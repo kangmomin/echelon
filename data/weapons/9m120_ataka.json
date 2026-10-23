@@ -1,0 +1,21 @@
+{
+  "id": "9m120_ataka",
+  "name": "9M120 아타카",
+  "type": "ATGM",
+  "range_m": {
+    "min": 400,
+    "max": 6000
+  },
+  "penetration": 800,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.8,
+    "at_max_range": 0.7
+  },
+  "rof_rpm": 2,
+  "suppression": 40,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle"
+  ]
+}

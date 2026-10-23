@@ -11,7 +11,9 @@
       "id": "co_a",
       "allowed": [
         "us_tank_co",
-        "us_mech_co"
+        "us_mech_co",
+        "us_stryker_co",
+        "us_light_inf_co"
       ],
       "required": true
     },
@@ -19,7 +21,9 @@
       "id": "co_b",
       "allowed": [
         "us_tank_co",
-        "us_mech_co"
+        "us_mech_co",
+        "us_stryker_co",
+        "us_light_inf_co"
       ],
       "required": true
     },
@@ -27,7 +31,19 @@
       "id": "co_c",
       "allowed": [
         "us_tank_co",
-        "us_mech_co"
+        "us_mech_co",
+        "us_stryker_co",
+        "us_light_inf_co"
+      ],
+      "required": false
+    },
+    {
+      "id": "co_d",
+      "allowed": [
+        "us_tank_co",
+        "us_mech_co",
+        "us_stryker_co",
+        "us_light_inf_co"
       ],
       "required": false
     }
@@ -45,9 +61,19 @@
       "allowed": [
         "us_fo_team",
         "us_jtac_team",
-        "us_ada_section"
+        "us_ada_section",
+        "us_at_plt",
+        "us_light_tank_plt",
+        "us_sniper_sec",
+        "us_engineer_plt"
       ],
-      "max": 3
+      "max": 4
+    },
+    {
+      "allowed": [
+        "us_aviation_sec"
+      ],
+      "max": 1
     }
   ],
   "command_capacity_per_min": 6,

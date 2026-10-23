@@ -31,6 +31,7 @@ var combat: CombatSystem
 var morale: MoraleSystem
 var fires: FireSupportSystem
 var supply: SupplySystem
+var engineers: EngineerSystem
 var reinforcements: ReinforcementSystem
 var scoring: ScoringSystem
 var tf_ai: TaskForceAI
@@ -91,6 +92,8 @@ static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_overrid
 	b.world.add_system(b.fires)
 	b.supply = SupplySystem.new(b)
 	b.world.add_system(b.supply)
+	b.engineers = EngineerSystem.new(b)
+	b.world.add_system(b.engineers)
 	b.world.add_system(b.morale)
 	b.scoring = ScoringSystem.new(b)
 	b.world.add_system(b.scoring)
@@ -206,6 +209,7 @@ func dispose() -> void:
 	morale = null
 	fires = null
 	supply = null
+	engineers = null
 	reinforcements = null
 	scoring = null
 	tf_ai = null

@@ -1,0 +1,31 @@
+{
+  "id": "us_hq_team",
+  "name": "중대 본부반",
+  "faction": "US",
+  "class": "inf_squad",
+  "hp": 5,
+  "armor": {
+    "front": 0,
+    "side": 0,
+    "rear": 0,
+    "top": 0
+  },
+  "size": 0.3,
+  "stealth": 0.5,
+  "optics_m": 1500,
+  "speed_kmh": {
+    "road": 6,
+    "offroad": 5
+  },
+  "weapons": [
+    "m4_rifles"
+  ],
+  "ammo": {
+    "m4_rifles": 1500
+  },
+  "radio_range_m": 3000,
+  "transport_capacity": 0,
+  "crew": 5,
+  "cost": 6,
+  "supply_full": 2
+}

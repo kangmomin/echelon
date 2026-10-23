@@ -26,9 +26,16 @@ func execute(unit: Unit, order: Order) -> void:
 		order.state = Order.State.RECEIVED
 		unit.queued_orders.append(order)
 		return
+	# 공병 작업은 공병 소대만.
+	if Order.ENGINEER_TYPES.has(order.type) and not EngineerSystem.is_engineer(unit):
+		order.state = Order.State.CANCELLED
+		battle.world.events.emit_event(&"order_refused", battle.world.tick, {"unit": unit.id, "side": unit.side,
+			"type": order.type, "reason": "not_engineer"})
+		return
 	order.state = Order.State.EXECUTING
 	match order.type:
-		Order.Type.MOVE, Order.Type.FAST_MOVE, Order.Type.ATTACK_MOVE, Order.Type.SEIZE, Order.Type.DEFEND, Order.Type.WITHDRAW:
+		Order.Type.MOVE, Order.Type.FAST_MOVE, Order.Type.ATTACK_MOVE, Order.Type.SEIZE, Order.Type.DEFEND, Order.Type.WITHDRAW, \
+				Order.Type.LAY_MINES, Order.Type.CLEAR_MINES, Order.Type.FORTIFY:
 			_start_movement(unit, order)
 		Order.Type.HALT:
 			_finish_mission(unit, Order.State.CANCELLED)
@@ -140,6 +147,17 @@ func on_arrival(unit: Unit) -> void:
 	var facing: float = order.get_facing()
 	if is_nan(facing):
 		facing = unit.guide.heading
+	if Order.ENGINEER_TYPES.has(order.type):
+		# 공병 작업 시작: 끝나면 EngineerSystem 이 명령을 완료 처리한다.
+		unit.guide.final_facing = facing
+		if battle.engineers != null and unit is Platoon and battle.engineers.begin_task(unit as Platoon, order):
+			return
+		order.state = Order.State.CANCELLED
+		unit.mission = null
+		unit.posture = &"idle"
+		battle.world.events.emit_event(&"order_refused", battle.world.tick, {"unit": unit.id, "side": unit.side,
+			"type": order.type, "reason": "no_capacity"})
+		return
 	match order.type:
 		Order.Type.SEIZE, Order.Type.DEFEND:
 			unit.posture = &"defending"
@@ -232,6 +250,14 @@ func _free_seat(p: Platoon, squad: Element) -> Element:
 
 
 static func path_mobility(unit: Unit) -> StringName:
+	var any_air: bool = false
+	for e: Element in unit.alive_elements():
+		if e.is_air():
+			any_air = true
+		elif e.is_vehicle():
+			return Terrain.MOBILITY_VEHICLE
+	if any_air:
+		return Terrain.MOBILITY_AIR
 	for e: Element in unit.alive_elements():
 		if e.is_vehicle():
 			return Terrain.MOBILITY_VEHICLE

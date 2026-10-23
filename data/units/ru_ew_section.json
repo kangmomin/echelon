@@ -11,5 +11,12 @@
     }
   ],
   "default_formation": "column",
-  "skill": "regular"
+  "skill": "regular",
+  "role": "R-330Zh 재머. 적 무전을 방해해 명령·보고를 늦춘다.",
+  "pros": [
+    "적 지휘 지연 증가"
+  ],
+  "cons": [
+    "무장 없음, 노출되면 표적"
+  ]
 }

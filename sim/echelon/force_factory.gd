@@ -69,7 +69,10 @@ func spawn_platoon(template: UnitTemplate, side: StringName, pos: Vector2, headi
 		if seat < vehicles.size():
 			squad.mounted_in = vehicles[seat]
 			vehicles[seat].passengers.append(squad)
-	p.mounted = p.has_squads()
+	# 도보 소대(차량 없음)는 "하차" 상태로 둔다.
+	p.mounted = p.has_squads() and p.has_transport()
+	if p.kind == &"engineer":
+		p.mines_left = EngineerSystem.MINEFIELDS_PER_PLATOON
 	p.commander = p.elements[0]
 	p.initial_element_count = p.elements.size()
 	place_elements(p)

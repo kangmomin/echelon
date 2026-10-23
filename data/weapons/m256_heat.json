@@ -1,5 +1,6 @@
 {
   "id": "m256_heat",
+  "name": "120 mm 다목적 대전차고폭탄",
   "type": "HEAT",
   "range_m": {
     "min": 100,

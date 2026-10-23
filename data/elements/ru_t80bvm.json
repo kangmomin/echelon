@@ -1,0 +1,35 @@
+{
+  "id": "ru_t80bvm",
+  "name": "T-80BVM",
+  "faction": "RU",
+  "class": "tank",
+  "hp": 100,
+  "armor": {
+    "front": 820,
+    "side": 280,
+    "rear": 110,
+    "top": 45
+  },
+  "size": 1.0,
+  "stealth": 0.12,
+  "optics_m": 2300,
+  "speed_kmh": {
+    "road": 70,
+    "offroad": 50
+  },
+  "weapons": [
+    "2a46m_apfsds",
+    "9m119_atgm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "2a46m_apfsds": 28,
+    "9m119_atgm": 4,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 3,
+  "cost": 44,
+  "supply_full": 11
+}

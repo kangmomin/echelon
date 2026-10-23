@@ -17,3 +17,8 @@ func step(_world: SimWorld) -> void:
 ## 결정론 검증용 상태 해시. 상태를 가진 시스템은 반드시 오버라이드한다.
 func state_hash() -> int:
 	return 0
+
+
+## true 면 SimWorld.state_hash 에서 뺀다(아직 아무 상태도 없는 선택 시스템용).
+func omit_from_hash() -> bool:
+	return false

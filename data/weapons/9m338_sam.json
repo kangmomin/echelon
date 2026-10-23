@@ -1,11 +1,12 @@
 {
   "id": "9m338_sam",
+  "name": "9M338 지대공 미사일",
   "type": "SAM",
   "range_m": {
     "min": 1000,
     "max": 15000
   },
-  "penetration": 0,
+  "penetration": 200,
   "damage": 100,
   "accuracy": {
     "base": 0.8,

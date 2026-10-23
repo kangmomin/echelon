@@ -11,5 +11,14 @@
     }
   ],
   "default_formation": "line",
-  "skill": "regular"
+  "skill": "regular",
+  "role": "M1064 120 mm 자주박격포 4문. 화력 요청(T)의 박격포.",
+  "pros": [
+    "사거리 7.2 km",
+    "연막 사격 가능"
+  ],
+  "cons": [
+    "직접 전투력 없음",
+    "대포병 위협"
+  ]
 }

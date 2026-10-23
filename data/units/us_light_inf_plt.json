@@ -1,0 +1,38 @@
+{
+  "id": "us_light_inf_plt",
+  "name": "경보병 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "inf",
+  "elements": [
+    {
+      "element": "us_inf_squad",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "loadouts": [
+    {
+      "id": "jav1",
+      "name": "분대 재블린 1기"
+    },
+    {
+      "id": "jav2",
+      "name": "분대 재블린 2기",
+      "replace": {
+        "us_inf_squad": "us_inf_squad_jav2"
+      }
+    }
+  ],
+  "role": "차량 없이 걷는 보병. 숲·마을에 숨어 대전차 매복을 한다.",
+  "pros": [
+    "은밀하다(숲에서 거의 안 보임)",
+    "재블린으로 전차를 잡는다",
+    "가장 싸다"
+  ],
+  "cons": [
+    "느리다(도보 5 km/h)",
+    "개활지에서 포격·기관총에 녹는다"
+  ]
+}

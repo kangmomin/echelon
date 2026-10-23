@@ -1,5 +1,6 @@
 {
   "id": "tow2b",
+  "name": "BGM-71 TOW-2B",
   "type": "ATGM",
   "range_m": {
     "min": 65,

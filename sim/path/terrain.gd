@@ -19,6 +19,8 @@ const RIVER_DEPTH_M: float = 6.0
 
 const MOBILITY_VEHICLE: StringName = &"vehicle"
 const MOBILITY_FOOT: StringName = &"foot"
+## 헬기: 지형·통행 불가 셀을 무시하고 지도 안이면 어디든 간다.
+const MOBILITY_AIR: StringName = &"air"
 
 var map: MapDef
 var size_m: Vector2
@@ -144,6 +146,8 @@ func ground_height(p: Vector2) -> float:
 func is_passable_cell(c: Vector2i, mobility: StringName) -> bool:
 	if c.x < 0 or c.y < 0 or c.x >= width or c.y >= height_cells:
 		return false
+	if mobility == MOBILITY_AIR:
+		return true
 	var mask: PackedByteArray = passable_vehicle if mobility == MOBILITY_VEHICLE else passable_foot
 	return mask[c.y * width + c.x] == 1
 
@@ -153,6 +157,8 @@ func is_passable(p: Vector2, mobility: StringName) -> bool:
 	var cy: int = floori(p.y / cell_m)
 	if cx < 0 or cy < 0 or cx >= width or cy >= height_cells:
 		return false
+	if mobility == MOBILITY_AIR:
+		return true
 	var mask: PackedByteArray = passable_vehicle if mobility == MOBILITY_VEHICLE else passable_foot
 	return mask[cy * width + cx] == 1
 
@@ -166,11 +172,15 @@ func is_bridge(p: Vector2) -> bool:
 
 
 func speed_factor(type: int, mobility: StringName) -> float:
+	if mobility == MOBILITY_AIR:
+		return 1.0
 	return SPEED_FACTOR_VEHICLE[type] if mobility == MOBILITY_VEHICLE else SPEED_FACTOR_FOOT[type]
 
 
 ## a→b 직선이 통행 가능한 셀만 지나는지. 셀 절반 간격으로 샘플링한다.
 func line_passable(a: Vector2, b: Vector2, mobility: StringName) -> bool:
+	if mobility == MOBILITY_AIR:
+		return contains(a) and contains(b)
 	var mask: PackedByteArray = passable_vehicle if mobility == MOBILITY_VEHICLE else passable_foot
 	var dist: float = a.distance_to(b)
 	# 빠른 길: 시작 셀 주변 여유 안에 선분이 다 들어가면 통과(차량이 통행 가능하면 도보도 가능).

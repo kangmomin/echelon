@@ -1,0 +1,25 @@
+{
+  "id": "ru_bmpt_plt",
+  "name": "BMPT 화력지원 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "tank",
+  "elements": [
+    {
+      "element": "ru_bmpt",
+      "count": 2
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "role": "BMPT 테르미나토르 2대. 전차를 따라가며 보병·대전차조를 제압한다.",
+  "pros": [
+    "전차급 정면 장갑",
+    "30 mm 2문 + 유탄 + 아타카 — 보병 킬러",
+    "헬기도 쏜다"
+  ],
+  "cons": [
+    "전차포가 없어 전차 상대는 미사일 4발뿐",
+    "비싸다"
+  ]
+}

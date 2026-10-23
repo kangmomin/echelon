@@ -19,6 +19,7 @@ const CONTACT_MEMORY_TICKS: int = 100
 const KNOWN_EXPIRE_TICKS: int = 1800
 const TRACKING_BONUS: float = 2.0
 const TERRAIN_CONCEAL: Dictionary[int, float] = {Terrain.Type.FOREST: 0.5, Terrain.Type.URBAN: 0.6}
+const AIR_HIGH_VISIBILITY: float = 1.5
 
 var battle: Battle
 ## side → {표적 element_id: 마지막으로 본 틱} (진영 단위 추적 보너스용)
@@ -87,6 +88,9 @@ func probability(obs: Element, t: Element, d: float, tick: int) -> float:
 	var range_f: float = clampf(1.0 - pow(d / maxf(obs.def.optics_m, 1.0), 1.5), 0.0, 1.0)
 	var conceal: float = 1.0 - t.def.stealth
 	var terrain_f: float = TERRAIN_CONCEAL.get(battle.terrain.type_at(t.pos), 1.0)
+	if t.is_air():
+		# 숲·시가지 위를 나는 헬기는 가려지지 않는다. 고공에서는 멀리서도 잘 보인다.
+		terrain_f = AIR_HIGH_VISIBILITY if t.altitude_m() >= Element.ALTITUDE_HIGH_M else 1.0
 	var state_f: float = 1.0
 	if tick - t.last_fired_tick < 50:
 		state_f = 2.0

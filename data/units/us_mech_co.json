@@ -15,5 +15,15 @@
     "us_mech_plt",
     "us_mech_plt"
   ],
-  "default_formation": "co_wedge"
+  "default_formation": "co_wedge",
+  "role": "M2A3 브래들리 기계화보병 중대. 보병과 IFV 의 균형.",
+  "pros": [
+    "보병 12개 분대 + TOW",
+    "25 mm 기관포로 경장갑·보병 제압",
+    "거점 확보·방어 모두 가능"
+  ],
+  "cons": [
+    "전차 정면은 못 뚫는다(TOW 제외)",
+    "IFV 가 격파되면 탑승 분대도 피해"
+  ]
 }

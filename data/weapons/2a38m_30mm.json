@@ -1,0 +1,24 @@
+{
+  "id": "2a38m_30mm",
+  "name": "30 mm 2A38M 대공포",
+  "type": "AC",
+  "range_m": {
+    "min": 100,
+    "max": 4000
+  },
+  "penetration": 70,
+  "damage": 35,
+  "accuracy": {
+    "base": 0.7,
+    "at_max_range": 0.35
+  },
+  "rof_rpm": 500,
+  "suppression": 12,
+  "fire_on_move": true,
+  "targets": [
+    "air",
+    "vehicle",
+    "infantry"
+  ],
+  "burst": 6
+}

@@ -1,0 +1,33 @@
+{
+  "id": "ru_btr82a",
+  "name": "BTR-82A",
+  "faction": "RU",
+  "class": "apc",
+  "hp": 100,
+  "armor": {
+    "front": 60,
+    "side": 40,
+    "rear": 30,
+    "top": 12
+  },
+  "size": 1.1,
+  "stealth": 0.12,
+  "optics_m": 1800,
+  "speed_kmh": {
+    "road": 100,
+    "offroad": 55
+  },
+  "weapons": [
+    "2a72_30mm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "2a72_30mm": 300,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 1,
+  "crew": 3,
+  "cost": 18,
+  "supply_full": 5
+}

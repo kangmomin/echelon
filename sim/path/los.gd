@@ -27,11 +27,11 @@ class Smoke:
 
 
 static func eye_height(e: Element) -> float:
-	return EYE_FOOT_M if e.is_infantry() else EYE_VEHICLE_M
+	return (EYE_FOOT_M if e.is_infantry() else EYE_VEHICLE_M) + e.altitude_m()
 
 
 static func target_height(e: Element) -> float:
-	return TARGET_FOOT_M if e.is_infantry() else TARGET_VEHICLE_M
+	return (TARGET_FOOT_M if e.is_infantry() else TARGET_VEHICLE_M) + e.altitude_m()
 
 
 static func between(terrain: Terrain, smokes: Array[Smoke], tick: int, observer: Element, target: Element) -> bool:

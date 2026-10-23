@@ -103,5 +103,7 @@ func get_sim_time_sec() -> float:
 func state_hash() -> int:
 	var parts: Array = [tick, rng.seed_value, rng.get_state()]
 	for system: SimSystem in _systems:
-		parts.append(system.state_hash())
+		# 쓰이지 않은 선택 시스템(공병 등)은 해시에서 뺀다: 그 기능을 쓰지 않는 전투의 해시가 그대로 남는다.
+		if not system.omit_from_hash():
+			parts.append(system.state_hash())
 	return hash(parts)

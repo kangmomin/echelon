@@ -11,5 +11,12 @@
     }
   ],
   "default_formation": "column",
-  "skill": "regular"
+  "skill": "regular",
+  "role": "KamAZ 보급 트럭 3대.",
+  "pros": [
+    "탄약 보급과 수리"
+  ],
+  "cons": [
+    "무장 없음"
+  ]
 }

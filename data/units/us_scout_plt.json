@@ -11,5 +11,14 @@
     }
   ],
   "default_formation": "line",
-  "skill": "regular"
+  "skill": "regular",
+  "role": "M3A3 정찰 브래들리 4대. 먼저 보고 보고한다.",
+  "pros": [
+    "관측 3.5 km",
+    "은폐가 좋다",
+    "TOW 10발"
+  ],
+  "cons": [
+    "싸우라고 만든 부대가 아니다"
+  ]
 }

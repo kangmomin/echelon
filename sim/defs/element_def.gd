@@ -2,7 +2,8 @@ class_name ElementDef
 extends RefCounted
 ## 엘리먼트(차량 1대 또는 분대 1개) 정의. data/elements/*.json. PLAN 16.1.
 
-const CLASSES: Array[String] = ["tank", "ifv", "apc", "recon", "mortar", "aa", "cp", "truck", "inf_squad", "fo", "ew"]
+const CLASSES: Array[String] = ["tank", "ifv", "apc", "recon", "mortar", "aa", "cp", "truck", "inf_squad", "fo", "ew",
+	"heli", "eng", "at"]
 const FACTIONS: Array[String] = ["US", "RU"]
 const ARMOR_FACINGS: Array[String] = ["front", "side", "rear", "top"]
 
@@ -62,8 +63,8 @@ static func from_dict(d: Dictionary, r: DefReader) -> ElementDef:
 	var speed: Dictionary = r.req_dict(d, "speed_kmh")
 	e.speed_road_kmh = r.req_number(speed, "road")
 	e.speed_offroad_kmh = r.req_number(speed, "offroad")
-	r.check_range(e.speed_road_kmh, 0.0, 150.0, "speed_kmh.road")
-	r.check_range(e.speed_offroad_kmh, 0.0, 150.0, "speed_kmh.offroad")
+	r.check_range(e.speed_road_kmh, 0.0, 350.0, "speed_kmh.road")
+	r.check_range(e.speed_offroad_kmh, 0.0, 350.0, "speed_kmh.offroad")
 
 	e.weapons = r.req_string_array(d, "weapons")
 	var ammo_raw: Dictionary = r.req_dict(d, "ammo")

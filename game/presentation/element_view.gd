@@ -22,6 +22,10 @@ class View:
 	var tilt: Node3D
 	var hull: MeshInstance3D
 	var turret: MeshInstance3D = null
+	var rotor: MeshInstance3D = null
+	var rotor2: MeshInstance3D = null
+	## 헬기: 화면에 그리는 현재 고도(목표 고도로 부드럽게 따라간다).
+	var altitude: float = -1.0
 	var model: VehicleModels.Model
 	var turret_yaw: float = 0.0
 	var recoil: float = 0.0
@@ -57,9 +61,14 @@ func _process(delta: float) -> void:
 			continue
 		var p: Vector2 = e.prev_pos.lerp(e.pos, alpha)
 		var h: float = lerp_angle(e.prev_heading, e.heading, alpha)
-		v.root.position = ViewCoords.to_3d(p, battle.terrain.ground_height(p))
+		var ground: float = battle.terrain.ground_height(p)
+		if e.def.element_class == &"heli":
+			_update_air(v, e, delta, dt)
+			v.root.position = ViewCoords.to_3d(p, ground + v.altitude)
+		else:
+			v.root.position = ViewCoords.to_3d(p, ground)
 		v.root.rotation = Vector3(0.0, ViewCoords.heading_to_yaw(h), 0.0)
-		if e.is_vehicle():
+		if e.is_vehicle() and e.def.element_class != &"heli":
 			_update_tilt(v, p, h)
 		_update_materials(v, e)
 		if v.turret != null:
@@ -84,6 +93,18 @@ func _ensure_view(e: Element) -> View:
 	v.hull = MeshInstance3D.new()
 	v.hull.mesh = v.model.hull
 	v.tilt.add_child(v.hull)
+	if v.model.rotor != null:
+		v.rotor = MeshInstance3D.new()
+		v.rotor.mesh = v.model.rotor
+		v.rotor.position = v.model.rotor_pivot
+		v.rotor.set_surface_override_material(0, _rotor_material())
+		v.tilt.add_child(v.rotor)
+	if v.model.rotor2 != null:
+		v.rotor2 = MeshInstance3D.new()
+		v.rotor2.mesh = v.model.rotor2
+		v.rotor2.position = v.model.rotor2_pivot
+		v.rotor2.set_surface_override_material(0, _rotor_material())
+		v.tilt.add_child(v.rotor2)
 	if v.model.turret != null:
 		v.turret = MeshInstance3D.new()
 		v.turret.mesh = v.model.turret
@@ -92,6 +113,33 @@ func _ensure_view(e: Element) -> View:
 	add_child(v.root)
 	_views[e.id] = v
 	return v
+
+
+## 헬기: 고도를 부드럽게 바꾸고, 속도만큼 앞으로 숙이며, 회전익을 돌린다. 격추되면 땅에 기울어 눕는다.
+func _update_air(v: View, e: Element, delta: float, dt: float) -> void:
+	var want: float = e.altitude_m()
+	if v.altitude < 0.0:
+		v.altitude = want
+	v.altitude = move_toward(v.altitude, want, maxf(dt, delta * 0.2) * (12.0 if e.is_alive() else 30.0))
+	if not e.is_alive():
+		v.tilt.basis = Basis.from_euler(Vector3(0.25, 0.0, 0.45))
+		return
+	var spd: float = e.velocity.length()
+	v.tilt.basis = Basis.from_euler(Vector3(-clampf(spd / 70.0, 0.0, 0.22), 0.0, 0.0))
+	if v.rotor != null:
+		v.rotor.rotation.y += maxf(dt, 0.0) * 28.0 if dt > 0.0 else delta * 4.0
+	if v.rotor2 != null:
+		v.rotor2.rotation.y -= maxf(dt, 0.0) * 28.0 if dt > 0.0 else delta * 4.0
+
+
+func _rotor_material() -> StandardMaterial3D:
+	if not _materials.has("rotor"):
+		var m := StandardMaterial3D.new()
+		m.albedo_color = Color(0.08, 0.08, 0.08, 0.85)
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.roughness = 0.7
+		_materials["rotor"] = m
+	return _materials["rotor"]
 
 
 ## 지면 경사를 따라 차체를 기울인다(앞뒤·좌우 높이차). 움직였을 때만 다시 잰다.

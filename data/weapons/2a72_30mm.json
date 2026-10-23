@@ -1,5 +1,6 @@
 {
   "id": "2a72_30mm",
+  "name": "30 mm 2A72 기관포",
   "type": "AC",
   "range_m": {
     "min": 50,
@@ -16,7 +17,8 @@
   "fire_on_move": true,
   "targets": [
     "vehicle",
-    "infantry"
+    "infantry",
+    "air"
   ],
   "pen_falloff_per_km": 0.2,
   "burst": 3

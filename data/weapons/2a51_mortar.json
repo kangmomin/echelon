@@ -1,5 +1,6 @@
 {
   "id": "2a51_mortar",
+  "name": "120 mm 2A51 박격포",
   "type": "HE",
   "range_m": {
     "min": 200,

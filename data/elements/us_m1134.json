@@ -1,0 +1,31 @@
+{
+  "id": "us_m1134",
+  "name": "M1134 스트라이커 ATGM",
+  "faction": "US",
+  "class": "at",
+  "hp": 100,
+  "armor": {
+    "front": 80,
+    "side": 50,
+    "rear": 40,
+    "top": 15
+  },
+  "size": 1.1,
+  "stealth": 0.15,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 97,
+    "offroad": 55
+  },
+  "weapons": [
+    "tow2b"
+  ],
+  "ammo": {
+    "tow2b": 12
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 26,
+  "supply_full": 4
+}

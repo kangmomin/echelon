@@ -8,6 +8,8 @@ const TECHNIQUE_VALUES: Array[StringName] = [&"traveling", &"overwatch", &"bound
 const WITHDRAW_VALUES: Array[float] = [0.4, 0.25, 0.0]
 const MOUNT_VALUES: Array[StringName] = [&"dismount_on_contact", &"stay_mounted", &"stay_dismounted"]
 const UNDER_FIRE_VALUES: Array[StringName] = [&"disperse", &"hold"]
+## 헬기 비행 고도.
+const ALTITUDE_VALUES: Array[StringName] = [&"low", &"high"]
 
 ## 교전 규칙.
 var roe: StringName = &"fire_at_will"
@@ -21,6 +23,8 @@ var withdraw_at: float = 0.4
 var mount_policy: StringName = &"dismount_on_contact"
 ## 포격 받을 때.
 var under_fire: StringName = &"disperse"
+## 헬기 고도(헬기가 아니면 쓰지 않는다).
+var altitude: StringName = &"low"
 
 
 func copy() -> Sop:
@@ -31,6 +35,7 @@ func copy() -> Sop:
 	s.withdraw_at = withdraw_at
 	s.mount_policy = mount_policy
 	s.under_fire = under_fire
+	s.altitude = altitude
 	return s
 
 
@@ -51,6 +56,8 @@ func apply(d: Dictionary) -> bool:
 				ok = _set_name(v, MOUNT_VALUES, "mount_policy") and ok
 			"under_fire":
 				ok = _set_name(v, UNDER_FIRE_VALUES, "under_fire") and ok
+			"altitude":
+				ok = _set_name(v, ALTITUDE_VALUES, "altitude") and ok
 			"withdraw_at":
 				if DefReader.is_number(v):
 					var f: float = v
@@ -66,6 +73,7 @@ func to_dict() -> Dictionary:
 	return {
 		"roe": String(roe), "on_contact": String(on_contact), "technique": String(technique),
 		"withdraw_at": withdraw_at, "mount_policy": String(mount_policy), "under_fire": String(under_fire),
+		"altitude": String(altitude),
 	}
 
 

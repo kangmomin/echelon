@@ -1,5 +1,6 @@
 {
   "id": "2a70_he",
+  "name": "100 mm 2A70 고폭탄",
   "type": "HE",
   "range_m": {
     "min": 100,

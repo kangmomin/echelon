@@ -1,0 +1,28 @@
+{
+  "id": "ru_msr_co_foot",
+  "name": "도보 소총 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "inf",
+  "hq": [
+    {
+      "element": "ru_hq_team",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_light_inf_plt",
+    "ru_light_inf_plt",
+    "ru_light_inf_plt"
+  ],
+  "default_formation": "co_wedge",
+  "role": "도보 소총 중대. 지형을 잡고 버티는 방어용.",
+  "pros": [
+    "가장 싸다",
+    "숲·시가지 방어에 강하다"
+  ],
+  "cons": [
+    "이동이 매우 느리다",
+    "개활지에서 취약하다"
+  ]
+}

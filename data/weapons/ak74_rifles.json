@@ -1,5 +1,6 @@
 {
   "id": "ak74_rifles",
+  "name": "AK-74 소총",
   "type": "MG",
   "range_m": {
     "min": 0,

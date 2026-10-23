@@ -38,6 +38,8 @@ const MASKED_SCORE: float = 0.2
 const LONG_RANGE_START_M: float = 1000.0
 const LONG_RANGE_END_M: float = 3000.0
 const LONG_RANGE_MULT: float = 0.4
+## 방공 차량이 아닌 기관포가 헬기를 쏠 때 명중률 배율(사격 통제가 대공용이 아니다).
+const NON_AA_VS_AIR: float = 0.3
 
 var battle: Battle
 var shots_fired: int = 0
@@ -116,7 +118,9 @@ func _score(e: Element, t: Element, d: float) -> float:
 		if not _usable(e, w, t, d):
 			continue
 		var eff: float = w.accuracy_at(d)
-		if t.is_vehicle():
+		if t.is_air():
+			eff *= clampf(w.penetration_at(d) / maxf(t.def.get_armor(&"side"), 1.0), 0.05, 1.5) * 1.5
+		elif t.is_vehicle():
 			eff *= clampf(w.penetration_at(d) / maxf(t.def.get_armor(&"front"), 1.0), 0.05, 1.5)
 		else:
 			eff *= w.damage * 0.1
@@ -124,17 +128,18 @@ func _score(e: Element, t: Element, d: float) -> float:
 	if best <= 0.0:
 		return 0.0
 	var value: float = float(t.def.cost) / 50.0
-	if t.def.element_class == &"tank":
+	if t.def.element_class == &"tank" or t.is_air():
 		value *= 1.5
 	return best * value / (1.0 + d / 1000.0)
 
 
 func _usable(e: Element, w: WeaponDef, t: Element, d: float) -> bool:
-	if w == null or w.indirect or w.weapon_type == &"SAM":
+	if w == null or w.indirect:
 		return false
 	if e.ammo.get(w.id, 0) < 1:
 		return false
-	if not w.can_target(&"infantry" if t.is_infantry() else &"vehicle"):
+	# 지대공 미사일은 targets 가 "air" 뿐이라 헬기에만 쏜다(CAS 요격은 화력지원 시스템이 따로 한다).
+	if not w.can_target(t.target_kind()):
 		return false
 	if d < w.range_min_m or d > w.range_max_m:
 		return false
@@ -208,9 +213,14 @@ func hit_chance(e: Element, w: WeaponDef, t: Element, d: float, tick: int) -> fl
 		p *= MOVING_TARGET
 	if e.suppression >= 50.0:
 		p *= SUPPRESSED_ACC
-	p *= TARGET_COVER_ACC.get(battle.terrain.type_at(t.pos), 1.0)
+	if not t.is_air():
+		p *= TARGET_COVER_ACC.get(battle.terrain.type_at(t.pos), 1.0)
+		if battle.engineers != null:
+			p *= battle.engineers.position_factor(t)
 	p *= clampf(sqrt(t.def.size), 0.6, 1.2)
 	p *= long_range_factor(d)
+	if t.is_air() and w.weapon_type != &"SAM" and e.def.element_class != &"aa":
+		p *= NON_AA_VS_AIR
 	return clampf(p, 0.01, 0.98)
 
 
@@ -223,7 +233,7 @@ static func long_range_factor(d: float) -> float:
 ## 사선 가림: 같은 소대 차량이 사수와 표적 사이 가까이(사선 폭 안)에 있으면 쏠 수 없다.
 ## 종대는 앞 차가 뒤 차의 사선을 막고, 횡대는 모두 쏠 수 있다 — 대형의 정면 화력이 기하로 생긴다.
 func is_masked(e: Element, t: Element) -> bool:
-	if e.platoon == null or e.is_infantry():
+	if e.platoon == null or e.is_infantry() or e.is_air():
 		return false
 	var to_t: Vector2 = t.pos - e.pos
 	var d: float = to_t.length()
@@ -232,7 +242,7 @@ func is_masked(e: Element, t: Element) -> bool:
 	var dir: Vector2 = to_t / d
 	var reach: float = minf(d - 5.0, MASK_RANGE_M)
 	for o: Element in e.platoon.elements:
-		if o == e or not o.is_active() or o.is_mounted() or o.is_infantry():
+		if o == e or not o.is_active() or o.is_mounted() or o.is_infantry() or o.is_air():
 			continue
 		var rel: Vector2 = o.pos - e.pos
 		var along: float = rel.dot(dir)
@@ -285,6 +295,8 @@ func _resolve_infantry_hit(e: Element, w: WeaponDef, t: Element, tick: int, expe
 	var cover: float = INF_COVER.get(battle.terrain.type_at(t.pos), 1.0)
 	if t.stationary_ticks > DUG_IN_TICKS:
 		cover *= DUG_IN_COVER
+	if battle.engineers != null:
+		cover *= battle.engineers.position_factor(t)
 	var x: float = expected * cover
 	var casualties: int = floori(x) + (1 if battle.world.rng.chance(x - floorf(x)) else 0)
 	if casualties <= 0:
@@ -297,7 +309,7 @@ func _resolve_infantry_hit(e: Element, w: WeaponDef, t: Element, tick: int, expe
 
 func _he_splash(e: Element, w: WeaponDef, center: Vector2, direct: Element, tick: int) -> void:
 	for o: Element in battle.elements_near(center, w.he_radius_m):
-		if o == direct or o.side == e.side or o.is_mounted():
+		if o == direct or o.side == e.side or o.is_mounted() or o.is_air():
 			continue
 		_suppress(o, w.suppression * 0.5)
 		if o.is_infantry():
@@ -310,7 +322,7 @@ func indirect_impact(pos: Vector2, w: WeaponDef, firing_side: StringName, source
 	var r: float = maxf(w.he_radius_m, 1.0)
 	var rng: SimRng = battle.world.rng
 	for o: Element in battle.elements_near(pos, r * 2.0):
-		if o.side == firing_side or o.is_mounted() or not o.is_alive():
+		if o.side == firing_side or o.is_mounted() or not o.is_alive() or o.is_air():
 			continue
 		var d: float = o.pos.distance_to(pos)
 		_suppress(o, w.suppression * clampf(1.0 - d / (r * 2.0), 0.0, 1.0))
@@ -344,6 +356,8 @@ func arty_vulnerability(o: Element) -> float:
 	v *= TARGET_COVER_ACC.get(battle.terrain.type_at(o.pos), 1.0)
 	if o.stationary_ticks > DUG_IN_TICKS:
 		v *= DUG_IN_COVER
+	if battle.engineers != null:
+		v *= battle.engineers.position_factor(o)
 	return v
 
 

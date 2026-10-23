@@ -1,5 +1,6 @@
 {
   "id": "9m119_atgm",
+  "name": "9M119 레플렉스 포발사 미사일",
   "type": "ATGM",
   "range_m": {
     "min": 100,

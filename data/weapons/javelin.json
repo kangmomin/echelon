@@ -1,5 +1,6 @@
 {
   "id": "javelin",
+  "name": "FGM-148 재블린",
   "type": "ATGM",
   "range_m": {
     "min": 65,

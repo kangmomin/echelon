@@ -1,5 +1,6 @@
 {
   "id": "rpg29",
+  "name": "RPG-29 대전차 로켓",
   "type": "HEAT",
   "range_m": {
     "min": 0,

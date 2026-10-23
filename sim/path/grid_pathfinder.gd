@@ -67,6 +67,12 @@ func request(from: Vector2, to: Vector2, mobility: StringName, side: StringName)
 	req.to = to
 	req.mobility = mobility
 	req.side = side if SIDES.has(side) else &"blue"
+	if mobility == Terrain.MOBILITY_AIR:
+		# 헬기: 직선 비행. 대기열을 거치지 않는다.
+		req.points = find_path_now(from, to, mobility, side)
+		req.ok = req.points.size() >= 2
+		req.done = true
+		return req
 	_queue.append(req)
 	return req
 
@@ -94,6 +100,8 @@ func process(budget: int = MAX_REQUESTS_PER_TICK) -> int:
 
 ## 단순화된 경유점 배열. 첫 점은 from(또는 가까운 통행 가능 점), 끝 점은 to(또는 가장 가까이 갈 수 있는 점).
 func find_path_now(from: Vector2, to: Vector2, mobility: StringName, side: StringName = &"blue") -> PackedVector2Array:
+	if mobility == Terrain.MOBILITY_AIR:
+		return PackedVector2Array([from, terrain.clamp_to_map(to, 20.0)])
 	var grid: AStarGrid2D = _grid(side if SIDES.has(side) else &"blue", mobility)
 	var start: Vector2 = terrain.nearest_passable(from, mobility)
 	var goal: Vector2 = terrain.nearest_passable(to, mobility)

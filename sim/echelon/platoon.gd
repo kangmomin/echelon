@@ -18,6 +18,11 @@ var last_assign_key: Vector3 = Vector3.INF
 var last_assign_members: int = -1
 ## 이 소대가 최근 본 적: element_id → 틱. 사격 표적은 여기서 고른다.
 var contacts: Dictionary[int, int] = {}
+## 공병: 현재 작업(&"" | &"lay" | &"clear" | &"fortify")과 진행(초), 남은 지뢰 지대 수, 만든 진지 수.
+var eng_task: StringName = &""
+var eng_progress: float = 0.0
+var mines_left: int = 0
+var positions_built: int = 0
 
 
 func _init() -> void:

@@ -1,5 +1,6 @@
 {
   "id": "m240_coax",
+  "name": "7.62 mm M240 동축기관총",
   "type": "MG",
   "range_m": {
     "min": 0,

@@ -15,5 +15,14 @@
     "ru_msr_plt_bmp3",
     "ru_msr_plt_bmp3"
   ],
-  "default_formation": "co_wedge"
+  "default_formation": "co_wedge",
+  "role": "BMP-3 차량화소총 중대. 화력이 강한 IFV 와 보병.",
+  "pros": [
+    "100 mm + 30 mm + 미사일",
+    "보병 9개 분대"
+  ],
+  "cons": [
+    "장갑이 얇다",
+    "탑승 중 격파되면 분대 피해"
+  ]
 }

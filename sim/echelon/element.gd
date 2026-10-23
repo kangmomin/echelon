@@ -8,6 +8,10 @@ const STATE_NAMES: Array[String] = ["정상", "손상", "격파", "유기"]
 ## 선회 속도(라디안/초).
 const TURN_RATE_VEHICLE: float = PI / 3.0
 const TURN_RATE_FOOT: float = PI
+const TURN_RATE_AIR: float = PI * 0.75
+## 헬기 고도(m): 저공(지형 뒤에 숨음) / 고공(멀리 보지만 잘 보임).
+const ALTITUDE_LOW_M: float = 25.0
+const ALTITUDE_HIGH_M: float = 90.0
 
 var id: int = 0
 var def: ElementDef
@@ -83,7 +87,30 @@ func is_vehicle() -> bool:
 	return not is_infantry()
 
 
+## 헬기(공중). 지상 무기 대부분은 쏠 수 없고, 지형을 무시하고 날며, 고도만큼 높은 곳에서 보고 보인다.
+func is_air() -> bool:
+	return def.element_class == &"heli"
+
+
+## 표적 종류: 무기의 targets 와 맞춘다.
+func target_kind() -> StringName:
+	if is_air() and is_alive():
+		return &"air"
+	return &"infantry" if is_infantry() else &"vehicle"
+
+
+## 지면 위 높이(m). 헬기는 SOP 고도(저공 25 m / 고공 90 m), 격추되면 0.
+func altitude_m() -> float:
+	if not is_air() or not is_alive():
+		return 0.0
+	if platoon != null and platoon.sop.altitude == &"high":
+		return ALTITUDE_HIGH_M
+	return ALTITUDE_LOW_M
+
+
 func mobility() -> StringName:
+	if is_air():
+		return Terrain.MOBILITY_AIR
 	return Terrain.MOBILITY_FOOT if is_infantry() else Terrain.MOBILITY_VEHICLE
 
 
@@ -123,6 +150,8 @@ func base_speed_mps() -> float:
 
 
 func turn_rate() -> float:
+	if is_air():
+		return TURN_RATE_AIR
 	return TURN_RATE_FOOT if is_infantry() else TURN_RATE_VEHICLE
 
 

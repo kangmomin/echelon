@@ -1,0 +1,33 @@
+{
+  "id": "ru_at_squad",
+  "name": "코르넷 대전차반",
+  "faction": "RU",
+  "class": "inf_squad",
+  "hp": 3,
+  "armor": {
+    "front": 0,
+    "side": 0,
+    "rear": 0,
+    "top": 0
+  },
+  "size": 0.25,
+  "stealth": 0.6,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 5,
+    "offroad": 4
+  },
+  "weapons": [
+    "9m133_kornet",
+    "ak74_rifles"
+  ],
+  "ammo": {
+    "9m133_kornet": 4,
+    "ak74_rifles": 500
+  },
+  "radio_range_m": 800,
+  "transport_capacity": 0,
+  "crew": 3,
+  "cost": 12,
+  "supply_full": 3
+}

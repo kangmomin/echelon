@@ -1,0 +1,35 @@
+{
+  "id": "us_engineer_plt",
+  "name": "공병 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "engineer",
+  "elements": [
+    {
+      "element": "us_m2a3",
+      "count": 2
+    },
+    {
+      "element": "us_m1150_abv",
+      "count": 1
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "us_sapper_squad",
+      "count": 2
+    }
+  ],
+  "role": "지뢰를 깔고(N), 걷어내고(I), 진지를 판다(O).",
+  "pros": [
+    "지뢰 지대 2개: 적 차량 진로를 막는다",
+    "적 지뢰를 찾아 빠르게 제거(돌파 장비)",
+    "진지: 안의 아군 피해 40% 감소"
+  ],
+  "cons": [
+    "작업 중에는 멈춰 있어 취약하다",
+    "직접 전투력은 약하다"
+  ]
+}

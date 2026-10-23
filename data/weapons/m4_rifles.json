@@ -1,5 +1,6 @@
 {
   "id": "m4_rifles",
+  "name": "M4 소총",
   "type": "MG",
   "range_m": {
     "min": 0,

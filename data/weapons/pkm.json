@@ -1,5 +1,6 @@
 {
   "id": "pkm",
+  "name": "7.62 mm PKM 기관총",
   "type": "MG",
   "range_m": {
     "min": 0,

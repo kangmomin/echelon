@@ -1,5 +1,6 @@
 {
   "id": "9m117_atgm",
+  "name": "9M117 바스티온 포발사 미사일",
   "type": "ATGM",
   "range_m": {
     "min": 100,

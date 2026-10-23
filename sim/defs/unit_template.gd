@@ -4,7 +4,8 @@ extends RefCounted
 ## 소대: 엘리먼트 목록(+ 탑승 분대), 장비 템플릿(loadouts). 중대: 본부 엘리먼트 + 소대 템플릿 목록.
 
 const ECHELONS: Array[String] = ["platoon", "company"]
-const KINDS: Array[String] = ["tank", "mech", "inf", "recon", "mortar", "supply", "hq", "cp", "fo", "aa", "ew", "engineer"]
+const KINDS: Array[String] = ["tank", "mech", "inf", "recon", "mortar", "supply", "hq", "cp", "fo", "aa", "ew", "engineer",
+	"wheeled", "at", "sniper", "aviation"]
 
 
 class Loadout:
@@ -34,6 +35,10 @@ var platoons: PackedStringArray = PackedStringArray()
 var skill: StringName = &"regular"
 ## 포인트(로드 후 DataLoader 가 계산).
 var cost: int = 0
+## 편성 화면 정보 카드용: 역할 한 줄, 장점·약점.
+var role: String = ""
+var pros: PackedStringArray = PackedStringArray()
+var cons: PackedStringArray = PackedStringArray()
 
 
 static func from_dict(d: Dictionary, r: DefReader) -> UnitTemplate:
@@ -49,6 +54,9 @@ static func from_dict(d: Dictionary, r: DefReader) -> UnitTemplate:
 	t.default_formation = StringName(r.opt_string(d, "default_formation", ""))
 	t.skill = StringName(r.opt_string(d, "skill", "regular"))
 	r.check_one_of(t.skill, ["recruit", "regular", "veteran", "elite"], "skill")
+	t.role = r.opt_string(d, "role", "")
+	t.pros = r.opt_string_array(d, "pros")
+	t.cons = r.opt_string_array(d, "cons")
 
 	if t.echelon == &"platoon":
 		t.elements = _expand(r.req_array(d, "elements"), r, "elements")

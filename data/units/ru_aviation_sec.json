@@ -1,0 +1,25 @@
+{
+  "id": "ru_aviation_sec",
+  "name": "공격헬기 반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "aviation",
+  "elements": [
+    {
+      "element": "ru_ka52",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "Ka-52 2대. 비흐르 미사일 8 km, 30 mm 기관포, 로켓.",
+  "pros": [
+    "가장 빠르다, 지형 무시",
+    "비흐르 12발 — 움직이며 쏜다",
+    "V 로 고도 전환"
+  ],
+  "cons": [
+    "가장 비싸다",
+    "방공·기관포에 약하다"
+  ]
+}

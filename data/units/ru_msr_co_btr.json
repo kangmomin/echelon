@@ -1,0 +1,29 @@
+{
+  "id": "ru_msr_co_btr",
+  "name": "차륜형 차량화소총 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "wheeled",
+  "hq": [
+    {
+      "element": "ru_btr82a",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_msr_plt_btr",
+    "ru_msr_plt_btr",
+    "ru_msr_plt_btr"
+  ],
+  "default_formation": "co_wedge",
+  "role": "BTR 중대. 빠른 기동과 보병 수로 거점을 잡는다.",
+  "pros": [
+    "가장 빠른 중대",
+    "보병 9개 분대",
+    "포인트가 싸다"
+  ],
+  "cons": [
+    "전차에 약하다",
+    "원거리 대전차 화력이 없다"
+  ]
+}

@@ -98,6 +98,7 @@ func _ready() -> void:
 	hud.order_mode_selected.connect(func(_t: int) -> void: pass)
 	hud.immediate_order.connect(_on_immediate_order)
 	hud.formation_selected.connect(_on_formation_selected)
+	hud.altitude_toggle_requested.connect(toggle_altitude)
 
 	var guide_button: Button = UiKit.button("가이드  /", toggle_guide, 0)
 	guide_button.position = Vector2(8, 8)
@@ -336,9 +337,16 @@ func _on_key(k: InputEventKey) -> void:
 			_sub_select(not k.shift_pressed)
 		KEY_F1, KEY_F2, KEY_F3, KEY_F4:
 			_select_company(code)
-		KEY_R, KEY_Z, KEY_X, KEY_C, KEY_V:
-			const MISSING: Dictionary[Key, String] = {KEY_R: "후진", KEY_Z: "질주", KEY_X: "연막탄 발사", KEY_C: "기만체",
-				KEY_V: "고도 변경"}
+		KEY_V:
+			toggle_altitude()
+		KEY_N:
+			hud.set_order_mode(Order.Type.LAY_MINES)
+		KEY_I:
+			hud.set_order_mode(Order.Type.CLEAR_MINES)
+		KEY_O:
+			hud.set_order_mode(Order.Type.FORTIFY)
+		KEY_R, KEY_Z, KEY_X, KEY_C:
+			const MISSING: Dictionary[Key, String] = {KEY_R: "후진", KEY_Z: "질주", KEY_X: "연막탄 발사", KEY_C: "기만체"}
 			notifications.push("%s 명령은 이 게임에 아직 없습니다" % MISSING[code], Color(0.7, 0.7, 0.7))
 		KEY_ESCAPE:
 			if hud.fire_asset >= 0:
@@ -351,6 +359,24 @@ func _on_key(k: InputEventKey) -> void:
 			handled = false
 	if handled:
 		get_viewport().set_input_as_handled()
+
+
+## V: 선택한 공격헬기 반의 고도를 저공 ↔ 고공으로.
+func toggle_altitude() -> void:
+	var helis: Array[Unit] = []
+	for u: Unit in selection:
+		if u.kind == &"aviation":
+			helis.append(u)
+	if helis.is_empty():
+		notifications.push("고도 전환은 공격헬기만 할 수 있습니다", Color(0.7, 0.7, 0.7))
+		return
+	var high: bool = helis[0].sop.altitude != &"high"
+	for u: Unit in helis:
+		var o: Order = Order.make(Order.Type.SET_SOP, u.id, {"sop": {"altitude": "high" if high else "low"}})
+		o.issuer = &"player"
+		battle.issue_order(o)
+		player_order.emit(o)
+	notifications.push("헬기 고도: %s" % ("고공(멀리 보지만 잘 보임)" if high else "저공(지형 뒤에 숨음)"), Color(0.8, 0.8, 0.8))
 
 
 ## T·G 를 거듭 누르면 박격포 → 포병 → 끔 순서로 바뀐다.

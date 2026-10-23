@@ -1,5 +1,6 @@
 {
   "id": "kab500_bomb",
+  "name": "KAB-500 유도폭탄",
   "type": "HE",
   "range_m": {
     "min": 0,

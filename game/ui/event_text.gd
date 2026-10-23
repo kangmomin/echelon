@@ -33,6 +33,10 @@ static func describe(battle: Battle, ev: Dictionary, player_side: StringName) ->
 		&"cas_shot_down":
 			if side != player_side:
 				return ["아군 방공이 적 항공기를 격추", GOOD]
+		&"mine_strike":
+			if side == player_side:
+				return ["%s: 지뢰를 밟음!" % (unit.label() if unit != null else "아군"), BAD]
+			return ["적이 아군 지뢰 지대에 걸림", GOOD]
 	if side != player_side and type != &"order_waiting_capacity":
 		return []
 	var unit_name: String = unit.display_name if unit != null and unit.level != Unit.Level.PLATOON else (unit.label() if unit != null else "?")
@@ -73,7 +77,22 @@ static func describe(battle: Battle, ev: Dictionary, player_side: StringName) ->
 		&"rally":
 			return ["%s: 재집결" % unit_name, INFO]
 		&"order_refused":
+			match str(p.get("reason", "")):
+				"not_engineer":
+					return ["%s: 공병만 할 수 있는 작업입니다" % unit_name, WARN]
+				"no_capacity":
+					return ["%s: 남은 지뢰·진지 자재가 없습니다" % unit_name, WARN]
 			return ["%s: 사기 저하로 공격 명령 거부" % unit_name, WARN]
+		&"minefield_laid":
+			return ["%s: 지뢰 지대 매설 완료" % unit_name, GOOD]
+		&"minefield_cleared":
+			if p.get("none", false):
+				return ["%s: 근처에 지뢰 지대가 없습니다" % unit_name, WARN]
+			return ["%s: 지뢰 지대 제거 완료" % unit_name, GOOD]
+		&"position_built":
+			return ["%s: 진지 구축 완료" % unit_name, GOOD]
+		&"minefield_found":
+			return ["적 지뢰 지대 발견", WARN]
 		&"auto_withdraw":
 			return ["%s: 전투력 저하 — 스스로 철수" % unit_name, WARN]
 		&"fire_mission":

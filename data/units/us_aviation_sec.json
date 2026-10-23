@@ -1,0 +1,26 @@
+{
+  "id": "us_aviation_sec",
+  "name": "공격헬기 반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "aviation",
+  "elements": [
+    {
+      "element": "us_ah64e",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "AH-64E 2대. 지형을 무시하고 날아가 헬파이어로 8 km 밖 전차를 잡는다.",
+  "pros": [
+    "가장 빠르다(220 km/h), 지형 무시",
+    "헬파이어 사거리 8 km",
+    "V 로 고도 전환: 저공은 숨고 고공은 멀리 본다"
+  ],
+  "cons": [
+    "가장 비싸다",
+    "방공·기관포에 약하다(장갑 30)",
+    "지상군이 잡을 수 없는 거점은 못 지킨다"
+  ]
+}

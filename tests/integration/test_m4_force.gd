@@ -67,13 +67,20 @@ func test_budget_and_constraint_errors() -> void:
 	var s4: ForceSpec = _us()
 	s4.companies.remove_at(0)
 	assert_string_contains(" ".join(ForceRules.evaluate(cat, s4, 5000).errors), "co_a")
-	# 배속 상한(3).
+	# 배속 상한(지상 4 + 헬기 1 = 5).
 	var s5: ForceSpec = _us()
-	for i: int in 2:
+	for i: int in 4:
 		var p := ForceSpec.PlatoonSpec.new()
 		p.template = &"us_ada_section"
 		s5.attachments.append(p)
-	assert_string_contains(" ".join(ForceRules.evaluate(cat, s5, 5000).errors), "배속 자산은 최대 3")
+	assert_string_contains(" ".join(ForceRules.evaluate(cat, s5, 5000).errors), "배속 자산은 최대 5")
+	# 슬롯별 상한: 공격헬기 반은 1개.
+	var s6: ForceSpec = _us()
+	for i: int in 2:
+		var p := ForceSpec.PlatoonSpec.new()
+		p.template = &"us_aviation_sec"
+		s6.attachments.append(p)
+	assert_string_contains(" ".join(ForceRules.evaluate(cat, s6, 50000).errors), "최대 1개")
 
 
 func test_wave_discount_and_loadout_cost() -> void:

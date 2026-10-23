@@ -9,6 +9,7 @@ signal close_requested
 const CLASS_NAMES: Dictionary[String, String] = {
 	"tank": "전차", "ifv": "보병전투차", "recon": "정찰차", "inf_squad": "보병 분대", "mortar": "박격포",
 	"cp": "지휘소", "truck": "트럭", "fo": "관측반", "aa": "방공", "ew": "전자전", "apc": "장갑차",
+	"heli": "공격헬기", "eng": "공병 장비", "at": "대전차 차량",
 }
 const REASONS: Dictionary[String, String] = {"collapse": "전투력 붕괴", "time": "시간 종료(승점)"}
 

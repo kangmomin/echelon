@@ -11,5 +11,12 @@
     }
   ],
   "default_formation": "line",
-  "skill": "regular"
+  "skill": "regular",
+  "role": "2S9 노나 4문. 박격포 화력.",
+  "pros": [
+    "사거리 8.8 km"
+  ],
+  "cons": [
+    "직접 전투력 없음"
+  ]
 }

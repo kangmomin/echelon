@@ -11,5 +11,13 @@
     }
   ],
   "default_formation": "column",
-  "skill": "regular"
+  "skill": "regular",
+  "role": "JTAC 팀. 근접항공지원 유도.",
+  "pros": [
+    "CAS 에 필요한 관측",
+    "관측 4.5 km"
+  ],
+  "cons": [
+    "경장갑 HMMWV"
+  ]
 }

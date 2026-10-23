@@ -82,6 +82,7 @@ func _draw() -> void:
 	var level: int = current_level()
 	var alpha: float = battle.world.get_interpolation_alpha()
 	_draw_control_points()
+	_draw_engineering()
 	if battle.deploying:
 		_draw_deploy_zone()
 	for side: StringName in Battle.SIDES:
@@ -135,6 +136,42 @@ func _draw_control_points() -> void:
 		if ps.contested:
 			label += " (경합)"
 		_text(c + Vector2(-40, 20), label, 13, Color(1, 1, 1, 0.95))
+
+
+## 공병: 플레이어 진영이 아는 지뢰 지대(점선 원 + ×), 아군 진지(톱니 원).
+func _draw_engineering() -> void:
+	if battle.engineers == null:
+		return
+	for m: EngineerSystem.Minefield in battle.engineers.known_minefields(player_side):
+		var c: Vector2 = _screen(m.pos)
+		if c == Vector2.INF:
+			continue
+		var edge: Vector2 = _screen(m.pos + Vector2(m.radius, 0.0))
+		var r: float = c.distance_to(edge) if edge != Vector2.INF else 14.0
+		var col: Color = FRIENDLY_FILL if m.side == player_side else HOSTILE_FILL
+		for i: int in 16:
+			if i % 2 == 0:
+				draw_arc(c, r, TAU * i / 16.0, TAU * (i + 1) / 16.0, 4, col, 2.0)
+		draw_circle(c, r, Color(col, 0.08))
+		for o: Vector2 in [Vector2(-0.4, -0.2), Vector2(0.3, -0.35), Vector2(0.0, 0.3), Vector2(-0.35, 0.35), Vector2(0.4, 0.2)]:
+			var p: Vector2 = c + o * r
+			draw_line(p + Vector2(-3, -3), p + Vector2(3, 3), col, 1.6)
+			draw_line(p + Vector2(-3, 3), p + Vector2(3, -3), col, 1.6)
+		_text(c + Vector2(-30, -r - 6), "지뢰 %d" % m.charges, 12, col)
+	for fp: EngineerSystem.FieldPosition in battle.engineers.positions:
+		if fp.side != player_side:
+			continue
+		var c2: Vector2 = _screen(fp.pos)
+		if c2 == Vector2.INF:
+			continue
+		var edge2: Vector2 = _screen(fp.pos + Vector2(fp.radius, 0.0))
+		var r2: float = c2.distance_to(edge2) if edge2 != Vector2.INF else 16.0
+		var pts := PackedVector2Array()
+		for i: int in 33:
+			var a: float = TAU * i / 32.0
+			pts.append(c2 + Vector2(cos(a), sin(a)) * (r2 + (3.0 if i % 2 == 0 else -2.0)))
+		draw_polyline(pts, Color(0.85, 0.75, 0.45, 0.9), 1.6)
+		_text(c2 + Vector2(-14, 4), "진지", 12, Color(0.95, 0.85, 0.55))
 
 
 ## 배치 단계: 아군 배치 구역(채운 사각형 + 테두리)과 증원 진입 지점.
@@ -298,6 +335,30 @@ func _draw_glyph(r: Rect2, kind: StringName) -> void:
 			draw_polyline(t, c, 1.4)
 		&"aa":
 			draw_arc(Vector2(cx, r.end.y - 2), 7.0, PI, TAU, 10, c, 1.4)
+		&"wheeled":
+			# 차륜형 보병: 기계화 부호 + 바퀴 두 개.
+			_draw_oval(r.get_center(), r.size.x * 0.32, r.size.y * 0.26, c)
+			draw_line(r.position, r.end, c, 1.2)
+			draw_line(Vector2(r.position.x, r.end.y), Vector2(r.end.x, r.position.y), c, 1.2)
+			draw_circle(Vector2(cx - 5, r.end.y + 3), 1.8, c)
+			draw_circle(Vector2(cx + 5, r.end.y + 3), 1.8, c)
+		&"at":
+			# 대전차: 뒤집힌 V.
+			draw_polyline(PackedVector2Array([Vector2(r.position.x + 3, r.end.y - 2), Vector2(cx, r.position.y + 2),
+				Vector2(r.end.x - 3, r.end.y - 2)]), c, 1.5)
+		&"sniper":
+			draw_arc(r.get_center(), 5.5, 0.0, TAU, 14, c, 1.3)
+			draw_line(Vector2(cx - 8, cy), Vector2(cx + 8, cy), c, 1.0)
+			draw_line(Vector2(cx, cy - 8), Vector2(cx, cy + 8), c, 1.0)
+		&"engineer":
+			# 공병: ㅠ 모양(교량 부호).
+			draw_line(Vector2(cx - 8, cy - 3), Vector2(cx + 8, cy - 3), c, 1.5)
+			for x: float in [-8.0, 0.0, 8.0]:
+				draw_line(Vector2(cx + x, cy - 3), Vector2(cx + x, cy + 4), c, 1.5)
+		&"aviation":
+			# 회전익: 나비넥타이.
+			draw_colored_polygon(PackedVector2Array([Vector2(cx, cy), Vector2(cx - 9, cy - 5), Vector2(cx - 9, cy + 5)]), c)
+			draw_colored_polygon(PackedVector2Array([Vector2(cx, cy), Vector2(cx + 9, cy - 5), Vector2(cx + 9, cy + 5)]), c)
 		_:
 			var text: String = {&"hq": "HQ", &"cp": "CP", &"ew": "EW"}.get(kind, String(kind).left(2).to_upper())
 			draw_string(_font, Vector2(r.position.x, cy + 4), text, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 10, c)

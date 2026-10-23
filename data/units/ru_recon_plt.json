@@ -11,5 +11,13 @@
     }
   ],
   "default_formation": "line",
-  "skill": "regular"
+  "skill": "regular",
+  "role": "BRM-3K 정찰 소대.",
+  "pros": [
+    "관측 3.5 km",
+    "은폐가 좋다"
+  ],
+  "cons": [
+    "전투력 약함"
+  ]
 }

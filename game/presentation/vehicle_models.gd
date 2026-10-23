@@ -15,6 +15,11 @@ class Model:
 	var turret_roles: Array[StringName] = []
 	## 포탑 회전축 위치(모델 좌표, 이미 SCALE 적용).
 	var turret_pivot: Vector3 = Vector3.ZERO
+	## 헬기 주 회전익(돌아간다). 동축 반전(Ka-52)은 rotor2 가 반대로 돈다.
+	var rotor: ArrayMesh = null
+	var rotor2: ArrayMesh = null
+	var rotor_pivot: Vector3 = Vector3.ZERO
+	var rotor2_pivot: Vector3 = Vector3.ZERO
 
 
 ## 조립 중인 메시: 역할별 조각 목록.
@@ -40,7 +45,38 @@ static func model_for(def: ElementDef) -> Model:
 	var turret := Parts.new()
 	var pivot := Vector3.ZERO
 	var id: String = String(def.id)
-	if id.begins_with("us_m1a2"):
+	var m := Model.new()
+	if id == "us_ah64e":
+		pivot = _apache(hull, turret, m)
+	elif id == "ru_ka52":
+		pivot = _ka52(hull, turret, m)
+	elif id in ["us_m1126", "us_m1296", "us_m1134", "us_mshorad"]:
+		pivot = _stryker(hull, turret, id)
+	elif id == "ru_btr82a":
+		pivot = _btr(hull, turret)
+	elif id == "us_m1167":
+		pivot = _humvee_tow(hull, turret)
+	elif id == "us_m10_booker":
+		pivot = _booker(hull, turret)
+	elif id == "us_m1150_abv":
+		_abv(hull)
+	elif id == "ru_bmpt":
+		pivot = _bmpt(hull, turret)
+	elif id == "ru_shturm_s" or id == "ru_ur77":
+		pivot = _mtlb(hull, turret, id == "ru_ur77")
+	elif id == "ru_tunguska":
+		pivot = _tunguska(hull, turret)
+	elif id == "ru_t80bvm":
+		pivot = _t90(hull, turret, false)
+		_box(hull, &"dark", Vector3(2.4, 0.3, 0.6), Vector3(0, 1.5, 3.1))   # 가스터빈 배기구
+	elif def.element_class == &"inf_squad" and id.contains("sniper"):
+		_squad(hull, 2)
+	elif def.element_class == &"inf_squad" and id == "ru_at_squad":
+		_squad(hull, 3)
+		_cyl(hull, &"dark", 0.12, 1.4, Vector3(1.2, 0.9, -0.6), Vector3(PI * 0.5, 0, 0))   # 코르넷 발사관
+	elif def.element_class == &"inf_squad" and id.contains("hq_team"):
+		_squad(hull, 5)
+	elif id.begins_with("us_m1a2"):
 		pivot = _abrams(hull, turret, id.ends_with("tusk"))
 	elif id.begins_with("ru_t90") or id.begins_with("ru_t72"):
 		pivot = _t90(hull, turret, id.begins_with("ru_t72"))
@@ -61,12 +97,11 @@ static func model_for(def: ElementDef) -> Model:
 	elif def.element_class == &"truck" or def.element_class == &"ew" or id == "ru_fo_team":
 		_truck(hull, id)
 	elif def.element_class == &"inf_squad":
-		_squad(hull)
+		_squad(hull, 9)
 	elif def.element_class == &"mortar" or def.element_class == &"cp":
 		_m113(hull, def.element_class)
 	else:
 		_m113(hull, &"apc")
-	var m := Model.new()
 	m.hull = _commit(hull, m.hull_roles)
 	if not turret.by_role.is_empty():
 		m.turret = _commit(turret, m.turret_roles)
@@ -329,16 +364,215 @@ static func _m113(h: Parts, cls: StringName) -> void:
 	_box(h, &"marker", Vector3(1.0, 0.05, 1.0), Vector3(0, 2.23, -0.6))
 
 
-## 보병 분대: 병사 9명(철모·소총), 흩어진 대형.
-static func _squad(h: Parts) -> void:
+## 보병 분대: 병사 n명(철모·소총), 흩어진 대형.
+static func _squad(h: Parts, n: int) -> void:
 	var offsets: Array[Vector2] = [Vector2(0, 0), Vector2(-3.5, 1.5), Vector2(3.5, 1.5), Vector2(-7, 3),
 		Vector2(7, 3), Vector2(-1.8, 4), Vector2(1.8, 4.2), Vector2(-5, -1), Vector2(5, -1)]
-	for o: Vector2 in offsets:
+	for i: int in mini(n, offsets.size()):
+		var o: Vector2 = offsets[i]
 		_box(h, &"camo", Vector3(0.55, 0.9, 0.35), Vector3(o.x, 1.15, o.y))        # 몸통
 		_box(h, &"dark", Vector3(0.5, 0.75, 0.3), Vector3(o.x, 0.38, o.y))         # 다리
 		_sphere(h, &"camo", Vector3(0.24, 0.2, 0.26), Vector3(o.x, 1.78, o.y))     # 철모
 		_box(h, &"dark", Vector3(0.08, 0.08, 0.9), Vector3(o.x + 0.25, 1.25, o.y - 0.4))  # 소총
 	_box(h, &"marker", Vector3(0.9, 0.05, 0.9), Vector3(0, 2.3, 0))
+
+
+## 스트라이커 8×8: ICV(.50 원격 무장), 드라군(30 mm 포탑), ATGM(TOW 발사기), M-SHORAD(30 mm + 스팅어).
+static func _stryker(h: Parts, t: Parts, id: String) -> Vector3:
+	_wheels(h, 2.9, [-2.4, -1.0, 0.9, 2.3], 0.55)
+	_box(h, &"camo", Vector3(2.8, 1.5, 6.0), Vector3(0, 1.55, 0.4))
+	_wedge(h, &"camo", 2.8, 1.0, 1.2, Vector3(0, 1.8, -3.2))
+	_box(h, &"camo", Vector3(2.7, 0.5, 1.2), Vector3(0, 1.05, -3.2))
+	for sgn: float in [-1.0, 1.0]:
+		_box(h, &"dark", Vector3(0.06, 1.0, 5.2), Vector3(sgn * 1.45, 1.6, 0.4))   # 슬랫 장갑
+	var pv := Vector3(0.2, 2.3, -0.4)
+	match id:
+		"us_m1296":
+			_box(t, &"camo", Vector3(1.6, 0.6, 1.8), Vector3(0, 0.3, 0))
+			_wedge(t, &"camo", 1.6, 0.6, 0.5, Vector3(0, 0.3, -1.15))
+			_barrel(t, 0.08, 2.6, Vector3(0, 0.35, -1.3))
+		"us_m1134":
+			_box(t, &"camo", Vector3(0.9, 0.5, 0.9), Vector3(0, 0.25, 0))
+			_box(t, &"camo", Vector3(1.6, 0.45, 1.3), Vector3(0, 0.75, -0.2))   # TOW 2연장 발사기
+		"us_mshorad":
+			_box(t, &"camo", Vector3(1.7, 0.7, 1.7), Vector3(0, 0.35, 0))
+			_barrel(t, 0.08, 2.2, Vector3(0.3, 0.4, -0.9))
+			_box(t, &"camo", Vector3(0.45, 0.5, 1.3), Vector3(-1.05, 0.55, -0.1))  # 스팅어 포드
+			_box(t, &"dark", Vector3(0.9, 0.5, 0.08), Vector3(0, 0.75, 0.9))       # 레이더 판
+		_:
+			_box(t, &"camo", Vector3(0.6, 0.4, 0.6), Vector3(0, 0.2, 0))
+			_barrel(t, 0.05, 1.6, Vector3(0, 0.3, -0.3))
+	_box(t, &"marker", Vector3(0.6, 0.05, 0.6), Vector3(0, 0.02, 0.6))
+	return pv
+
+
+## BTR-82A: 배 모양 앞, 8륜, 작은 30 mm 포탑.
+static func _btr(h: Parts, t: Parts) -> Vector3:
+	_wheels(h, 2.8, [-2.5, -1.2, 0.9, 2.2], 0.55)
+	_box(h, &"camo", Vector3(2.7, 1.3, 5.2), Vector3(0, 1.5, 0.6))
+	_wedge(h, &"camo", 2.7, 1.3, 1.8, Vector3(0, 1.5, -2.9))
+	var pv := Vector3(0, 2.2, -0.6)
+	_sphere(t, &"camo", Vector3(0.75, 0.45, 0.8), Vector3(0, 0.15, 0))
+	_barrel(t, 0.06, 2.4, Vector3(0, 0.3, -0.6))
+	_box(t, &"marker", Vector3(0.6, 0.05, 0.6), Vector3(0, 0.6, 0.2))
+	return pv
+
+
+## M1167 HMMWV TOW.
+static func _humvee_tow(h: Parts, t: Parts) -> Vector3:
+	_wheels(h, 2.3, [-1.6, 1.5], 0.48)
+	_box(h, &"camo", Vector3(2.2, 0.75, 4.6), Vector3(0, 1.05, 0))
+	_box(h, &"camo", Vector3(2.1, 0.7, 1.6), Vector3(0, 1.75, -0.2))
+	_box(h, &"dark", Vector3(1.9, 0.5, 0.08), Vector3(0, 1.85, -1.0))
+	var pv := Vector3(0, 2.1, 0.3)
+	_cyl(t, &"camo", 0.45, 0.4, Vector3(0, 0.2, 0), Vector3.ZERO, 10)
+	_cyl(t, &"camo", 0.14, 1.9, Vector3(0, 0.75, -0.3), Vector3(PI * 0.5, 0, 0))   # TOW 발사관
+	_box(t, &"dark", Vector3(0.4, 0.35, 0.4), Vector3(0.35, 0.75, 0.1))           # 조준경
+	_box(t, &"marker", Vector3(0.6, 0.05, 0.6), Vector3(0, 0.42, 0.5))
+	return pv
+
+
+## M10 부커: 각진 궤도 차체, 큰 포탑, 105 mm.
+static func _booker(h: Parts, t: Parts) -> Vector3:
+	_tracks(h, 3.5, 6.6, 6, true)
+	_box(h, &"camo", Vector3(3.3, 0.8, 5.6), Vector3(0, 1.2, 0.4))
+	_wedge(h, &"camo", 3.3, 0.8, 1.2, Vector3(0, 1.2, -3.0))
+	var pv := Vector3(0, 1.62, 0.4)
+	_box(t, &"camo", Vector3(2.8, 0.8, 3.0), Vector3(0, 0.4, 0.2))
+	_wedge(t, &"camo", 2.6, 0.8, 0.9, Vector3(0, 0.4, -1.75))
+	_box(t, &"dark", Vector3(2.4, 0.4, 0.8), Vector3(0, 0.4, 2.1))
+	_barrel(t, 0.1, 4.6, Vector3(0, 0.45, -2.1))
+	_box(t, &"camo", Vector3(0.5, 0.4, 0.5), Vector3(0.7, 1.0, 0.4))
+	_box(t, &"marker", Vector3(1.0, 0.05, 0.9), Vector3(-0.4, 0.83, 0.8))
+	return pv
+
+
+## M1150 돌파 장비: 에이브럼스 차체 + 쟁기 + 지뢰 개척 장약 발사함.
+static func _abv(h: Parts) -> void:
+	_tracks(h, 3.7, 7.6, 7, true)
+	_box(h, &"camo", Vector3(3.5, 0.75, 6.6), Vector3(0, 1.15, 0.35))
+	_wedge(h, &"camo", 3.5, 0.75, 1.3, Vector3(0, 1.15, -3.6))
+	_box(h, &"dark", Vector3(4.2, 0.9, 0.4), Vector3(0, 0.55, -4.6), Vector3(0.4, 0, 0))   # 쟁기
+	_box(h, &"camo", Vector3(2.4, 1.0, 2.6), Vector3(0, 2.0, 1.2))                         # 장약 발사함
+	_box(h, &"camo", Vector3(1.2, 0.8, 1.5), Vector3(0, 1.9, -1.0))
+	_box(h, &"marker", Vector3(1.0, 0.05, 1.0), Vector3(0, 2.53, 1.2))
+
+
+## BMPT: T-72 차체 + 낮은 무장 모듈(30 mm 2문, 아타카 발사관 양옆).
+static func _bmpt(h: Parts, t: Parts) -> Vector3:
+	_tracks(h, 3.5, 6.8, 6, true)
+	_box(h, &"camo", Vector3(3.3, 0.65, 5.8), Vector3(0, 1.1, 0.4))
+	_wedge(h, &"camo", 3.3, 0.65, 1.3, Vector3(0, 1.1, -3.1))
+	var pv := Vector3(0, 1.45, 0.2)
+	_box(t, &"camo", Vector3(2.2, 0.55, 2.4), Vector3(0, 0.27, 0))
+	_wedge(t, &"camo", 2.2, 0.55, 0.6, Vector3(0, 0.27, -1.5))
+	for sgn: float in [-1.0, 1.0]:
+		_barrel(t, 0.06, 2.4, Vector3(sgn * 0.3, 0.45, -1.4))
+		_box(t, &"camo", Vector3(0.4, 0.4, 1.8), Vector3(sgn * 1.35, 0.55, -0.1))   # 아타카 발사관
+	_box(t, &"marker", Vector3(0.8, 0.05, 0.8), Vector3(0, 0.57, 0.5))
+	return pv
+
+
+## MT-LB 차체: 시투름-S(팔 위 발사관) / UR-77(장약 발사 상자).
+static func _mtlb(h: Parts, t: Parts, ur77: bool) -> Vector3:
+	_tracks(h, 3.0, 6.4, 6, false)
+	_box(h, &"camo", Vector3(2.8, 1.0, 5.4), Vector3(0, 1.1, 0.3))
+	_wedge(h, &"camo", 2.8, 1.0, 1.0, Vector3(0, 1.1, -2.9))
+	_box(h, &"dark", Vector3(2.0, 0.4, 0.08), Vector3(0, 1.4, -2.42))
+	var pv := Vector3(0, 1.6, 0.9)
+	if ur77:
+		_box(t, &"camo", Vector3(2.2, 0.9, 2.6), Vector3(0, 0.6, 0))
+		_box(t, &"dark", Vector3(1.8, 0.3, 0.1), Vector3(0, 1.0, -1.3))
+	else:
+		_box(t, &"camo", Vector3(0.8, 0.5, 0.8), Vector3(0, 0.25, 0))
+		_cyl(t, &"camo", 0.16, 2.0, Vector3(0, 0.9, -0.5), Vector3(PI * 0.45, 0, 0))
+		_box(t, &"dark", Vector3(0.45, 0.4, 0.4), Vector3(0.45, 0.6, 0.2))
+	_box(t, &"marker", Vector3(0.7, 0.05, 0.7), Vector3(0, 0.02, 0.8))
+	return pv
+
+
+## 퉁구스카: 큰 포탑 위 탐지 레이더, 양옆 30 mm 2문 + 미사일.
+static func _tunguska(h: Parts, t: Parts) -> Vector3:
+	_tracks(h, 3.3, 7.0, 6, false)
+	_box(h, &"camo", Vector3(3.2, 1.0, 6.2), Vector3(0, 1.2, 0.2))
+	_wedge(h, &"camo", 3.2, 1.0, 0.9, Vector3(0, 1.2, -3.35))
+	var pv := Vector3(0, 1.7, 0.5)
+	_box(t, &"camo", Vector3(2.4, 1.2, 2.6), Vector3(0, 0.6, 0))
+	_box(t, &"dark", Vector3(1.8, 0.9, 0.12), Vector3(0, 1.8, 0.9), Vector3(-0.3, 0, 0))   # 탐지 레이더
+	_sphere(t, &"dark", Vector3(0.5, 0.5, 0.3), Vector3(0, 0.8, -1.4))                   # 추적 레이더
+	for sgn: float in [-1.0, 1.0]:
+		_barrel(t, 0.07, 2.2, Vector3(sgn * 1.45, 0.7, -0.9))
+		_box(t, &"camo", Vector3(0.35, 0.5, 1.6), Vector3(sgn * 1.45, 1.15, 0.2))   # 미사일 상자
+	_box(t, &"marker", Vector3(0.9, 0.05, 0.9), Vector3(0, 1.22, -0.3))
+	return pv
+
+
+## AH-64E 아파치: 원점 = 동체 중심 바닥(ElementView 가 고도만큼 띄운다). 포탑 = 기수 아래 30 mm.
+static func _apache(h: Parts, t: Parts, m: Model) -> Vector3:
+	_box(h, &"camo", Vector3(1.2, 1.4, 5.0), Vector3(0, 1.3, -0.4))       # 동체
+	_wedge(h, &"camo", 1.2, 1.0, 1.4, Vector3(0, 1.1, -3.6))
+	_box(h, &"dark", Vector3(0.9, 0.7, 2.2), Vector3(0, 2.3, -1.4))        # 탠덤 조종석 유리
+	_box(h, &"camo", Vector3(0.5, 0.6, 6.0), Vector3(0, 1.6, 4.6))         # 꼬리 붐
+	_box(h, &"camo", Vector3(0.15, 1.6, 1.1), Vector3(0, 2.4, 7.4))        # 수직 꼬리
+	_box(h, &"camo", Vector3(1.8, 0.1, 0.7), Vector3(0, 1.3, 7.2))         # 수평 꼬리
+	_cyl(h, &"dark", 0.9, 0.08, Vector3(0.3, 2.6, 7.6), Vector3(0, 0, PI * 0.5), 12)   # 꼬리 회전익
+	_box(h, &"camo", Vector3(3.6, 0.15, 0.9), Vector3(0, 1.4, 0.2))        # 날개
+	for sgn: float in [-1.0, 1.0]:
+		_box(h, &"camo", Vector3(0.6, 0.9, 1.0), Vector3(sgn * 0.85, 1.9, 0.6))   # 엔진
+		_box(h, &"dark", Vector3(0.35, 0.35, 1.4), Vector3(sgn * 1.2, 1.05, 0.1))  # 헬파이어
+		_cyl(h, &"dark", 0.25, 1.4, Vector3(sgn * 1.65, 1.05, 0.1), Vector3(PI * 0.5, 0, 0))  # 로켓 포드
+	_sphere(h, &"dark", Vector3(0.35, 0.35, 0.35), Vector3(0, 1.1, -4.0))   # 기수 센서
+	_cyl(h, &"dark", 0.1, 2.2, Vector3(0, 2.75, -0.2), Vector3.ZERO, 6)     # 회전익 축
+	_box(h, &"marker", Vector3(0.6, 0.05, 1.2), Vector3(0, 2.02, 1.4))
+	_box(h, &"dark", Vector3(0.3, 0.6, 0.2), Vector3(-0.4, 0.3, -0.6))      # 착륙 바퀴
+	_box(h, &"dark", Vector3(0.3, 0.6, 0.2), Vector3(0.4, 0.3, -0.6))
+	_box(t, &"dark", Vector3(0.35, 0.35, 0.35), Vector3(0, 0, 0))
+	_barrel(t, 0.06, 1.1, Vector3(0, -0.05, -0.1))
+	m.rotor = _rotor(4, 7.5)
+	m.rotor_pivot = Vector3(0, 3.85, -0.2) * SCALE
+	return Vector3(0, 0.75, -2.6)
+
+
+## Ka-52: 나란히 앉는 넓은 조종석, 동축 반전 회전익 2개, 꼬리 회전익 없음.
+static func _ka52(h: Parts, t: Parts, m: Model) -> Vector3:
+	_box(h, &"camo", Vector3(1.8, 1.6, 4.6), Vector3(0, 1.4, -0.3))
+	_wedge(h, &"camo", 1.8, 1.3, 1.6, Vector3(0, 1.25, -3.4))
+	_box(h, &"dark", Vector3(1.6, 0.7, 1.6), Vector3(0, 2.4, -1.6))
+	_box(h, &"camo", Vector3(0.6, 0.7, 5.4), Vector3(0, 1.7, 4.3))
+	for sgn: float in [-1.0, 1.0]:
+		_box(h, &"camo", Vector3(0.12, 1.4, 1.0), Vector3(sgn * 1.0, 2.0, 6.8))   # 쌍 수직 꼬리
+		_box(h, &"camo", Vector3(0.6, 0.8, 1.2), Vector3(sgn * 0.95, 2.1, 0.4))   # 엔진
+		_box(h, &"dark", Vector3(0.4, 0.4, 1.6), Vector3(sgn * 1.4, 1.1, 0.0))    # 비흐르
+		_cyl(h, &"dark", 0.28, 1.5, Vector3(sgn * 1.9, 1.1, 0.0), Vector3(PI * 0.5, 0, 0))
+	_box(h, &"camo", Vector3(1.9, 0.1, 0.6), Vector3(0, 1.5, 6.8))
+	_box(h, &"camo", Vector3(4.2, 0.15, 0.9), Vector3(0, 1.45, 0.0))
+	_cyl(h, &"dark", 0.12, 2.6, Vector3(0, 3.0, 0.0), Vector3.ZERO, 6)
+	_box(h, &"marker", Vector3(0.7, 0.05, 1.0), Vector3(0, 2.22, 1.2))
+	_box(t, &"dark", Vector3(0.5, 0.4, 0.8), Vector3(0.6, 0, 0))   # 30 mm 측면 포
+	_barrel(t, 0.06, 1.6, Vector3(0.6, 0.0, -0.4))
+	m.rotor = _rotor(3, 7.2)
+	m.rotor_pivot = Vector3(0, 3.6, 0.0) * SCALE
+	m.rotor2 = _rotor(3, 7.2)
+	m.rotor2_pivot = Vector3(0, 4.3, 0.0) * SCALE
+	return Vector3(0, 0.9, -0.8)
+
+
+## 회전익: 가는 날개 n장 + 허브(어두운 색 한 겹).
+static func _rotor(blades: int, radius: float) -> ArrayMesh:
+	var p := Parts.new()
+	for i: int in blades:
+		var a: float = TAU * float(i) / float(blades)
+		var dir := Vector3(sin(a), 0.0, cos(a))
+		p.add(&"dark", _blade_mesh(radius), Transform3D(Basis(Vector3.UP, a), dir * radius * 0.5 * SCALE))
+	_cyl(p, &"dark", 0.35, 0.3, Vector3.ZERO, Vector3.ZERO, 8)
+	var roles: Array[StringName] = []
+	return _commit(p, roles)
+
+
+static func _blade_mesh(radius: float) -> BoxMesh:
+	var b := BoxMesh.new()
+	b.size = Vector3(0.45, 0.06, radius) * SCALE
+	return b
 
 
 # --- 조립 ----------------------------------------------------------------

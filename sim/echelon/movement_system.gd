@@ -429,7 +429,7 @@ func _separation(e: Element) -> Vector2:
 	var push: Vector2 = Vector2.ZERO
 	for item: Variant in battle.spatial.query(e.pos, SEPARATION_RADIUS_M):
 		var o: Element = item
-		if o == e or o.side != e.side or o.is_mounted() or not o.is_active():
+		if o == e or o.side != e.side or o.is_mounted() or not o.is_active() or o.is_air() != e.is_air():
 			continue
 		var away: Vector2 = e.pos - o.pos
 		var d: float = away.length()

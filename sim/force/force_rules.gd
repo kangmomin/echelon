@@ -88,6 +88,18 @@ static func evaluate(catalog: DataCatalog, spec: ForceSpec, budget: int) -> Repo
 		allowed_att.append_array(slot.allowed)
 		max_att += slot.max_count
 	_check_list(catalog, spec.attachments, allowed_att, "배속", r, max_att)
+	# 슬롯별 한도(예: 공격헬기 1개).
+	for slot: TOETemplate.AttachmentSlot in toe.attachment_slots:
+		var n: int = 0
+		for p: ForceSpec.PlatoonSpec in spec.attachments:
+			if slot.allowed.has(String(p.template)):
+				n += 1
+		if n > slot.max_count:
+			var names := PackedStringArray()
+			for t_id: String in slot.allowed:
+				var ut: UnitTemplate = catalog.get_unit_template(StringName(t_id))
+				names.append(ut.display_name if ut != null else t_id)
+			r.errors.append("배속: %s 은(는) 합쳐서 최대 %d개입니다." % [" / ".join(names), slot.max_count])
 
 	# 지원.
 	if spec.artillery_missions > toe.max_artillery:

@@ -1,5 +1,6 @@
 {
   "id": "pkt_coax",
+  "name": "7.62 mm PKT 동축기관총",
   "type": "MG",
   "range_m": {
     "min": 0,

@@ -1,0 +1,28 @@
+{
+  "id": "us_light_inf_co",
+  "name": "경보병 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "inf",
+  "hq": [
+    {
+      "element": "us_hq_team",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "us_light_inf_plt",
+    "us_light_inf_plt",
+    "us_light_inf_plt"
+  ],
+  "default_formation": "co_wedge",
+  "role": "도보 보병 중대. 지형을 잡고 버티는 방어·매복용.",
+  "pros": [
+    "숲·시가지 방어에 가장 강하다",
+    "포인트 대비 대전차 화력이 높다"
+  ],
+  "cons": [
+    "이동이 매우 느려 처음 자리가 중요하다",
+    "기동 예비로 쓸 수 없다"
+  ]
+}

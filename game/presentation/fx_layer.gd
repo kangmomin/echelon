@@ -264,6 +264,15 @@ func on_event(ev: Dictionary) -> void:
 			_on_shot(pl)
 		&"element_destroyed":
 			var pos: Vector2 = pl["pos"]
+			var eid: int = pl.get("element", -1)
+			var dead: Element = battle.get_element(eid)
+			if dead != null and dead.def.element_class == &"heli" and dead.platoon != null:
+				# 격추된 헬기: 그 고도에서 터지고 잔해는 땅에서 탄다.
+				var alt: float = Element.ALTITUDE_HIGH_M if dead.platoon.sop.altitude == &"high" else Element.ALTITUDE_LOW_M
+				var air: Vector3 = _ground(pos, alt)
+				_flash(air, 14.0, 0.2)
+				_fireball(air, 1.2)
+				_sparks(air, 14, 1.4)
 			_explode_vehicle(pos)
 		&"shell":
 			var sp: Vector2 = pl["pos"]
@@ -295,6 +304,15 @@ func on_event(ev: Dictionary) -> void:
 				pr.show_impact = false
 				_projectiles.append(pr)
 				_muzzle_smoke(pr.a, Vector3.UP, 4, 1.0)
+		&"mine_strike":
+			var mp2: Vector2 = pl.get("pos", Vector2.ZERO)
+			var g: Vector3 = _ground(mp2, 0.5)
+			_flash(g + Vector3.UP * 2.0, 10.0, 0.14)
+			_dirt(g, 14, 1.2)
+			_burst(Layer.SMOKE, g + Vector3.UP * 2.0, 6, 3.0, 9.0, 3.0, 12.0, Color(0.32, 0.27, 0.21, 0.85),
+				Color(0.5, 0.47, 0.42, 0.0), 4.0, 6.0, 0.6, -0.3)
+			_scorch(mp2, 6.0)
+			_light(g + Vector3.UP * 2.0, 6.0, 60.0, 0.25)
 		&"cas_shot_down":
 			var cp: Vector2 = pl.get("pos", Vector2.ZERO)
 			var air: Vector3 = _ground(cp, 450.0)
@@ -322,10 +340,12 @@ func _on_shot(pl: Dictionary) -> void:
 	var dist: float = maxf(d2.length(), 1.0)
 	var dir2: Vector2 = d2 / dist
 	var inf: bool = from_e.is_infantry()
-	var muzzle_h: float = 1.3 if inf else 2.9
+	var muzzle_h: float = (1.3 if inf else 2.9) + from_e.altitude_m()
 	var muzzle_fwd: float = 0.5 if inf else 5.0
 	var a: Vector3 = _ground(fp + dir2 * muzzle_fwd, muzzle_h)
 	var tgt_h: float = 1.0 if (target_e != null and target_e.is_infantry()) else 1.8
+	if target_e != null:
+		tgt_h += target_e.altitude_m()
 	var b: Vector3 = _ground(tp, tgt_h)
 	if not hit:
 		# 빗나간 탄: 표적 옆·너머 땅에 떨어진다(효과용 난수).

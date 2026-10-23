@@ -1,0 +1,21 @@
+{
+  "id": "9m311_sam",
+  "name": "9M311 지대공 미사일",
+  "type": "SAM",
+  "range_m": {
+    "min": 2500,
+    "max": 8000
+  },
+  "penetration": 200,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.75,
+    "at_max_range": 0.6
+  },
+  "rof_rpm": 3,
+  "suppression": 0,
+  "fire_on_move": false,
+  "targets": [
+    "air"
+  ]
+}

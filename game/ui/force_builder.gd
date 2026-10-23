@@ -21,6 +21,9 @@ var _name_edit: LineEdit
 var _load_option: OptionButton
 var _start_button: Button
 var _toast: Label
+## 오른쪽 정보 카드: 마우스를 올리거나 고른 중대·소대·장비의 역할·장단점·능력치·장비 제원.
+var _card: RichTextLabel
+const CARD_HINT: String = "[color=#a6a9b3]중대·소대·장비 템플릿·배속 자산에 마우스를 올리면 여기에 역할, 장점·약점, 능력치, 장비 제원(장갑·속도·무장)이 나옵니다.\n\n선택 상자를 열고 항목 위로 움직여도 바뀝니다.[/color]"
 
 
 func setup(p_catalog: DataCatalog, p_scenario: ScenarioDef, initial: ForceSpec = null) -> void:
@@ -51,6 +54,7 @@ func _ready() -> void:
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override(&"separation", 8)
 	scroll.add_child(_list)
+	root.add_child(_build_card_panel())
 	_rebuild()
 
 
@@ -65,7 +69,7 @@ func _budget() -> int:
 
 func _build_side_panel() -> Control:
 	var p: PanelContainer = UiKit.panel(12)
-	p.custom_minimum_size.x = 380
+	p.custom_minimum_size.x = 340
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override(&"separation", 8)
 	p.add_child(v)
@@ -116,6 +120,62 @@ func _build_side_panel() -> Control:
 	v.add_child(nav)
 	_refresh_load_list()
 	return p
+
+
+func _build_card_panel() -> Control:
+	var p: PanelContainer = UiKit.panel(12)
+	p.custom_minimum_size.x = 400
+	_card = RichTextLabel.new()
+	_card.bbcode_enabled = true
+	_card.scroll_active = true
+	_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_card.add_theme_font_size_override(&"normal_font_size", 13)
+	_card.add_theme_font_size_override(&"bold_font_size", 14)
+	_card.add_theme_constant_override(&"table_h_separation", 6)
+	_card.text = CARD_HINT
+	p.add_child(_card)
+	return p
+
+
+func _show_card(text: String) -> void:
+	if _card != null and text != "":
+		_card.text = text
+		_card.scroll_to_line(0)
+
+
+func _card_platoon(template_id: StringName, loadout: StringName, cost: int) -> void:
+	_show_card(UnitInfo.platoon_card(catalog, template_id, loadout, cost))
+
+
+func _card_company(template_id: StringName) -> void:
+	_show_card(UnitInfo.company_card(catalog, template_id))
+
+
+## 선택 상자: 항목마다 툴팁, 목록 위를 움직이면 카드 갱신. meta_to_card(메타데이터) → BBCode.
+func _hook_option(o: OptionButton, meta_to_tip: Callable, meta_to_card: Callable) -> void:
+	var popup: PopupMenu = o.get_popup()
+	for i: int in o.item_count:
+		var meta: Variant = o.get_item_metadata(i)
+		var tip: String = meta_to_tip.call(meta)
+		if tip != "":
+			popup.set_item_tooltip(i, tip)
+	popup.id_focused.connect(func(id: int) -> void:
+		var idx: int = o.get_item_index(id)
+		if idx >= 0:
+			var card: String = meta_to_card.call(o.get_item_metadata(idx))
+			_show_card(card))
+	o.mouse_entered.connect(func() -> void:
+		if o.selected >= 0:
+			var card2: String = meta_to_card.call(o.get_item_metadata(o.selected))
+			_show_card(card2))
+
+
+## 마우스를 올리면 카드를 바꾸고, 툴팁도 단다.
+func _hover(c: Control, tip: String, on_hover: Callable) -> void:
+	if c.mouse_filter == Control.MOUSE_FILTER_IGNORE:
+		c.mouse_filter = Control.MOUSE_FILTER_PASS
+	c.tooltip_text = tip
+	c.mouse_entered.connect(on_hover)
 
 
 func _refresh_load_list() -> void:
@@ -228,7 +288,14 @@ func _company_block(toe: TOETemplate, slot: TOETemplate.CompanySlot) -> Control:
 	for t_id: String in slot.allowed:
 		var ut: UnitTemplate = catalog.get_unit_template(StringName(t_id))
 		choices.append([ut.display_name if ut != null else t_id, StringName(t_id)])
-	head.add_child(UiKit.option(choices, cs.template if cs != null else &"", _set_company.bind(toe, slot), 200))
+	var co_opt: OptionButton = UiKit.option(choices, cs.template if cs != null else &"", _set_company.bind(toe, slot), 200)
+	_hook_option(co_opt,
+		func(meta: Variant) -> String: return UnitInfo.tooltip(catalog, StringName(str(meta))) if str(meta) != "" else "",
+		func(meta: Variant) -> String: return UnitInfo.company_card(catalog, StringName(str(meta))) if str(meta) != "" else "")
+	head.add_child(co_opt)
+	if cs != null:
+		var co_tid: StringName = cs.template
+		_hover(box, UnitInfo.tooltip(catalog, co_tid), func() -> void: _card_company(co_tid))
 	if cs != null:
 		var hq: int = ForceRules.company_hq_cost(catalog, cs.template)
 		head.add_child(UiKit.label("본부 %d점" % hq, 13, UiKit.TEXT_DIM))
@@ -306,14 +373,23 @@ func _platoon_row(ps: ForceSpec.PlatoonSpec, tag: String, on_remove: Callable) -
 		if not here:
 			name_text += "  (%s 중대에서 배속)" % ForceFactory.COMPANY_LETTERS[home_index]
 	var name_label: Label = UiKit.label(name_text, 14)
-	name_label.custom_minimum_size.x = 300
+	name_label.custom_minimum_size.x = 250
+	name_label.clip_text = true
 	row.add_child(name_label)
+	var tid: StringName = ps.template
+	var row_cost: int = ForceRules.platoon_cost(catalog, ps)
+	var lo_now: StringName = ps.loadout
+	_hover(name_label, UnitInfo.tooltip(catalog, tid, lo_now), func() -> void: _card_platoon(tid, lo_now, row_cost))
 	if ut != null and not ut.loadouts.is_empty():
 		var los: Array = []
 		for lo: UnitTemplate.Loadout in ut.loadouts:
 			los.append([lo.display_name, lo.id])
 		var current: StringName = ps.loadout if ps.loadout != &"" else ut.loadouts[0].id
-		row.add_child(UiKit.option(los, current, _on_loadout.bind(ps), 150))
+		var lo_opt: OptionButton = UiKit.option(los, current, _on_loadout.bind(ps), 150)
+		_hook_option(lo_opt,
+			func(meta: Variant) -> String: return UnitInfo.tooltip(catalog, tid, StringName(str(meta))),
+			func(meta: Variant) -> String: return UnitInfo.platoon_card(catalog, tid, StringName(str(meta))))
+		row.add_child(lo_opt)
 	else:
 		var spacer := Control.new()
 		spacer.custom_minimum_size.x = 150
@@ -353,12 +429,14 @@ func _organic_row(template_id: StringName) -> HBoxContainer:
 		row.add_child(_platoon_row(ps, "", Callable()))
 	else:
 		var ut: UnitTemplate = catalog.get_unit_template(template_id)
-		row.add_child(UiKit.label("%s  (편성 안 함)" % (ut.display_name if ut != null else String(template_id)), 14, UiKit.TEXT_DIM))
+		var off_label: Label = UiKit.label("%s  (편성 안 함)" % (ut.display_name if ut != null else String(template_id)), 14, UiKit.TEXT_DIM)
+		_hover(off_label, UnitInfo.tooltip(catalog, template_id), func() -> void: _card_platoon(template_id, &"", -1))
+		row.add_child(off_label)
 	return row
 
 
 func _attachment_adders(toe: TOETemplate) -> Control:
-	var row := HBoxContainer.new()
+	var row := HFlowContainer.new()
 	var max_att: int = 0
 	var allowed := PackedStringArray()
 	for slot: TOETemplate.AttachmentSlot in toe.attachment_slots:
@@ -369,6 +447,8 @@ func _attachment_adders(toe: TOETemplate) -> Control:
 		var ut: UnitTemplate = catalog.get_unit_template(StringName(t_id))
 		var b: Button = UiKit.button("+ %s" % (ut.display_name if ut != null else t_id), _add_attachment.bind(StringName(t_id)))
 		b.disabled = spec.attachments.size() >= max_att
+		var att_id: StringName = StringName(t_id)
+		_hover(b, UnitInfo.tooltip(catalog, att_id), func() -> void: _card_platoon(att_id, &"", -1))
 		row.add_child(b)
 	return row
 

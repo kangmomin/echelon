@@ -1,5 +1,6 @@
 {
   "id": "m242_apds",
+  "name": "25 mm M242 철갑탄",
   "type": "AC",
   "range_m": {
     "min": 50,
@@ -15,7 +16,8 @@
   "suppression": 10,
   "fire_on_move": true,
   "targets": [
-    "vehicle"
+    "vehicle",
+    "air"
   ],
   "pen_falloff_per_km": 0.2,
   "burst": 3

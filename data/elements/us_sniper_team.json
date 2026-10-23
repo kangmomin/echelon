@@ -1,0 +1,31 @@
+{
+  "id": "us_sniper_team",
+  "name": "저격조",
+  "faction": "US",
+  "class": "inf_squad",
+  "hp": 2,
+  "armor": {
+    "front": 0,
+    "side": 0,
+    "rear": 0,
+    "top": 0
+  },
+  "size": 0.15,
+  "stealth": 0.8,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 5,
+    "offroad": 4
+  },
+  "weapons": [
+    "m107_rifle"
+  ],
+  "ammo": {
+    "m107_rifle": 60
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 2,
+  "cost": 6,
+  "supply_full": 1
+}

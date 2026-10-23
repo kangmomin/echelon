@@ -1,5 +1,6 @@
 {
   "id": "m120_mortar",
+  "name": "120 mm M120 박격포",
   "type": "HE",
   "range_m": {
     "min": 200,

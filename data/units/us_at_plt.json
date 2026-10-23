@@ -1,0 +1,39 @@
+{
+  "id": "us_at_plt",
+  "name": "대전차 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "at",
+  "elements": [
+    {
+      "element": "us_m1167",
+      "count": 4
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "loadouts": [
+    {
+      "id": "hmmwv",
+      "name": "HMMWV TOW"
+    },
+    {
+      "id": "stryker",
+      "name": "스트라이커 ATGM",
+      "replace": {
+        "us_m1167": "us_m1134"
+      }
+    }
+  ],
+  "role": "TOW 대전차 미사일 전용 차량. 원거리 매복으로 전차를 잡는다.",
+  "pros": [
+    "사거리 3.75 km 상부 공격 미사일",
+    "작고 은밀하다(HMMWV)",
+    "싸다"
+  ],
+  "cons": [
+    "장갑이 거의 없다 — 들키면 끝",
+    "움직이며 못 쏜다",
+    "보병을 상대할 무기가 없다"
+  ]
+}

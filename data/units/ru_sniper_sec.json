@@ -1,0 +1,25 @@
+{
+  "id": "ru_sniper_sec",
+  "name": "저격반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "sniper",
+  "elements": [
+    {
+      "element": "ru_sniper_team",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "2인 저격조 2개. 숨어서 관측하고 보병을 깎는다.",
+  "pros": [
+    "가장 은밀하다",
+    "관측 3 km",
+    "매우 싸다"
+  ],
+  "cons": [
+    "차량 상대 불가",
+    "들키면 금방 죽는다"
+  ]
+}

@@ -89,6 +89,7 @@ func _enemies_near(tf: TaskForce, pos: Vector2, radius: float) -> int:
 const CLASS_VALUE: Dictionary[StringName, float] = {
 	&"tank": 60.0, &"ifv": 30.0, &"recon": 30.0, &"inf_squad": 10.0, &"apc": 20.0, &"mortar": 15.0,
 	&"cp": 20.0, &"fo": 15.0, &"aa": 25.0, &"ew": 15.0, &"truck": 5.0,
+	&"heli": 70.0, &"at": 25.0, &"eng": 20.0,
 }
 
 
@@ -242,6 +243,19 @@ func _organic(tf: TaskForce) -> void:
 					var spot: Vector2 = lead.centroid() - enemy_dir * back
 					if p.centroid().distance_to(spot) > 400.0:
 						_order(p, Order.Type.MOVE, spot, NAN)
+			&"at", &"sniper", &"tank", &"engineer":
+				# 대전차·저격·경전차·공병: 선도 중대 뒤 400 m 에서 따라간다.
+				if lead != null and idle:
+					var spot2: Vector2 = lead.centroid() - enemy_dir * 400.0
+					if p.centroid().distance_to(spot2) > 400.0:
+						_order(p, Order.Type.MOVE, spot2, FormationSolver.heading_from_vector(enemy_dir))
+			&"aviation":
+				# 공격헬기: 선도 중대 목표 앞 1.5 km 에서 원거리 공격 이동.
+				if lead != null and idle:
+					var obj: Vector2 = battle.scoring.get_point(assignment[lead.id]).def.pos
+					var stand: Vector2 = obj - enemy_dir * 1500.0
+					if p.centroid().distance_to(stand) > 400.0:
+						_order(p, Order.Type.ATTACK_MOVE, stand, FormationSolver.heading_from_vector(enemy_dir))
 			&"mortar":
 				if lead != null and idle:
 					var w: WeaponDef = battle.catalog.get_weapon(battle.fires._indirect_weapon(p))

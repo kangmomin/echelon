@@ -1,0 +1,31 @@
+{
+  "id": "us_m1126",
+  "name": "M1126 스트라이커 ICV",
+  "faction": "US",
+  "class": "apc",
+  "hp": 100,
+  "armor": {
+    "front": 80,
+    "side": 50,
+    "rear": 40,
+    "top": 15
+  },
+  "size": 1.1,
+  "stealth": 0.12,
+  "optics_m": 2000,
+  "speed_kmh": {
+    "road": 97,
+    "offroad": 55
+  },
+  "weapons": [
+    "m2_hmg"
+  ],
+  "ammo": {
+    "m2_hmg": 2000
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 1,
+  "crew": 2,
+  "cost": 22,
+  "supply_full": 5
+}

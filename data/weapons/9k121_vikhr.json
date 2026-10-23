@@ -1,0 +1,21 @@
+{
+  "id": "9k121_vikhr",
+  "name": "9K121 비흐르",
+  "type": "ATGM",
+  "range_m": {
+    "min": 600,
+    "max": 8000
+  },
+  "penetration": 900,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.85,
+    "at_max_range": 0.75
+  },
+  "rof_rpm": 3,
+  "suppression": 50,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle"
+  ]
+}

@@ -15,5 +15,14 @@
     "ru_tank_plt",
     "ru_tank_plt"
   ],
-  "default_formation": "co_wedge"
+  "default_formation": "co_wedge",
+  "role": "T-90M 전차 중대.",
+  "pros": [
+    "강한 정면 장갑(850)",
+    "포발사 미사일 9M119 5 km"
+  ],
+  "cons": [
+    "보병이 없다",
+    "측후면 약함"
+  ]
 }

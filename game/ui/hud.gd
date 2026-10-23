@@ -7,11 +7,16 @@ signal order_mode_selected(type: int)
 signal immediate_order(type: int, params: Dictionary)
 signal formation_selected(formation_id: StringName)
 signal fire_mode_selected(asset: int, smoke: bool)
+signal altitude_toggle_requested
 
 const PANEL_BG: Color = Color(0.06, 0.07, 0.09, 0.93)
 const ORDER_MODES: Array[Array] = [
 	[Order.Type.MOVE, "이동", "M"], [Order.Type.FAST_MOVE, "급속 이동", "F"], [Order.Type.ATTACK_MOVE, "공격 이동", "Q"],
 	[Order.Type.SEIZE, "확보", "Y"], [Order.Type.DEFEND, "방어", "J"], [Order.Type.WITHDRAW, "철수", "B"],
+]
+## 공병 명령(지점 지정): [종류, 이름, 키].
+const SPECIAL_MODES: Array[Array] = [
+	[Order.Type.LAY_MINES, "지뢰 매설", "N"], [Order.Type.CLEAR_MINES, "지뢰 제거", "I"], [Order.Type.FORTIFY, "진지 구축", "O"],
 ]
 const PLATOON_FORMATIONS: Array[StringName] = [&"column", &"wedge", &"line", &"echelon_left", &"echelon_right", &"vee", &"coil"]
 const COMPANY_FORMATIONS: Array[StringName] = [&"co_column", &"co_wedge", &"co_line", &"co_echelon_left", &"co_echelon_right", &"co_vee", &"co_box"]
@@ -27,6 +32,9 @@ var _sel_label: RichTextLabel
 var _mode_buttons: Dictionary[int, Button] = {}
 var _formation_box: HBoxContainer
 var _misc_box: HBoxContainer
+## 공병·헬기 전용 명령 줄(선택에 따라 보임).
+var _special_box: HBoxContainer
+var _altitude_button: Button
 var _cmd_panel: PanelContainer
 var _fire_label: RichTextLabel
 var _fire_buttons: Dictionary[String, Button] = {}
@@ -88,6 +96,7 @@ func refresh_selection(units: Array[Unit]) -> void:
 	_update_selection_text()
 	_rebuild_formation_buttons()
 	_cmd_panel.visible = not selection.is_empty()
+	_update_special_row()
 
 
 # --- 구성 ----------------------------------------------------------------
@@ -164,6 +173,23 @@ func _build_command_panel() -> void:
 
 	_formation_box = HBoxContainer.new()
 	v.add_child(_formation_box)
+
+	_special_box = HBoxContainer.new()
+	v.add_child(_special_box)
+	for item: Array in SPECIAL_MODES:
+		var sb := Button.new()
+		sb.text = "%s [%s]" % [item[1], item[2]]
+		sb.toggle_mode = true
+		sb.focus_mode = Control.FOCUS_NONE
+		var st: int = item[0]
+		sb.pressed.connect(func() -> void: set_order_mode(st); order_mode_selected.emit(st))
+		_special_box.add_child(sb)
+		_mode_buttons[st] = sb
+	_altitude_button = Button.new()
+	_altitude_button.text = "고도 전환 [V]"
+	_altitude_button.focus_mode = Control.FOCUS_NONE
+	_altitude_button.pressed.connect(func() -> void: altitude_toggle_requested.emit())
+	_special_box.add_child(_altitude_button)
 
 	_misc_box = HBoxContainer.new()
 	v.add_child(_misc_box)
@@ -257,6 +283,23 @@ func _add_misc(text: String, type: int, params: Dictionary) -> void:
 	_misc_box.add_child(b)
 
 
+func _update_special_row() -> void:
+	if _special_box == null:
+		return
+	var eng: bool = false
+	var air: bool = false
+	for u: Unit in selection:
+		if u.kind == &"engineer":
+			eng = true
+		if u.kind == &"aviation":
+			air = true
+	for item: Array in SPECIAL_MODES:
+		var t: int = item[0]
+		_mode_buttons[t].visible = eng
+	_altitude_button.visible = air
+	_special_box.visible = eng or air
+
+
 func _rebuild_formation_buttons() -> void:
 	if _formation_box == null:
 		return
@@ -308,6 +351,12 @@ func _update_selection_text() -> void:
 	if u is Platoon and (u as Platoon).has_squads():
 		lines.append("보병 %s" % ("탑승" if (u as Platoon).mounted else "하차"))
 	lines.append("탄약 %d%%" % roundi(SupplySystem.ammo_ratio(u) * 100.0))
+	if u is Platoon and u.kind == &"engineer":
+		var ep: Platoon = u
+		lines.append("공병: 지뢰 지대 %d개 남음, 진지 %d/%d" % [ep.mines_left, ep.positions_built,
+			EngineerSystem.POSITIONS_PER_PLATOON])
+	if u.kind == &"aviation":
+		lines.append("고도: %s  (V 로 전환)" % ("고공 — 멀리 보지만 잘 보임" if u.sop.altitude == &"high" else "저공 — 지형 뒤에 숨음"))
 	_sel_label.text = "\n".join(lines)
 
 
@@ -319,6 +368,7 @@ static func _order_name(type: int) -> String:
 		Order.Type.SET_SOP: "SOP 변경", Order.Type.CALL_FIRE: "화력 요청", Order.Type.DETACH: "분리",
 		Order.Type.REJOIN: "복귀", Order.Type.REORGANIZE: "재편", Order.Type.CANCEL: "취소",
 		Order.Type.FOLLOW: "중대 대형 추종", Order.Type.HALT: "정지",
+		Order.Type.LAY_MINES: "지뢰 매설", Order.Type.CLEAR_MINES: "지뢰 제거", Order.Type.FORTIFY: "진지 구축",
 	}
 	return NAMES.get(type, "?")
 
@@ -329,4 +379,5 @@ static func _technique_name(t: StringName) -> String:
 
 static func _posture_name(p: StringName) -> String:
 	return {&"idle": "대기", &"moving": "이동", &"defending": "방어", &"withdrawing": "철수", &"routed": "패주",
-		&"resupplying": "보급 중"}.get(p, String(p))
+		&"resupplying": "보급 중", &"laying": "지뢰 매설 중", &"clearing": "지뢰 제거 중",
+		&"fortifying": "진지 구축 중"}.get(p, String(p))

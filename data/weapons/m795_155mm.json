@@ -1,5 +1,6 @@
 {
   "id": "m795_155mm",
+  "name": "155 mm M795 고폭탄",
   "type": "HE",
   "range_m": {
     "min": 0,

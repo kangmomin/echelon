@@ -6,6 +6,8 @@ const TYPES: Array[String] = ["KE", "HEAT", "ATGM", "HE", "MG", "AC", "SAM"]
 const TARGETS: Array[String] = ["vehicle", "infantry", "air"]
 
 var id: StringName
+## 표시 이름(없으면 id).
+var display_name: String = ""
 var weapon_type: StringName
 var range_min_m: float
 var range_max_m: float
@@ -32,6 +34,7 @@ var burst: int = 1
 static func from_dict(d: Dictionary, r: DefReader) -> WeaponDef:
 	var w := WeaponDef.new()
 	w.id = StringName(r.req_string(d, "id"))
+	w.display_name = r.opt_string(d, "name", String(w.id))
 	w.weapon_type = StringName(r.req_string(d, "type"))
 	r.check_one_of(w.weapon_type, TYPES, "type")
 
