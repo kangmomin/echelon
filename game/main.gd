@@ -4,6 +4,7 @@ extends Node
 ## 커맨드라인(-- 뒤):
 ##   --smoke-ticks=N        헤드리스로 N 틱 돌리고 종료(실시간 경로, 4배속)
 ##   --screenshot=PATH      잠시 뒤 화면을 PNG 로 저장하고 종료(렌더러 필요)
+##   --screenshot-series=K,M  K장을 M프레임 간격으로 저장(PATH 의 .png 앞에 _0, _1 … 를 붙임). --fixed-fps 와 함께 쓰면 좋다
 ##   --scene=NAME           시작 화면: menu(기본) | builder | skirmish(기본 편성으로 배치 단계) | sandbox
 ##                          --smoke-ticks / --screenshot 만 주면 sandbox
 ##   --start                skirmish 배치 단계를 바로 끝내고 전투 시작
@@ -29,6 +30,9 @@ var _smoke_ticks: int = -1
 var _smoke_elapsed: float = 0.0
 var _screenshot_path: String = ""
 var _screenshot_frames: int = SCREENSHOT_DELAY_FRAMES
+var _series_count: int = 1
+var _series_interval: int = 1
+var _series_done: int = 0
 var _frames: int = 0
 var _camera_args: Dictionary = {}
 
@@ -165,11 +169,17 @@ func _process(delta: float) -> void:
 		elif _smoke_elapsed > SMOKE_TIMEOUT_SEC:
 			print("[smoke] FAIL timeout tick=%d" % b.world.tick)
 			get_tree().quit(2)
-	if _screenshot_path != "" and _frames == _screenshot_frames:
+	if _screenshot_path != "" and _frames >= _screenshot_frames \
+			and (_frames - _screenshot_frames) % _series_interval == 0:
+		var path: String = _screenshot_path
+		if _series_count > 1:
+			path = _screenshot_path.get_basename() + "_%d.png" % _series_done
 		var image: Image = get_viewport().get_texture().get_image()
-		var err: Error = image.save_png(_screenshot_path)
-		print("[screenshot] %s -> %s" % [error_string(err), ProjectSettings.globalize_path(_screenshot_path)])
-		get_tree().quit(0 if err == OK else 1)
+		var err: Error = image.save_png(path)
+		print("[screenshot] %s -> %s" % [error_string(err), ProjectSettings.globalize_path(path)])
+		_series_done += 1
+		if _series_done >= _series_count or err != OK:
+			get_tree().quit(0 if err == OK else 1)
 
 
 func _parse_cmdline() -> void:
@@ -181,6 +191,10 @@ func _parse_cmdline() -> void:
 			_screenshot_path = value
 		elif arg.begins_with("--screenshot-frames="):
 			_screenshot_frames = value.to_int()
+		elif arg.begins_with("--screenshot-series="):
+			var km: PackedStringArray = value.split(",")
+			_series_count = maxi(km[0].to_int(), 1)
+			_series_interval = maxi(km[1].to_int() if km.size() > 1 else 1, 1)
 		elif arg.begins_with("--camera="):
 			# x,y,distance,pitch_deg,yaw_deg
 			var parts: PackedStringArray = value.split(",")
