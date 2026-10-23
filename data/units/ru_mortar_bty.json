@@ -1,0 +1,15 @@
+{
+  "id": "ru_mortar_bty",
+  "name": "박격포 포대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "mortar",
+  "elements": [
+    {
+      "element": "ru_2s9",
+      "count": 4
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular"
+}

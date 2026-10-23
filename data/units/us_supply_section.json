@@ -1,0 +1,15 @@
+{
+  "id": "us_supply_section",
+  "name": "보급반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "supply",
+  "elements": [
+    {
+      "element": "us_hemtt",
+      "count": 3
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

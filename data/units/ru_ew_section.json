@@ -1,0 +1,15 @@
+{
+  "id": "ru_ew_section",
+  "name": "전자전반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "ew",
+  "elements": [
+    {
+      "element": "ru_r330zh",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

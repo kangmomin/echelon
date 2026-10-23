@@ -1,0 +1,31 @@
+{
+  "id": "ru_fo_team",
+  "name": "PRP-4M 관측반",
+  "faction": "RU",
+  "class": "fo",
+  "hp": 100,
+  "armor": {
+    "front": 60,
+    "side": 30,
+    "rear": 20,
+    "top": 10
+  },
+  "size": 1.0,
+  "stealth": 0.25,
+  "optics_m": 4500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "pkt_coax"
+  ],
+  "ammo": {
+    "pkt_coax": 1000
+  },
+  "radio_range_m": 4000,
+  "transport_capacity": 0,
+  "crew": 5,
+  "cost": 35,
+  "supply_full": 2
+}

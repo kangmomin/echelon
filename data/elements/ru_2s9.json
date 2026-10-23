@@ -1,0 +1,31 @@
+{
+  "id": "ru_2s9",
+  "name": "2S9 노나",
+  "faction": "RU",
+  "class": "mortar",
+  "hp": 80,
+  "armor": {
+    "front": 40,
+    "side": 20,
+    "rear": 15,
+    "top": 10
+  },
+  "size": 1.0,
+  "stealth": 0.15,
+  "optics_m": 1200,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "2a51_mortar"
+  ],
+  "ammo": {
+    "2a51_mortar": 40
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 40,
+  "supply_full": 8
+}

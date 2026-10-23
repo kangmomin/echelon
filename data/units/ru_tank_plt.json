@@ -1,0 +1,15 @@
+{
+  "id": "ru_tank_plt",
+  "name": "전차 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "tank",
+  "elements": [
+    {
+      "element": "ru_t90m",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular"
+}

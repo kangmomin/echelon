@@ -128,7 +128,7 @@ func as_vec2(v: Variant, what: String) -> Vector2:
 	if arr.size() != 2 or not is_number(arr[0]) or not is_number(arr[1]):
 		error("'%s'는 숫자 2개짜리 [x, y] 배열이어야 함" % what)
 		return Vector2.ZERO
-	return Vector2(_to_float(arr[0]), _to_float(arr[1]))
+	return Vector2(to_float(arr[0]), to_float(arr[1]))
 
 
 func as_dict(v: Variant, what: String) -> Dictionary:
@@ -163,14 +163,14 @@ func _as_number(v: Variant, key: String) -> float:
 	if not is_number(v):
 		error("'%s'는 숫자여야 함" % key)
 		return 0.0
-	return _to_float(v)
+	return to_float(v)
 
 
 func _as_int(v: Variant, key: String) -> int:
 	if not is_number(v):
 		error("'%s'는 정수여야 함" % key)
 		return 0
-	var f: float = _to_float(v)
+	var f: float = to_float(v)
 	if f != floorf(f):
 		error("'%s'는 정수여야 함 (값 %s)" % [key, f])
 	return int(f)
@@ -209,7 +209,7 @@ func _as_string_array(v: Variant, key: String) -> PackedStringArray:
 
 
 ## 숫자 Variant(int 또는 float)를 float 로. 호출 전에 is_number() 로 확인한다.
-static func _to_float(v: Variant) -> float:
+static func to_float(v: Variant) -> float:
 	if typeof(v) == TYPE_INT:
 		var i: int = v
 		return float(i)

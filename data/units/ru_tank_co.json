@@ -1,0 +1,19 @@
+{
+  "id": "ru_tank_co",
+  "name": "전차 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "tank",
+  "hq": [
+    {
+      "element": "ru_t90m",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_tank_plt",
+    "ru_tank_plt",
+    "ru_tank_plt"
+  ],
+  "default_formation": "co_wedge"
+}

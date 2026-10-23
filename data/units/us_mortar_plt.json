@@ -1,0 +1,15 @@
+{
+  "id": "us_mortar_plt",
+  "name": "박격포 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "mortar",
+  "elements": [
+    {
+      "element": "us_m1064",
+      "count": 4
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular"
+}

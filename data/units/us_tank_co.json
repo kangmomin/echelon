@@ -1,0 +1,19 @@
+{
+  "id": "us_tank_co",
+  "name": "전차 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "tank",
+  "hq": [
+    {
+      "element": "us_m1a2_sepv3",
+      "count": 2
+    }
+  ],
+  "platoons": [
+    "us_tank_plt",
+    "us_tank_plt",
+    "us_tank_plt"
+  ],
+  "default_formation": "co_wedge"
+}

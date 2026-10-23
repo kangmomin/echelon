@@ -1,0 +1,21 @@
+{
+  "id": "us_mech_plt",
+  "name": "기계화보병 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "mech",
+  "elements": [
+    {
+      "element": "us_m2a3",
+      "count": 4
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "us_inf_squad",
+      "count": 4
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "javelin",
+  "type": "ATGM",
+  "range_m": {
+    "min": 65,
+    "max": 2500
+  },
+  "penetration": 600,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.9,
+    "at_max_range": 0.85
+  },
+  "rof_rpm": 1.5,
+  "suppression": 40,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle"
+  ],
+  "top_attack": true
+}

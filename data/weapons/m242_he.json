@@ -1,0 +1,22 @@
+{
+  "id": "m242_he",
+  "type": "AC",
+  "range_m": {
+    "min": 0,
+    "max": 2000
+  },
+  "penetration": 10,
+  "damage": 6,
+  "accuracy": {
+    "base": 0.55,
+    "at_max_range": 0.2
+  },
+  "rof_rpm": 200,
+  "suppression": 15,
+  "fire_on_move": true,
+  "targets": [
+    "infantry"
+  ],
+  "he_radius_m": 3,
+  "burst": 3
+}

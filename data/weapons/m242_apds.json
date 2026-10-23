@@ -1,0 +1,22 @@
+{
+  "id": "m242_apds",
+  "type": "AC",
+  "range_m": {
+    "min": 50,
+    "max": 2000
+  },
+  "penetration": 90,
+  "damage": 30,
+  "accuracy": {
+    "base": 0.65,
+    "at_max_range": 0.25
+  },
+  "rof_rpm": 200,
+  "suppression": 10,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle"
+  ],
+  "pen_falloff_per_km": 0.2,
+  "burst": 3
+}

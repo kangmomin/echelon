@@ -2,7 +2,7 @@ class_name ElementDef
 extends RefCounted
 ## 엘리먼트(차량 1대 또는 분대 1개) 정의. data/elements/*.json. PLAN 16.1.
 
-const CLASSES: Array[String] = ["tank", "ifv", "apc", "recon", "mortar", "aa", "cp", "truck", "inf_squad", "fo"]
+const CLASSES: Array[String] = ["tank", "ifv", "apc", "recon", "mortar", "aa", "cp", "truck", "inf_squad", "fo", "ew"]
 const FACTIONS: Array[String] = ["US", "RU"]
 const ARMOR_FACINGS: Array[String] = ["front", "side", "rear", "top"]
 
@@ -29,6 +29,8 @@ var crew: int
 var cost: int
 ## 완전 보급에 드는 보급 단위.
 var supply_full: int
+## 보급 차량이 실을 수 있는 보급 단위(트럭만).
+var supply_capacity: int = 0
 var loadouts: PackedStringArray
 
 
@@ -81,6 +83,7 @@ static func from_dict(d: Dictionary, r: DefReader) -> ElementDef:
 	e.cost = r.req_int(d, "cost")
 	r.check_range(e.cost, 0, 10000, "cost")
 	e.supply_full = r.req_int(d, "supply_full")
+	e.supply_capacity = r.opt_int(d, "supply_capacity", 0)
 	e.loadouts = r.opt_string_array(d, "loadouts")
 	return e
 

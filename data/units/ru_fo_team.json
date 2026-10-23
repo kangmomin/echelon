@@ -1,0 +1,15 @@
+{
+  "id": "ru_fo_team",
+  "name": "포병 관측반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "fo",
+  "elements": [
+    {
+      "element": "ru_fo_team",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

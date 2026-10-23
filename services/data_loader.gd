@@ -7,6 +7,8 @@ extends RefCounted
 ##   data/weapons/*.json    파일 하나 = WeaponDef 하나
 ##   data/toe/*.json        파일 하나 = TOETemplate 하나
 ##   data/scenarios/*.json  파일 하나 = ScenarioDef 하나
+##   data/units/*.json      파일 하나 = UnitTemplate 하나(중대·소대)
+##   data/maps/*.json       파일 하나 = MapDef 하나
 ##   data/formations.json   {"formations": [FormationDef, ...]}
 ##
 ## 검증은 두 단계다. 1) 파일별 필드·타입·범위 검사, 2) 정의 사이 참조 검사(validate_references).
@@ -44,6 +46,20 @@ static func load_catalog(root: String = DEFAULT_ROOT) -> DataCatalog:
 		r.context = "%s#%s" % [formations_path, item.get("id", i)]
 		_put(cat.formations, FormationDef.from_dict(item, r), r)
 
+	for path: String in list_json(root.path_join("units")):
+		var d: Dictionary = _read_object(path, r)
+		if d.is_empty():
+			continue
+		r.context = path
+		_put(cat.unit_templates, UnitTemplate.from_dict(d, r), r)
+
+	for path: String in list_json(root.path_join("maps")):
+		var d: Dictionary = _read_object(path, r)
+		if d.is_empty():
+			continue
+		r.context = path
+		_put(cat.maps, MapDef.from_dict(d, r), r)
+
 	for path: String in list_json(root.path_join("toe")):
 		var d: Dictionary = _read_object(path, r)
 		if d.is_empty():
@@ -77,6 +93,56 @@ static func validate_references(cat: DataCatalog, r: DefReader) -> void:
 		if f.echelon == &"platoon" and not (f.slots.has(3) and f.slots.has(4)):
 			r.error("소대 대형은 3·4 엘리먼트 슬롯을 모두 정의해야 함")
 
+	for ut: UnitTemplate in cat.unit_templates.values():
+		r.context = "unit '%s'" % ut.id
+		var cost: int = 0
+		var ids: PackedStringArray = ut.elements.duplicate()
+		ids.append_array(ut.passengers)
+		ids.append_array(ut.hq_elements)
+		for lo: UnitTemplate.Loadout in ut.loadouts:
+			for to_id: StringName in lo.replace.values():
+				ids.append(String(to_id))
+		for element_id: String in ids:
+			var ed: ElementDef = cat.get_element(StringName(element_id))
+			if ed == null:
+				r.error("엘리먼트 '%s' 정의가 없음" % element_id)
+			elif ed.faction != ut.faction:
+				r.error("엘리먼트 '%s' 의 진영(%s)이 템플릿 진영과 다름" % [element_id, ed.faction])
+		for element_id: String in ut.elements:
+			var ed: ElementDef = cat.get_element(StringName(element_id))
+			cost += ed.cost if ed != null else 0
+		for element_id: String in ut.passengers:
+			var ed: ElementDef = cat.get_element(StringName(element_id))
+			cost += ed.cost if ed != null else 0
+		if not ut.passengers.is_empty():
+			var seats: int = 0
+			for element_id: String in ut.elements:
+				var ed: ElementDef = cat.get_element(StringName(element_id))
+				seats += ed.transport_capacity if ed != null else 0
+			if seats < ut.passengers.size():
+				r.error("탑승 분대 %d 개를 태울 좌석이 %d 개뿐" % [ut.passengers.size(), seats])
+		if ut.default_formation != &"" and cat.get_formation(ut.default_formation) == null:
+			r.error("default_formation '%s' 가 없음" % ut.default_formation)
+		ut.cost = cost
+	# 중대 원가는 소대 원가가 정해진 뒤 계산한다.
+	for ut: UnitTemplate in cat.unit_templates.values():
+		if ut.echelon != &"company":
+			continue
+		r.context = "unit '%s'" % ut.id
+		var cost: int = 0
+		for element_id: String in ut.hq_elements:
+			var ed: ElementDef = cat.get_element(StringName(element_id))
+			cost += ed.cost if ed != null else 0
+		for plt_id: String in ut.platoons:
+			var pt: UnitTemplate = cat.get_unit_template(StringName(plt_id))
+			if pt == null:
+				r.error("소대 템플릿 '%s' 가 없음" % plt_id)
+			elif pt.echelon != &"platoon" or pt.faction != ut.faction:
+				r.error("'%s' 는 같은 진영의 소대 템플릿이어야 함" % plt_id)
+			else:
+				cost += pt.cost
+		ut.cost = cost
+
 	for t: TOETemplate in cat.toe_templates.values():
 		r.context = "toe '%s'" % t.id
 		var hq: ElementDef = cat.get_element(t.hq_element)
@@ -84,10 +150,14 @@ static func validate_references(cat: DataCatalog, r: DefReader) -> void:
 			r.error("hq.element '%s' 정의가 없음" % t.hq_element)
 		elif hq.faction != t.faction:
 			r.error("hq.element '%s' 의 진영(%s)이 템플릿 진영(%s)과 다름" % [hq.id, hq.faction, t.faction])
-		# 중대·소대 템플릿(UnitTemplate)은 M4 에서 추가된다. 그 전까지는 경고로만 남긴다.
-		var unresolved: PackedStringArray = t.referenced_unit_templates()
-		if not unresolved.is_empty():
-			r.warn("중대·소대 템플릿 참조 %d개 미검증(M4 에서 UnitTemplate 추가 후 검사)" % unresolved.size())
+		for slot: TOETemplate.CompanySlot in t.company_slots:
+			for ref: String in slot.allowed:
+				_check_unit_ref(cat, r, ref, &"company", t.faction)
+		for ref: String in t.organic:
+			_check_unit_ref(cat, r, ref, &"platoon", t.faction)
+		for slot: TOETemplate.AttachmentSlot in t.attachment_slots:
+			for ref: String in slot.allowed:
+				_check_unit_ref(cat, r, ref, &"platoon", t.faction)
 
 	for s: ScenarioDef in cat.scenarios.values():
 		r.context = "scenario '%s'" % s.id
@@ -98,10 +168,22 @@ static func validate_references(cat: DataCatalog, r: DefReader) -> void:
 				r.error("sides.%s.toe '%s' 정의가 없음" % [side_name, side.toe])
 			elif toe.faction != side.faction:
 				r.error("sides.%s 의 진영(%s)과 toe 진영(%s)이 다름" % [side_name, side.faction, toe.faction])
-		var map_dir: String = DEFAULT_ROOT.path_join("maps").path_join(s.map_id)
-		if not FileAccess.file_exists(map_dir.path_join("heightmap.png")):
-			r.warn("지도 '%s' 의 heightmap.png 가 아직 없음(M1 에서 추가)" % s.map_id)
+		var m: MapDef = cat.get_map(s.map_id)
+		if m == null:
+			r.error("지도 '%s' 정의가 없음" % s.map_id)
+		elif m.size_m != s.size_m:
+			r.error("size_m 이 지도(%s)와 다름" % m.size_m)
 	r.context = ""
+
+
+static func _check_unit_ref(cat: DataCatalog, r: DefReader, ref: String, echelon: StringName, faction: StringName) -> void:
+	var ut: UnitTemplate = cat.get_unit_template(StringName(ref))
+	if ut == null:
+		r.error("편제 템플릿 '%s' 가 없음" % ref)
+	elif ut.echelon != echelon:
+		r.error("'%s' 는 %s 템플릿이어야 함" % [ref, echelon])
+	elif ut.faction != faction:
+		r.error("'%s' 의 진영이 다름" % ref)
 
 
 ## 디렉터리의 .json 파일 경로를 이름순으로.

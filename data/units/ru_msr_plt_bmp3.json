@@ -1,0 +1,21 @@
+{
+  "id": "ru_msr_plt_bmp3",
+  "name": "차량화소총 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "mech",
+  "elements": [
+    {
+      "element": "ru_bmp3",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "ru_msr_squad",
+      "count": 3
+    }
+  ]
+}

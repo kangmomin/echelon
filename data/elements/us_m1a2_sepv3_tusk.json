@@ -1,0 +1,35 @@
+{
+  "id": "us_m1a2_sepv3_tusk",
+  "name": "M1A2 SEPv3 TUSK",
+  "faction": "US",
+  "class": "tank",
+  "hp": 100,
+  "armor": {
+    "front": 900,
+    "side": 500,
+    "rear": 180,
+    "top": 60
+  },
+  "size": 1.25,
+  "stealth": 0.08,
+  "optics_m": 2500,
+  "speed_kmh": {
+    "road": 55,
+    "offroad": 32
+  },
+  "weapons": [
+    "m256_apfsds",
+    "m256_heat",
+    "m240_coax"
+  ],
+  "ammo": {
+    "m256_apfsds": 22,
+    "m256_heat": 18,
+    "m240_coax": 4000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 110,
+  "supply_full": 10
+}

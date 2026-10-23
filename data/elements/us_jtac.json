@@ -1,0 +1,31 @@
+{
+  "id": "us_jtac",
+  "name": "JTAC 팀",
+  "faction": "US",
+  "class": "fo",
+  "hp": 60,
+  "armor": {
+    "front": 30,
+    "side": 20,
+    "rear": 10,
+    "top": 10
+  },
+  "size": 0.8,
+  "stealth": 0.35,
+  "optics_m": 4500,
+  "speed_kmh": {
+    "road": 90,
+    "offroad": 45
+  },
+  "weapons": [
+    "m2_hmg"
+  ],
+  "ammo": {
+    "m2_hmg": 600
+  },
+  "radio_range_m": 6000,
+  "transport_capacity": 0,
+  "crew": 3,
+  "cost": 40,
+  "supply_full": 2
+}

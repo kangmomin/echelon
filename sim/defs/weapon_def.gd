@@ -21,6 +21,12 @@ var suppression: float
 var fire_on_move: bool
 var targets: PackedStringArray
 var he_radius_m: float
+## 간접사격 무기(박격포 등). 직접 교전에 쓰지 않고 화력 임무로만 쓴다.
+var indirect: bool = false
+## 상부 공격(재블린 등): 상부 장갑으로 판정.
+var top_attack: bool = false
+## 한 번 쏠 때 소모하는 탄수(기관총 점사).
+var burst: int = 1
 
 
 static func from_dict(d: Dictionary, r: DefReader) -> WeaponDef:
@@ -56,4 +62,29 @@ static func from_dict(d: Dictionary, r: DefReader) -> WeaponDef:
 	for t: String in w.targets:
 		r.check_one_of(t, TARGETS, "targets")
 	w.he_radius_m = r.opt_number(d, "he_radius_m", 0.0)
+	w.indirect = r.opt_bool(d, "indirect", false)
+	w.top_attack = r.opt_bool(d, "top_attack", false)
+	w.burst = r.opt_int(d, "burst", 1)
+	if w.burst < 1:
+		r.error("burst 는 1 이상")
 	return w
+
+
+## 사격 간격(초).
+func interval_sec() -> float:
+	return 60.0 / rof_rpm * burst
+
+
+## 거리 d(m)에서의 관통력.
+func penetration_at(d: float) -> float:
+	return penetration * maxf(0.0, 1.0 - pen_falloff_per_km * d / 1000.0)
+
+
+## 거리 d(m)에서의 기본 명중률(최대 사거리에서 at_max_range 로 선형 감소).
+func accuracy_at(d: float) -> float:
+	var t: float = clampf((d - range_min_m) / maxf(range_max_m - range_min_m, 1.0), 0.0, 1.0)
+	return lerpf(accuracy_base, accuracy_at_max_range, t)
+
+
+func can_target(kind: StringName) -> bool:
+	return targets.has(String(kind))

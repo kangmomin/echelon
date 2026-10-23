@@ -1,0 +1,15 @@
+{
+  "id": "ru_supply_section",
+  "name": "보급반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "supply",
+  "elements": [
+    {
+      "element": "ru_kamaz",
+      "count": 3
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

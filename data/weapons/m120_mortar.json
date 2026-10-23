@@ -1,0 +1,23 @@
+{
+  "id": "m120_mortar",
+  "type": "HE",
+  "range_m": {
+    "min": 200,
+    "max": 7200
+  },
+  "penetration": 40,
+  "damage": 60,
+  "accuracy": {
+    "base": 0.5,
+    "at_max_range": 0.5
+  },
+  "rof_rpm": 4,
+  "suppression": 60,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 35,
+  "indirect": true
+}

@@ -1,0 +1,15 @@
+{
+  "id": "us_ada_section",
+  "name": "방공반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "aa",
+  "elements": [
+    {
+      "element": "us_avenger",
+      "count": 2
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

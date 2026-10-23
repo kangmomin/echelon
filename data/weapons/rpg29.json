@@ -1,0 +1,20 @@
+{
+  "id": "rpg29",
+  "type": "HEAT",
+  "range_m": {
+    "min": 0,
+    "max": 500
+  },
+  "penetration": 650,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.55,
+    "at_max_range": 0.2
+  },
+  "rof_rpm": 2,
+  "suppression": 40,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle"
+  ]
+}

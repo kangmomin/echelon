@@ -1,0 +1,15 @@
+{
+  "id": "ru_ada_section",
+  "name": "방공반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "aa",
+  "elements": [
+    {
+      "element": "ru_tor_m2",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "us_fo_team",
+  "name": "포병 관측반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "fo",
+  "elements": [
+    {
+      "element": "us_m7_fist",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

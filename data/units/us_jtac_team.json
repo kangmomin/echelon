@@ -1,0 +1,15 @@
+{
+  "id": "us_jtac_team",
+  "name": "JTAC 팀",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "fo",
+  "elements": [
+    {
+      "element": "us_jtac",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "ru_msr_co_bmp3",
+  "name": "차량화소총 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "mech",
+  "hq": [
+    {
+      "element": "ru_bmp3",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_msr_plt_bmp3",
+    "ru_msr_plt_bmp3",
+    "ru_msr_plt_bmp3"
+  ],
+  "default_formation": "co_wedge"
+}

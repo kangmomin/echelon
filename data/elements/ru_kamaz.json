@@ -1,0 +1,28 @@
+{
+  "id": "ru_kamaz",
+  "name": "KamAZ 보급 트럭",
+  "faction": "RU",
+  "class": "truck",
+  "hp": 50,
+  "armor": {
+    "front": 10,
+    "side": 10,
+    "rear": 10,
+    "top": 5
+  },
+  "size": 1.2,
+  "stealth": 0.1,
+  "optics_m": 800,
+  "speed_kmh": {
+    "road": 80,
+    "offroad": 30
+  },
+  "weapons": [],
+  "ammo": {},
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 2,
+  "cost": 15,
+  "supply_full": 0,
+  "supply_capacity": 100
+}

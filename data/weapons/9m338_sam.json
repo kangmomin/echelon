@@ -1,0 +1,20 @@
+{
+  "id": "9m338_sam",
+  "type": "SAM",
+  "range_m": {
+    "min": 1000,
+    "max": 15000
+  },
+  "penetration": 0,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.8,
+    "at_max_range": 0.6
+  },
+  "rof_rpm": 3,
+  "suppression": 0,
+  "fire_on_move": false,
+  "targets": [
+    "air"
+  ]
+}

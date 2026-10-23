@@ -1,0 +1,19 @@
+{
+  "id": "us_mech_co",
+  "name": "기계화보병 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "mech",
+  "hq": [
+    {
+      "element": "us_m2a3",
+      "count": 2
+    }
+  ],
+  "platoons": [
+    "us_mech_plt",
+    "us_mech_plt",
+    "us_mech_plt"
+  ],
+  "default_formation": "co_wedge"
+}
