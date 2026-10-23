@@ -220,10 +220,13 @@ func _draw_elements(p: Platoon, hostile: bool, alpha: float) -> void:
 			draw_arc(sp, 5.0, 0.0, TAU, 12, SELECT_COLOR if selected else FRAME_COLOR, 1.5)
 		else:
 			var tip: Vector2 = _screen(wp + FormationSolver.forward_vector(h) * 12.0)
-			var dir: Vector2 = (tip - sp).normalized() if tip != Vector2.INF and tip != sp else Vector2.UP
+			var dir: Vector2 = (tip - sp).normalized() if tip != Vector2.INF and tip.distance_to(sp) > 0.01 else Vector2.UP
+			if not dir.is_finite() or dir.length() < 0.5:
+				dir = Vector2.UP
 			var right := Vector2(-dir.y, dir.x)
 			var pts := PackedVector2Array([sp + dir * 8.0, sp - dir * 5.0 + right * 5.0, sp - dir * 5.0 - right * 5.0])
-			draw_colored_polygon(pts, c)
+			# 삼각형은 삼각분할이 필요 없는 draw_primitive 로(축퇴 다각형 오류 방지).
+			draw_primitive(pts, PackedColorArray([c, c, c]), PackedVector2Array())
 			pts.append(pts[0])
 			draw_polyline(pts, SELECT_COLOR if selected else FRAME_COLOR, 1.5)
 		if e == p.leader():
