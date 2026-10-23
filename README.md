@@ -97,7 +97,8 @@ GODOT=/path/to/godot ./tools/check_warnings.sh   # 타입·안전성 경고를 �
 
 `.github/workflows/ci-deploy.yml` 이 `main` 에 올라올 때마다 정적 타입 검사 → GUT 테스트 → 스모크를 돌리고,
 통과하면 웹·Windows·Linux 로 내보내 **웹 빌드를 GitHub Pages 에 배포**한다. `v*` 태그를 올리면 Windows·Linux
-실행 파일을 Releases 에 첨부한다(예: `git tag v0.1.1 && git push origin v0.1.1`).
+실행 파일을 Releases 에 첨부한다(예: `git tag v0.1.1 && git push origin v0.1.1`). 태그 없이 Actions 화면의
+**Run workflow** 에서 `release_tag` 를 적어 실행해도 같은 릴리스를 만든다.
 
 - 내보내기 프리셋: `export_presets.cfg` (웹은 단일 스레드 빌드라 Pages 에서 별도 헤더 없이 돈다)
 - 웹은 Compatibility 렌더러(WebGL 2)로 바뀌고, 한글은 내장 글꼴 Noto Sans KR(SIL OFL, `assets/fonts`)로 그린다.

@@ -7,6 +7,11 @@ on:
     tags: ["v*"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "이 태그(예: v0.1.0)로 Releases 를 만든다. 비우면 배포만"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -115,7 +120,7 @@ jobs:
   release:
     name: Releases 업로드
     needs: export
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -125,9 +130,10 @@ jobs:
       - name: 릴리스 만들기
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" dist/* --repo "${GITHUB_REPOSITORY}" \
-            --title "ECHELON ${GITHUB_REF_NAME}" \
+          gh release create "${TAG}" dist/* --repo "${GITHUB_REPOSITORY}" --target "${GITHUB_SHA}" \
+            --title "ECHELON ${TAG}" \
             --notes "웹에서 바로 하기: https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/ (브라우저는 큰 전투에서 느릴 수 있습니다)
 
           - Windows: Echelon-windows-x86_64.zip 을 풀고 Echelon.exe 실행 (서명되지 않아 SmartScreen 경고가 뜰 수 있음 → 추가 정보 → 실행)
