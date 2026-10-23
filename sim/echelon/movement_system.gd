@@ -40,6 +40,8 @@ const LINE_CHECK_INTERVAL: int = 20
 const STUCK_TICKS_BEFORE_PATH: int = 10
 ## 대형 추종 중 경로 재요청: 목표가 경로 끝에서 이만큼 멀어지면(m), 이 주기(틱)로.
 const FOLLOW_REPATH_M: float = 80.0
+## 중대가 소대 브리핑을 기다리는 최대 시간(틱). 통신 두절 소대 때문에 중대 전체가 멈추지 않게.
+const BRIEFING_TIMEOUT_TICKS: int = 300
 const FOLLOW_REPATH_INTERVAL: int = 10
 
 var battle: Battle
@@ -100,6 +102,12 @@ func _update_company(c: Company, tick: int, dt: float) -> void:
 		speed = _road_march_speed(c, c.base_speed())
 	if c.formation_error > COMPANY_WAIT_M:
 		speed = 0.0
+	# 소대들이 번역 명령을 받을 때까지(최대 BRIEFING_TIMEOUT) 출발하지 않는다.
+	if c.mission != null and c.mission.received_tick >= 0 and tick - c.mission.received_tick < BRIEFING_TIMEOUT_TICKS:
+		for p: Platoon in c.formation_platoons():
+			if p.awaiting_follow:
+				speed = 0.0
+				break
 	if c.is_routed(tick) or c.is_leaderless(tick):
 		speed = minf(speed, c.base_speed() * 0.5)
 	c.guide_speed_limit = speed
@@ -129,7 +137,8 @@ func _update_company(c: Company, tick: int, dt: float) -> void:
 				target = c.guide.trail_point_behind(absf(FormationSolver.world_to_local(target, c.guide.pos, c.guide.heading).y) + i * 30.0)
 		target = battle.terrain.nearest_passable(target, OrderExecutor.path_mobility(p))
 		_company_targets[p.id] = target
-		if not p.is_destroyed():
+		# 아직 중대 지휘를 받지 못한 소대(번역 명령 대기·통신 두절)는 중대를 붙잡지 않는다.
+		if not p.is_destroyed() and not p.awaiting_follow and p.comms_state != Unit.Comms.CUT:
 			# 소대 가이드 오차 + 소대 안 엘리먼트 오차(가이드만 앞서 가는 것을 막는다).
 			worst = maxf(worst, maxf(p.guide.pos.distance_to(target), p.formation_error))
 	if c.hq != null and c.hq.on_map:
@@ -169,7 +178,7 @@ func _update_platoon(p: Platoon, tick: int, dt: float) -> void:
 		var catch_up: float = base * CATCH_UP_MULT
 		if p.guide.pos.distance_to(target) < 40.0:
 			catch_up = maxf(c.guide.speed, base * 0.5)
-		if waiting:
+		if waiting or p.awaiting_follow:
 			catch_up = 0.0
 		p.guide_speed_limit = catch_up
 		var before: Vector2 = p.guide.pos

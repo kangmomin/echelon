@@ -38,6 +38,12 @@ var commander: Element = null
 var succession_until_tick: int = -1
 ## 승계 후 명령 지연 가산(선임 소대장 승계 등).
 var succession_delay_mult: float = 1.0
+## 승계를 기다리는 후계 엘리먼트.
+var pending_successor: Element = null
+## 비편제(템플릿 제약을 깬 교차 배속) — 명령 지연 +20%, 재편 불가. PLAN 6.2.
+var ad_hoc: bool = false
+## 중대가 새 이동 명령을 받아 하위 소대에 번역 명령(FOLLOW)을 보냈고, 아직 이 소대에 닿지 않았다.
+var awaiting_follow: bool = false
 
 var morale: float = 100.0
 var comms_quality: float = 1.0

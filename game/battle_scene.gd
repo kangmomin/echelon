@@ -14,6 +14,8 @@ var symbols: SymbolLayer
 var hud: Hud
 var element_view: ElementView
 var overlay: DebugOverlay
+var orbat: OrbatPanel
+var notifications: Notifications
 var ui_layer: CanvasLayer
 
 var selection: Array[Unit] = []
@@ -58,7 +60,16 @@ func _ready() -> void:
 	ui_layer.add_child(symbols)
 	hud = Hud.new()
 	hud.battle = battle
+	hud.status_extra = _status_extra
 	ui_layer.add_child(hud)
+	orbat = OrbatPanel.new()
+	orbat.battle = battle
+	orbat.side = battle.player_side
+	ui_layer.add_child(orbat)
+	orbat.unit_selected.connect(_on_orbat_selected)
+	orbat.unit_focused.connect(func(u: Unit) -> void: rts_camera.look_at_point(u.centroid()))
+	notifications = Notifications.new()
+	ui_layer.add_child(notifications)
 	hud.order_mode_selected.connect(func(_t: int) -> void: pass)
 	hud.immediate_order.connect(_on_immediate_order)
 	hud.formation_selected.connect(_on_formation_selected)
@@ -79,7 +90,12 @@ func _process(delta: float) -> void:
 	_advance_usec = Time.get_ticks_usec() - t0
 	if ran > 0:
 		_advance_peak_usec = maxi(_advance_peak_usec, floori(_advance_usec / float(ran)))
-	battle.world.events.drain()
+	for ev: Dictionary in battle.world.events.drain():
+		var line: Array = EventText.describe(battle, ev, battle.player_side)
+		if not line.is_empty():
+			var text: String = line[0]
+			var color: Color = line[1]
+			notifications.push(text, color)
 	_prune_selection()
 	if overlay.visible:
 		overlay.set_lines(_debug_lines(ran))
@@ -90,9 +106,10 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		_on_mouse_button(event as InputEventMouseButton)
-	elif event is InputEventMouseMotion and _rclick_world != Vector2.INF:
+	elif event is InputEventMouseMotion:
 		var mm: InputEventMouseMotion = event
-		if mm.position.distance_to(_rclick_screen) > DRAG_THRESHOLD_PX:
+		_update_preview(mm.position)
+		if _rclick_world != Vector2.INF and mm.position.distance_to(_rclick_screen) > DRAG_THRESHOLD_PX:
 			var w: Vector2 = TerrainPicker.pick(rts_camera.camera, mm.position, battle.terrain)
 			if w != Vector2.INF:
 				symbols.drag_from = _rclick_world
@@ -236,6 +253,42 @@ func select_units(units: Array[Unit]) -> void:
 func _selection_changed() -> void:
 	symbols.selection = selection
 	hud.refresh_selection(selection)
+	orbat.show_selection(selection)
+
+
+func _on_orbat_selected(u: Unit, additive: bool) -> void:
+	if additive:
+		if not selection.has(u):
+			selection.append(u)
+	else:
+		selection = [u]
+	symbols.selection = selection
+	hud.refresh_selection(selection)
+
+
+## 커서 옆에 "명령하면 몇 초 뒤 실행" 미리보기. PLAN 12.2.
+func _update_preview(screen_pos: Vector2) -> void:
+	symbols.preview_pos = screen_pos
+	if selection.is_empty() or battle.order_system == null:
+		symbols.preview_text = ""
+		return
+	var u: Unit = selection[0]
+	var bypass: bool = u.level == Unit.Level.PLATOON and (u as Platoon).follows_parent()
+	var sec: float = battle.order_system.estimate_delay_sec(u, hud.order_mode, bypass)
+	var label: String = Hud._order_name(hud.order_mode)
+	if sec < 0.0:
+		symbols.preview_text = "%s — 통신 두절, 명령 대기" % label
+	else:
+		symbols.preview_text = "%s — 실행까지 약 %.0f초%s" % [label, sec, "  (직접 명령: 분리, 용량 2)" if bypass else ""]
+
+
+func _status_extra() -> String:
+	if battle.order_system == null:
+		return ""
+	var side: StringName = battle.player_side
+	var q: int = battle.order_system.capacity_queue_size(side)
+	return "지휘 용량 %.1f / %.0f%s" % [battle.order_system.capacity[side], battle.order_system.capacity_max(side),
+		"  (대기 %d)" % q if q > 0 else ""]
 
 
 func _prune_selection() -> void:

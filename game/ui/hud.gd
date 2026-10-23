@@ -7,7 +7,7 @@ signal order_mode_selected(type: int)
 signal immediate_order(type: int, params: Dictionary)
 signal formation_selected(formation_id: StringName)
 
-const PANEL_BG: Color = Color(0.06, 0.07, 0.09, 0.82)
+const PANEL_BG: Color = Color(0.06, 0.07, 0.09, 0.93)
 const ORDER_MODES: Array[Array] = [
 	[Order.Type.MOVE, "이동", "M"], [Order.Type.FAST_MOVE, "급속 이동", "G"], [Order.Type.ATTACK_MOVE, "공격 이동", "A"],
 	[Order.Type.SEIZE, "확보", "S"], [Order.Type.DEFEND, "방어", "D"], [Order.Type.WITHDRAW, "철수", "X"],
@@ -206,7 +206,7 @@ func _update_selection_text() -> void:
 	lines.append("전투력 %d%%   사기 %d   통신 %s" % [roundi(u.strength() * 100.0), roundi(u.morale), u.comms_name()])
 	var f_name: String = u.formation.display_name if u.formation != null else "-"
 	lines.append("대형 %s   이동 방식 %s" % [f_name, _technique_name(u.sop.technique)])
-	var mission: String = "%s (%s)" % [u.mission.type_name(), u.mission.state_name()] if u.mission != null else "없음"
+	var mission: String = _order_name(u.mission.type) if u.mission != null and not u.mission.is_finished() else "없음"
 	lines.append("자세 %s   임무 %s" % [_posture_name(u.posture), mission])
 	if u.detached:
 		lines.append("[color=#ffd166]분리됨 — 중대 지휘에서 빠짐[/color]")
@@ -217,6 +217,18 @@ func _update_selection_text() -> void:
 	if u is Platoon and (u as Platoon).has_squads():
 		lines.append("보병 %s" % ("탑승" if (u as Platoon).mounted else "하차"))
 	_sel_label.text = "\n".join(lines)
+
+
+static func _order_name(type: int) -> String:
+	const NAMES: Dictionary[int, String] = {
+		Order.Type.MOVE: "이동", Order.Type.FAST_MOVE: "급속 이동", Order.Type.ATTACK_MOVE: "공격 이동",
+		Order.Type.SEIZE: "확보", Order.Type.DEFEND: "방어", Order.Type.WITHDRAW: "철수", Order.Type.RESUPPLY: "보급",
+		Order.Type.MOUNT: "탑승", Order.Type.DISMOUNT: "하차", Order.Type.SET_FORMATION: "대형 변경",
+		Order.Type.SET_SOP: "SOP 변경", Order.Type.CALL_FIRE: "화력 요청", Order.Type.DETACH: "분리",
+		Order.Type.REJOIN: "복귀", Order.Type.REORGANIZE: "재편", Order.Type.CANCEL: "취소",
+		Order.Type.FOLLOW: "중대 대형 추종", Order.Type.HALT: "정지",
+	}
+	return NAMES.get(type, "?")
 
 
 static func _technique_name(t: StringName) -> String:

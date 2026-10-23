@@ -23,8 +23,10 @@ var orders_by_id: Dictionary[int, Order] = {}
 
 var executor: OrderExecutor
 var movement: MovementSystem
-## 명령 전파 시스템(M2). null 이면 명령을 즉시 실행한다.
-var order_system: RefCounted = null
+var comms: CommsNet
+var succession: SuccessionSystem
+## 명령 전파 시스템. null 이면 명령을 즉시 실행한다(이동 테스트용 instant 모드).
+var order_system: OrderSystem = null
 
 ## 플레이어가 조종하는 진영.
 var player_side: StringName = &"blue"
@@ -35,7 +37,8 @@ var _next_order_id: int = 1
 
 
 ## 시나리오의 지도로 빈 전장을 만든다. 부대는 따로 생성한다.
-static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_override: int = -1) -> Battle:
+static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_override: int = -1,
+		instant_orders: bool = false) -> Battle:
 	var b := Battle.new()
 	b.catalog = p_catalog
 	b.scenario = p_catalog.get_scenario(scenario_id)
@@ -46,6 +49,14 @@ static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_overrid
 	b.world = SimWorld.new(b.scenario.seed_value if seed_override < 0 else seed_override)
 	b.factory = ForceFactory.new(b)
 	b.executor = OrderExecutor.new(b)
+	# 시스템 실행 순서(결정론): 통신 → 승계 → 명령 전파 → 이동.
+	b.comms = CommsNet.new(b)
+	b.world.add_system(b.comms)
+	b.succession = SuccessionSystem.new(b)
+	b.world.add_system(b.succession)
+	if not instant_orders:
+		b.order_system = OrderSystem.new(b, b.comms)
+		b.world.add_system(b.order_system)
 	b.movement = MovementSystem.new(b)
 	b.world.add_system(b.movement)
 	return b
@@ -96,7 +107,7 @@ func issue_order(order: Order) -> Order:
 	order.tick_issued = world.tick
 	orders_by_id[order.id] = order
 	if order_system != null:
-		order_system.call(&"submit", order)
+		order_system.submit(order)
 	else:
 		var unit: Unit = get_unit(order.target_unit_id)
 		if unit != null:
@@ -150,6 +161,8 @@ func dispose() -> void:
 	executor = null
 	movement = null
 	order_system = null
+	comms = null
+	succession = null
 	factory = null
 
 

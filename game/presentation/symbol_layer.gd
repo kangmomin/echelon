@@ -28,6 +28,9 @@ var fog: bool = false
 ## 우클릭 드래그 미리보기(명령 방향).
 var drag_from: Vector2 = Vector2.INF
 var drag_to: Vector2 = Vector2.INF
+## 커서 옆 명령 미리보기.
+var preview_text: String = ""
+var preview_pos: Vector2 = Vector2.ZERO
 
 var _font: Font
 ## 이번 프레임에 그린 부호(선택 판정용): [{"pos": Vector2, "unit": Unit}]
@@ -92,6 +95,8 @@ func _draw() -> void:
 					_draw_unit(u, hostile, alpha)
 	for u: Unit in selection:
 		_draw_selection_overlay(u)
+	if preview_text != "" and not selection.is_empty():
+		_text(preview_pos + Vector2(18, 26), preview_text, 13, Color(1.0, 0.92, 0.6))
 	if drag_from != Vector2.INF and drag_to != Vector2.INF:
 		var a: Vector2 = _screen(drag_from)
 		var b: Vector2 = _screen(drag_to)
@@ -284,7 +289,7 @@ func _draw_selection_overlay(u: Unit) -> void:
 func _draw_pending_orders(u: Unit) -> void:
 	if battle.order_system == null:
 		return
-	var pending: Array = battle.order_system.call(&"pending_for_unit", u.id)
+	var pending: Array = battle.order_system.pending_for_unit(u.id)
 	for item: Variant in pending:
 		var o: Order = item
 		if not o.has_pos():

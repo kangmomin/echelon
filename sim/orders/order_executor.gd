@@ -43,6 +43,7 @@ func execute(unit: Unit, order: Order) -> void:
 			order.state = Order.State.DONE
 		Order.Type.REJOIN:
 			unit.detached = false
+			unit.awaiting_follow = false
 			_finish_mission(unit, Order.State.CANCELLED)
 			unit.guide.clear_path()
 			unit.posture = &"idle"
@@ -55,6 +56,14 @@ func execute(unit: Unit, order: Order) -> void:
 					set_mounted(child as Platoon, order.type == Order.Type.MOUNT)
 			order.state = Order.State.DONE
 		Order.Type.CANCEL:
+			order.state = Order.State.DONE
+		Order.Type.FOLLOW:
+			# 중대의 번역 명령이 소대에 닿았다: 중대 대형을 따라 움직이기 시작.
+			unit.awaiting_follow = false
+			if unit.mission != null and unit.mission.issuer != &"unit":
+				unit.mission.state = Order.State.CANCELLED
+			unit.mission = null
+			unit.guide.clear_path()
 			order.state = Order.State.DONE
 		_:
 			# RESUPPLY, CALL_FIRE, REORGANIZE 등은 해당 시스템이 처리한다.
@@ -83,10 +92,28 @@ func _start_movement(unit: Unit, order: Order) -> void:
 		_apply_formation_id(unit, StringName(str(order.params["formation"])))
 	if order.params.has("technique"):
 		unit.sop.apply({"technique": str(order.params["technique"])})
+	if unit is Company:
+		_brief_platoons(unit as Company, order)
 	if unit.guide.pos.distance_to(target) < 5.0:
 		on_arrival(unit)
 		return
 	unit.guide.pending = battle.pathfinder.request(unit.guide.pos, target, path_mobility(unit), unit.side)
+
+
+## 중대가 새 이동 명령을 받으면 소대마다 번역 명령(FOLLOW)을 보낸다. 중대→소대 지연을 거쳐 닿는다. PLAN 5.1.
+func _brief_platoons(c: Company, order: Order) -> void:
+	if battle.order_system == null:
+		return
+	var targets: Array[Platoon] = c.formation_platoons()
+	if c.hq != null and c.hq.on_map:
+		targets.append(c.hq)
+	for p: Platoon in targets:
+		if p == c.hq and c.leader() != null and c.leader().platoon == p:
+			continue  # 중대장이 탄 본부 반은 즉시 따른다.
+		p.awaiting_follow = true
+		var sub: Order = Order.make(Order.Type.FOLLOW, p.id)
+		sub.parent_order_id = order.id
+		battle.order_system.submit_sub_order(sub, c)
 
 
 ## 가이드가 목적지에 도착했을 때(MovementSystem 이 부른다).
@@ -112,6 +139,7 @@ func on_arrival(unit: Unit) -> void:
 			unit.posture = &"idle"
 			unit.guide.final_facing = order.get_facing()
 	order.state = Order.State.DONE
+	battle.world.events.emit_event(&"arrived", battle.world.tick, {"unit": unit.id, "side": unit.side, "type": order.type})
 	_start_next_queued(unit)
 
 
