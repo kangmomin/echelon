@@ -32,6 +32,18 @@ func chance(p: float) -> bool:
 	return _rng.randf() < p
 
 
+## 평균 0, 표준편차 1 정규 분포(Box-Muller, 균등 난수 2개 소비).
+func next_gaussian() -> float:
+	var u1: float = maxf(_rng.randf(), 1e-9)
+	var u2: float = _rng.randf()
+	return sqrt(-2.0 * log(u1)) * cos(TAU * u2)
+
+
+## 원형 정규 산포: 표준편차 sigma(m)인 2D 오차.
+func next_scatter(sigma: float) -> Vector2:
+	return Vector2(next_gaussian(), next_gaussian()) * sigma
+
+
 func get_state() -> int:
 	return _rng.state
 

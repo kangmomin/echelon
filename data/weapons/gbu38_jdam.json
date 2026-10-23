@@ -1,0 +1,24 @@
+{
+  "id": "gbu38_jdam",
+  "type": "HE",
+  "range_m": {
+    "min": 0,
+    "max": 10000
+  },
+  "penetration": 180,
+  "damage": 150,
+  "accuracy": {
+    "base": 1.0,
+    "at_max_range": 1.0
+  },
+  "rof_rpm": 1,
+  "suppression": 100,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 45,
+  "indirect": true,
+  "top_attack": true
+}

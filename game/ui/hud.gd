@@ -6,6 +6,7 @@ extends Control
 signal order_mode_selected(type: int)
 signal immediate_order(type: int, params: Dictionary)
 signal formation_selected(formation_id: StringName)
+signal fire_mode_selected(asset: int, smoke: bool)
 
 const PANEL_BG: Color = Color(0.06, 0.07, 0.09, 0.93)
 const ORDER_MODES: Array[Array] = [
@@ -27,6 +28,11 @@ var _mode_buttons: Dictionary[int, Button] = {}
 var _formation_box: HBoxContainer
 var _misc_box: HBoxContainer
 var _cmd_panel: PanelContainer
+var _fire_label: RichTextLabel
+var _fire_buttons: Dictionary[String, Button] = {}
+## 현재 화력 요청 모드(-1 = 없음).
+var fire_asset: int = -1
+var fire_smoke: bool = false
 
 
 func _ready() -> void:
@@ -35,6 +41,7 @@ func _ready() -> void:
 	_build_top_bar()
 	_build_selection_panel()
 	_build_command_panel()
+	_build_fire_panel()
 	refresh_selection(selection)
 
 
@@ -44,6 +51,7 @@ func _process(_delta: float) -> void:
 	_top_label.text = top_bar_text()
 	if Engine.get_process_frames() % 10 == 0:
 		_update_selection_text()
+		_update_fire_panel()
 
 
 func top_bar_text() -> String:
@@ -154,11 +162,81 @@ func _build_command_panel() -> void:
 	_add_misc("경계 이동 [W]", Order.Type.SET_SOP, {"sop": {"technique": "overwatch"}})
 	_add_misc("교대 약진 [E]", Order.Type.SET_SOP, {"sop": {"technique": "bounding"}})
 	_add_misc("일반 이동 [Q]", Order.Type.SET_SOP, {"sop": {"technique": "traveling"}})
+	_add_misc("보급 [R]", Order.Type.RESUPPLY, {})
 	_add_misc("탑승", Order.Type.MOUNT, {})
 	_add_misc("하차", Order.Type.DISMOUNT, {})
 	_add_misc("분리", Order.Type.DETACH, {})
 	_add_misc("복귀", Order.Type.REJOIN, {})
 	set_order_mode(Order.Type.MOVE)
+
+
+## 화력 지원 패널(오른쪽 아래): 자산 버튼, 남은 횟수, 진행 중인 임무. PLAN 10.1.
+const FIRE_BUTTONS: Array[Array] = [
+	["박격포 [Z]", FireSupportSystem.Asset.MORTAR, false], ["박격포 연막 [V]", FireSupportSystem.Asset.MORTAR, true],
+	["포병 [C]", FireSupportSystem.Asset.ARTILLERY, false], ["포병 연막", FireSupportSystem.Asset.ARTILLERY, true],
+	["근접항공지원 [B]", FireSupportSystem.Asset.CAS, false],
+]
+
+
+func _build_fire_panel() -> void:
+	var p: PanelContainer = _panel(Control.PRESET_BOTTOM_RIGHT)
+	p.offset_right = -8
+	p.offset_bottom = -8
+	p.offset_left = -300
+	p.offset_top = -230
+	p.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	p.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	var v := VBoxContainer.new()
+	p.add_child(v)
+	var title := Label.new()
+	title.text = "화력 지원  (좌클릭: 표적, 우클릭: 취소)"
+	title.add_theme_font_size_override(&"font_size", 13)
+	v.add_child(title)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	v.add_child(grid)
+	for item: Array in FIRE_BUTTONS:
+		var b := Button.new()
+		b.text = item[0]
+		b.toggle_mode = true
+		b.focus_mode = Control.FOCUS_NONE
+		var asset: int = item[1]
+		var smoke: bool = item[2]
+		b.pressed.connect(func() -> void: set_fire_mode(asset, smoke); fire_mode_selected.emit(asset, smoke))
+		grid.add_child(b)
+		_fire_buttons["%d_%s" % [asset, smoke]] = b
+	_fire_label = RichTextLabel.new()
+	_fire_label.bbcode_enabled = true
+	_fire_label.fit_content = true
+	_fire_label.scroll_active = false
+	_fire_label.custom_minimum_size = Vector2(280, 60)
+	_fire_label.add_theme_font_size_override(&"normal_font_size", 12)
+	v.add_child(_fire_label)
+
+
+func set_fire_mode(asset: int, smoke: bool) -> void:
+	fire_asset = asset
+	fire_smoke = smoke
+	for key: String in _fire_buttons.keys():
+		_fire_buttons[key].button_pressed = asset >= 0 and key == "%d_%s" % [asset, smoke]
+
+
+func _update_fire_panel() -> void:
+	if _fire_label == null or battle == null or battle.fires == null:
+		return
+	var tf: TaskForce = battle.task_forces.get(battle.player_side)
+	if tf == null:
+		return
+	var lines: PackedStringArray = ["남은 포병 임무 %d   항공 출격 %d" % [tf.artillery_missions, tf.cas_sorties]]
+	var tick: int = battle.world.tick
+	for m: FireSupportSystem.Mission in battle.fires.active_missions(battle.player_side):
+		var t: String = FireSupportSystem.PHASE_NAMES[m.phase]
+		if m.phase == FireSupportSystem.Phase.PROCESSING:
+			t += " %.0f초" % maxf(0.0, (m.ready_tick - tick) / float(SimConst.TICK_RATE))
+		elif m.phase == FireSupportSystem.Phase.EFFECT:
+			t += " (남은 %d발)" % m.rounds_left
+		lines.append("• %s — %s" % [m.label(), t])
+	_fire_label.text = "\n".join(lines)
 
 
 func _add_misc(text: String, type: int, params: Dictionary) -> void:
@@ -218,7 +296,18 @@ func _update_selection_text() -> void:
 		lines.append("[color=#9fd3ff]대형 전환 중[/color]")
 	if u is Platoon and (u as Platoon).has_squads():
 		lines.append("보병 %s" % ("탑승" if (u as Platoon).mounted else "하차"))
+	lines.append("탄약 %d%%" % roundi(ammo_ratio(u) * 100.0))
 	_sel_label.text = "\n".join(lines)
+
+
+## 제대 탄약 비율(엘리먼트 보급 필요량 기준).
+static func ammo_ratio(u: Unit) -> float:
+	var full: float = 0.0
+	var need: float = 0.0
+	for e: Element in u.alive_elements():
+		full += e.def.supply_full
+		need += SupplySystem.element_need(e)
+	return 1.0 - need / full if full > 0.0 else 1.0
 
 
 static func _order_name(type: int) -> String:

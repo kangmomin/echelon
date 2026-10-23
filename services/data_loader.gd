@@ -162,6 +162,9 @@ static func validate_references(cat: DataCatalog, r: DefReader) -> void:
 				_check_unit_ref(cat, r, ref, &"company", t.faction)
 		for ref: String in t.organic:
 			_check_unit_ref(cat, r, ref, &"platoon", t.faction)
+		for wid: StringName in [t.artillery_weapon, t.cas_weapon]:
+			if wid != &"" and cat.get_weapon(wid) == null:
+				r.error("support 무기 '%s' 정의가 없음" % wid)
 		for slot: TOETemplate.AttachmentSlot in t.attachment_slots:
 			for ref: String in slot.allowed:
 				_check_unit_ref(cat, r, ref, &"platoon", t.faction)

@@ -31,6 +31,8 @@ var drag_to: Vector2 = Vector2.INF
 ## 커서 옆 명령 미리보기.
 var preview_text: String = ""
 var preview_pos: Vector2 = Vector2.ZERO
+## 선택이 없어도 미리보기를 그릴지(화력 요청 모드).
+var preview_force: bool = false
 
 var _font: Font
 ## 이번 프레임에 그린 부호(선택 판정용): [{"pos": Vector2, "unit": Unit}]
@@ -97,7 +99,7 @@ func _draw() -> void:
 					_draw_unit(u, hostile, alpha)
 	for u: Unit in selection:
 		_draw_selection_overlay(u)
-	if preview_text != "" and not selection.is_empty():
+	if preview_text != "" and (not selection.is_empty() or preview_force):
 		_text(preview_pos + Vector2(18, 26), preview_text, 13, Color(1.0, 0.92, 0.6))
 	if drag_from != Vector2.INF and drag_to != Vector2.INF:
 		var a: Vector2 = _screen(drag_from)

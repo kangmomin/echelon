@@ -61,6 +61,11 @@
     "artillery_mission": 25,
     "max_artillery": 8,
     "cas_sortie": 80,
-    "max_cas": 1
+    "max_cas": 1,
+    "artillery_weapon": "of45_152mm",
+    "battery_guns": 6,
+    "rounds_per_gun": 3,
+    "cas_weapon": "kab500_bomb",
+    "cas_bombs": 2
   }
 }

@@ -69,6 +69,8 @@ var last_hit_tick: int = -1000000
 var contact_halt_until: int = -1
 ## 공격 이동 중 다음 "짧은 정지"를 할 수 있는 틱(정지 후 일정 시간은 계속 전진).
 var next_halt_tick: int = -1
+## 포격 분산 반응을 다시 할 수 있는 틱.
+var next_disperse_tick: int = 0
 ## 패주 중(사기 20 이하). routed_until_tick 까지 후방으로 달아나고 명령을 받지 않는다.
 var routed: bool = false
 ## SOP 철수 기준으로 이미 한 번 스스로 철수했다.

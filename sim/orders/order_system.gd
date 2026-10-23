@@ -138,6 +138,18 @@ func capacity_queue_size(side: StringName) -> int:
 	return (_capacity_queue[side] as Array).size()
 
 
+## 화력 요청 같은 즉시 비용을 쓴다. 모자라면 false(쓰지 않음).
+func try_spend(side: StringName, amount: float) -> bool:
+	var tf: TaskForce = battle.task_forces.get(side)
+	if tf == null:
+		return false
+	_ensure_capacity(tf)
+	if capacity[side] < amount:
+		return false
+	capacity[side] -= amount
+	return true
+
+
 ## 현재 남은 지휘 용량(아직 한 번도 안 돌았으면 최대치).
 func capacity_now(side: StringName) -> float:
 	var c: float = capacity.get(side, -1.0)

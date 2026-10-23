@@ -9,6 +9,7 @@ extends Node
 ##   --start                skirmish 배치 단계를 바로 끝내고 전투 시작
 ##   --nofog                전장의 안개 끔(F9 와 같음)
 ##   --red-attack=X,Y       시작하자마자 적 중대들에 공격 이동 명령(교전 화면 확인용)
+##   --fire=A,X,Y[,smoke]   시작하자마자 화력 요청(A: 0 박격포, 1 포병, 2 CAS)
 
 const SMOKE_TIMEOUT_SEC: float = 60.0
 const SCREENSHOT_DELAY_FRAMES: int = 30
@@ -164,6 +165,10 @@ func _parse_cmdline() -> void:
 			_scene_arg = "sandbox"
 		elif arg == "--start":
 			_auto_start = true
+		elif arg.begins_with("--fire="):
+			# asset(0 박격포·1 포병·2 CAS),x,y[,smoke]
+			var fp: PackedStringArray = value.split(",")
+			_camera_args["fire"] = [fp[0].to_int(), Vector2(fp[1].to_float(), fp[2].to_float()), fp.size() > 3]
 		elif arg == "--nofog":
 			_camera_args["nofog"] = true
 		elif arg.begins_with("--red-attack="):
@@ -195,6 +200,14 @@ func _apply_camera_args() -> void:
 			var o: Order = Order.make(Order.Type.ATTACK_MOVE, red.companies[i].id)
 			o.set_pos(target + Vector2(i * 500.0 - 250.0, 0.0))
 			battle_scene.battle.issue_order(o)
+	if _camera_args.has("fire"):
+		var fire: Array = _camera_args["fire"]
+		var asset: int = fire[0]
+		var pos: Vector2 = fire[1]
+		var smoke: bool = fire[2]
+		battle_scene.battle.run_ticks(25)  # 지휘망이 한 번 계산되도록
+		var res: Dictionary = battle_scene.battle.fires.request(battle_scene.battle.player_side, asset, pos, smoke)
+		print("[fire] ", res.get("error", "요청됨"))
 	if _camera_args.has("run_sec"):
 		var run_sec: float = _camera_args["run_sec"]
 		battle_scene.battle.run_seconds(run_sec)

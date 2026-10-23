@@ -64,6 +64,14 @@ func execute(unit: Unit, order: Order) -> void:
 			order.state = Order.State.DONE
 		Order.Type.CANCEL:
 			order.state = Order.State.DONE
+		Order.Type.RESUPPLY:
+			_finish_mission(unit, Order.State.CANCELLED)
+			if unit is Platoon:
+				battle.supply.request(unit as Platoon)
+			for child: Unit in unit.children_units():
+				if child is Platoon and not (child as Platoon).is_hq_section:
+					battle.supply.request(child as Platoon)
+			order.state = Order.State.DONE
 		Order.Type.FOLLOW:
 			# 중대의 번역 명령이 소대에 닿았다: 중대 대형을 따라 움직이기 시작.
 			unit.awaiting_follow = false

@@ -30,6 +30,8 @@ var _mesh_instance: MeshInstance3D
 var _line_material: StandardMaterial3D
 var _flash_material: StandardMaterial3D
 var _smoke_material: StandardMaterial3D
+## 연막탄 차장(연한 회색).
+var _screen_material: StandardMaterial3D
 
 
 func setup(p_battle: Battle) -> void:
@@ -48,6 +50,9 @@ func setup(p_battle: Battle) -> void:
 	_flash_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_flash_material.albedo_color = Color(1.0, 0.7, 0.3, 0.85)
 	_flash_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_screen_material = StandardMaterial3D.new()
+	_screen_material.albedo_color = Color(0.85, 0.86, 0.88, 0.75)
+	_screen_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_smoke_material = StandardMaterial3D.new()
 	_smoke_material.albedo_color = Color(0.2, 0.2, 0.2, 0.45)
 	_smoke_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -82,6 +87,32 @@ func on_event(ev: Dictionary) -> void:
 			var pos: Vector2 = pl["pos"]
 			_add_flash(pos, 6.0, FLASH_SEC, _flash_material, 2.0)
 			_add_flash(pos, 5.0, WRECK_SMOKE_SEC, _smoke_material, 2.5)
+		&"shell":
+			var sp: Vector2 = pl["pos"]
+			var smoke: bool = pl.get("smoke", false)
+			if smoke:
+				var r: float = pl.get("radius", 35.0)
+				_add_flash(sp, r * 0.6, 120.0, _screen_material, 1.6)
+			else:
+				_add_flash(sp, 9.0, 0.8, _flash_material, 2.5)
+				_add_flash(sp, 7.0, 6.0, _smoke_material, 2.0)
+		&"indirect_fire":
+			var from_id2: int = pl.get("from", -1)
+			var from_e2: Element = battle.get_element(from_id2)
+			if from_e2 != null and _visible(from_e2):
+				var mp: Vector2 = pl["pos"]
+				_add_flash(mp, 3.0, 0.3, _flash_material, 1.5)
+		&"sam_launch":
+			var sam_id: int = pl.get("from", -1)
+			var sam_e: Element = battle.get_element(sam_id)
+			if sam_e != null and _visible(sam_e):
+				var t2 := Tracer.new()
+				var a2: Vector2 = pl["pos"]
+				var b2: Vector2 = pl["to"]
+				t2.a = ViewCoords.to_3d(a2, battle.terrain.ground_height(a2) + 3.0)
+				t2.b = ViewCoords.to_3d(b2, battle.terrain.ground_height(b2) + 400.0)
+				t2.color = Color(1.0, 1.0, 0.85)
+				_tracers.append(t2)
 
 
 func _visible(e: Element) -> bool:

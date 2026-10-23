@@ -16,6 +16,10 @@ const WITHDRAW_DISTANCE_M: float = 600.0
 const BREAK_CONTACT_DISTANCE_M: float = 400.0
 const ROUT_DISTANCE_M: float = 800.0
 const ASSAULT_MAX_M: float = 1200.0
+## 포격 SOP "분산": 착탄 3초 안이면 정지해 있던 제대가 착탄점 반대쪽으로 250 m 옮긴다(60초에 한 번).
+const SHELLED_TICKS: int = 30
+const DISPERSE_M: float = 250.0
+const DISPERSE_COOLDOWN: int = 600
 
 var battle: Battle
 
@@ -62,6 +66,12 @@ func _company(c: Company, tick: int) -> void:
 				c.contact_halt_until = tick + HALT_TICKS
 			&"break_contact":
 				_self_order(c, Order.Type.WITHDRAW, _away_from_contact(c, BREAK_CONTACT_DISTANCE_M))
+	var shelled: Platoon = null
+	for p: Platoon in c.formation_platoons():
+		if tick - p.last_shelled_tick < SHELLED_TICKS:
+			shelled = p
+	if shelled != null:
+		_disperse(c, shelled.last_shell_pos, tick)
 	if c.sop.withdraw_at > 0.0 and c.strength() <= c.sop.withdraw_at and c.posture != &"withdrawing" \
 			and not c.auto_withdrawn:
 		c.auto_withdrawn = true
@@ -83,6 +93,8 @@ func _platoon(p: Platoon, tick: int) -> void:
 		return
 	if p.follows_parent():
 		return  # 대형 안의 소대는 중대가 반응한다.
+	if tick - p.last_shelled_tick < SHELLED_TICKS:
+		_disperse(p, p.last_shell_pos, tick)
 	if contact and p.posture == &"moving" and p.mission != null and p.mission.type == Order.Type.ATTACK_MOVE:
 		_attack_halt(p, tick)
 	elif contact and (p.posture == &"moving" or p.posture == &"idle"):
@@ -104,6 +116,25 @@ func _platoon(p: Platoon, tick: int) -> void:
 		battle.world.events.emit_event(&"auto_withdraw", tick, {"unit": p.id, "side": p.side})
 
 
+## 포격을 받으면(SOP 분산) 정지해 있던 제대가 착탄점에서 멀어진다. 이동 중이면 그대로 계속 간다.
+func _disperse(u: Unit, shell_pos: Vector2, tick: int) -> void:
+	if u.sop.under_fire != &"disperse" or tick < u.next_disperse_tick:
+		return
+	if u.posture != &"idle" and u.posture != &"defending":
+		return
+	if u.guide.is_moving() or u.guide.is_waiting_for_path():
+		return
+	u.next_disperse_tick = tick + DISPERSE_COOLDOWN
+	var here: Vector2 = u.centroid()
+	var away: Vector2 = here - shell_pos
+	if away.length() < 5.0:
+		away = FormationSolver.right_vector(u.guide.heading)
+	var dest: Vector2 = here + away.normalized() * DISPERSE_M
+	var facing: float = u.guide.heading
+	battle.self_order(u, Order.Type.MOVE, battle.terrain.nearest_passable(dest, Terrain.MOBILITY_VEHICLE), {"facing": facing})
+	battle.world.events.emit_event(&"disperse", tick, {"unit": u.id, "side": u.side})
+
+
 ## 공격 이동의 짧은 정지: 정지 사격 HALT_TICKS → 전진 ATTACK_ADVANCE_TICKS 를 반복.
 func _attack_halt(u: Unit, tick: int) -> void:
 	if tick < u.next_halt_tick:
@@ -113,13 +144,7 @@ func _attack_halt(u: Unit, tick: int) -> void:
 
 
 func _self_order(u: Unit, type: int, pos: Vector2) -> void:
-	var o: Order = Order.make(type, u.id)
-	o.issuer = &"self"
-	o.set_pos(battle.terrain.clamp_to_map(pos, 20.0))
-	battle.register_order(o)
-	o.state = Order.State.RECEIVED
-	o.received_tick = battle.world.tick
-	battle.executor.execute(u, o)
+	battle.self_order(u, type, pos)
 
 
 ## 자기 진영 후방(배치 구역 쪽)으로 distance 만큼 물러난 지점.

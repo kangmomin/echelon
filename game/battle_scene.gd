@@ -7,6 +7,7 @@ signal battle_finished(result: Dictionary)
 
 const DOUBLE_CLICK_MS: int = 350
 const DRAG_THRESHOLD_PX: float = 18.0
+const OBSERVER_NAMES: Array[String] = ["관측반 관측", "일반 엘리먼트 관측", "관측 없음, 지도 좌표 사격"]
 
 var battle: Battle
 var rts_camera: RtsCamera
@@ -177,6 +178,16 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_mouse_button(mb: InputEventMouseButton) -> void:
+	if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed and hud.fire_asset >= 0 and not battle.deploying:
+		var w: Vector2 = TerrainPicker.pick(rts_camera.camera, mb.position, battle.terrain)
+		if w != Vector2.INF:
+			_request_fire(w)
+		get_viewport().set_input_as_handled()
+		return
+	if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed and hud.fire_asset >= 0:
+		hud.set_fire_mode(-1, false)
+		get_viewport().set_input_as_handled()
+		return
 	if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 		var u: Unit = symbols.pick_unit(mb.position, battle.player_side)
 		var now: int = Time.get_ticks_msec()
@@ -249,7 +260,20 @@ func _on_key(k: InputEventKey) -> void:
 			_select_company(k.physical_keycode)
 		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7:
 			_formation_hotkey(k.physical_keycode - KEY_1)
+		KEY_Z:
+			hud.set_fire_mode(FireSupportSystem.Asset.MORTAR, false)
+		KEY_V:
+			hud.set_fire_mode(FireSupportSystem.Asset.MORTAR, true)
+		KEY_C:
+			hud.set_fire_mode(FireSupportSystem.Asset.ARTILLERY, false)
+		KEY_B:
+			hud.set_fire_mode(FireSupportSystem.Asset.CAS, false)
+		KEY_R:
+			_on_immediate_order(Order.Type.RESUPPLY, {})
 		KEY_ESCAPE:
+			if hud.fire_asset >= 0:
+				hud.set_fire_mode(-1, false)
+				return
 			selection = []
 			_selection_changed()
 		_:
@@ -279,6 +303,18 @@ func _issue_move_orders(target: Vector2, facing: float, append: bool) -> void:
 		o.bypass = u.level == Unit.Level.PLATOON and (u as Platoon).follows_parent()
 		battle.issue_order(o)
 	hud.set_order_mode(Order.Type.MOVE)
+
+
+func _request_fire(target: Vector2) -> void:
+	var asset: int = hud.fire_asset
+	var res: Dictionary = battle.fires.request(battle.player_side, asset, target, hud.fire_smoke)
+	if res.get("ok", false):
+		var m: FireSupportSystem.Mission = res["mission"]
+		notifications.push("%s 요청 — 약 %.0f초 뒤 초탄 (%s)" % [m.label(), m.delay_sec, OBSERVER_NAMES[m.observer_quality]],
+			EventText.INFO)
+	else:
+		notifications.push("%s 요청 불가: %s" % [FireSupportSystem.ASSET_NAMES[asset], str(res.get("error", ""))], EventText.BAD)
+	hud.set_fire_mode(-1, false)
 
 
 func _on_immediate_order(type: int, params: Dictionary) -> void:
@@ -337,6 +373,22 @@ func _update_preview(screen_pos: Vector2) -> void:
 	if battle.deploying:
 		symbols.preview_text = "배치: 우클릭으로 옮기기" if not selection.is_empty() else ""
 		return
+	if hud.fire_asset >= 0:
+		var w: Vector2 = TerrainPicker.pick(rts_camera.camera, screen_pos, battle.terrain)
+		symbols.preview_force = true
+		if w == Vector2.INF:
+			symbols.preview_text = ""
+			return
+		var pv: Dictionary = battle.fires.preview(battle.player_side, hud.fire_asset, w)
+		var fire_name: String = FireSupportSystem.ASSET_NAMES[hud.fire_asset] + (" 연막" if hud.fire_smoke else "")
+		if pv.has("error"):
+			symbols.preview_text = "%s — %s" % [fire_name, str(pv["error"])]
+		else:
+			var q: int = pv["quality"]
+			var sec: float = pv["seconds"]
+			symbols.preview_text = "%s — %s, 약 %.0f초" % [fire_name, OBSERVER_NAMES[q], sec]
+		return
+	symbols.preview_force = false
 	if selection.is_empty() or battle.order_system == null:
 		symbols.preview_text = ""
 		return

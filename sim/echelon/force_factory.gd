@@ -287,6 +287,7 @@ func _add_element(p: Platoon, element_id: StringName) -> Element:
 	e.platoon = p
 	e.index_in_platoon = p.elements.size()
 	e.hp = def.hp
+	e.supply_left = def.supply_capacity
 	for weapon_id: StringName in def.ammo.keys():
 		e.ammo[weapon_id] = def.ammo[weapon_id]
 	for weapon_id: String in def.weapons:

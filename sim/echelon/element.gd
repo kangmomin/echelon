@@ -56,6 +56,10 @@ var last_hit_tick: int = -1000000
 var kills: int = 0
 ## 이 엘리먼트를 쓰러뜨린 상대 id(AAR).
 var killed_by: int = -1
+## 보급 트럭: 남은 보급 단위.
+var supply_left: float = 0.0
+## 수리 진행(초).
+var repair_sec: float = 0.0
 var destroyed_tick: int = -1
 
 

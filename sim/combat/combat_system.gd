@@ -294,6 +294,49 @@ func _he_splash(e: Element, w: WeaponDef, center: Vector2, direct: Element, tick
 			_resolve_infantry_hit(e, w, o, tick, w.damage * HE_SPLASH_CASUALTY_PER_DAMAGE)
 
 
+## 간접화력 한 발 착탄. 반경 안 피해는 거리·대형 포격 취약도·피복·진지에 따라 줄고, 2배 반경까지 제압. PLAN 10.1.
+## 차량은 상면 장갑 대 관통력, 보병은 인원 손실. 아군 오사는 다루지 않는다.
+func indirect_impact(pos: Vector2, w: WeaponDef, firing_side: StringName, source: Element, tick: int) -> void:
+	var r: float = maxf(w.he_radius_m, 1.0)
+	var rng: SimRng = battle.world.rng
+	for o: Element in battle.elements_near(pos, r * 2.0):
+		if o.side == firing_side or o.is_mounted() or not o.is_alive():
+			continue
+		var d: float = o.pos.distance_to(pos)
+		_suppress(o, w.suppression * clampf(1.0 - d / (r * 2.0), 0.0, 1.0))
+		o.last_hit_tick = tick
+		if o.platoon != null:
+			o.platoon.last_hit_tick = tick
+			o.platoon.last_shelled_tick = tick
+			o.platoon.last_shell_pos = pos
+		if d > r:
+			continue
+		var k: float = (1.0 - d / r) * arty_vulnerability(o)
+		if o.is_infantry():
+			_resolve_infantry_hit(source, w, o, tick, w.damage * HE_SPLASH_CASUALTY_PER_DAMAGE * 2.0 * k)
+			continue
+		match classify_penetration(w.penetration, o.def.get_armor(&"top")):
+			&"overmatch":
+				if rng.chance(k * KILL_P):
+					destroy(o, source, tick)
+				elif rng.chance(k):
+					damage(o, source, tick)
+			&"marginal":
+				if rng.chance(k * MARGINAL_P):
+					damage(o, source, tick)
+
+
+## 포격 취약도: 대형(arty_vuln) × 지형 피복 × 진지(오래 정지).
+func arty_vulnerability(o: Element) -> float:
+	var v: float = 1.0
+	if o.platoon != null and o.platoon.formation != null:
+		v *= o.platoon.formation.get_mod(&"arty_vuln", 1.0)
+	v *= TARGET_COVER_ACC.get(battle.terrain.type_at(o.pos), 1.0)
+	if o.stationary_ticks > DUG_IN_TICKS:
+		v *= DUG_IN_COVER
+	return v
+
+
 func _suppress(t: Element, amount: float) -> void:
 	t.suppression = minf(100.0, t.suppression + amount)
 

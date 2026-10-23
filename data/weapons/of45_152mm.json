@@ -1,0 +1,23 @@
+{
+  "id": "of45_152mm",
+  "type": "HE",
+  "range_m": {
+    "min": 0,
+    "max": 24000
+  },
+  "penetration": 70,
+  "damage": 90,
+  "accuracy": {
+    "base": 1.0,
+    "at_max_range": 1.0
+  },
+  "rof_rpm": 4,
+  "suppression": 85,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 50,
+  "indirect": true
+}

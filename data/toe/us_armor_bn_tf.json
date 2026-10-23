@@ -56,6 +56,11 @@
     "artillery_mission": 30,
     "max_artillery": 6,
     "cas_sortie": 70,
-    "max_cas": 2
+    "max_cas": 2,
+    "artillery_weapon": "m795_155mm",
+    "battery_guns": 6,
+    "rounds_per_gun": 3,
+    "cas_weapon": "gbu38_jdam",
+    "cas_bombs": 2
   }
 }

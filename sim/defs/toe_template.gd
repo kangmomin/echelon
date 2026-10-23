@@ -35,6 +35,12 @@ var artillery_mission_cost: int = 30
 var max_artillery: int = 6
 var cas_sortie_cost: int = 70
 var max_cas: int = 2
+## 지도 밖 포대·항공의 무기와 규모.
+var artillery_weapon: StringName = &""
+var battery_guns: int = 6
+var rounds_per_gun: int = 3
+var cas_weapon: StringName = &""
+var cas_bombs: int = 2
 
 
 static func from_dict(d: Dictionary, r: DefReader) -> TOETemplate:
@@ -79,6 +85,11 @@ static func from_dict(d: Dictionary, r: DefReader) -> TOETemplate:
 	t.max_artillery = r.opt_int(sup, "max_artillery", 6)
 	t.cas_sortie_cost = r.opt_int(sup, "cas_sortie", 70)
 	t.max_cas = r.opt_int(sup, "max_cas", 2)
+	t.artillery_weapon = StringName(r.opt_string(sup, "artillery_weapon", ""))
+	t.battery_guns = r.opt_int(sup, "battery_guns", 6)
+	t.rounds_per_gun = r.opt_int(sup, "rounds_per_gun", 3)
+	t.cas_weapon = StringName(r.opt_string(sup, "cas_weapon", ""))
+	t.cas_bombs = r.opt_int(sup, "cas_bombs", 2)
 	t.command_capacity_per_min = r.req_number(d, "command_capacity_per_min")
 	r.check_range(t.command_capacity_per_min, 1.0, 20.0, "command_capacity_per_min")
 	t.max_companies = r.req_int(d, "max_companies")

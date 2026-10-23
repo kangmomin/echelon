@@ -10,6 +10,9 @@ var mounted: bool = true
 var loadout: StringName = &""
 ## 대대 배속 자산(관측반·방공 등).
 var attached: bool = false
+## 최근 포격을 받은 틱과 착탄점(포격 SOP 반응용).
+var last_shelled_tick: int = -1000000
+var last_shell_pos: Vector2 = Vector2.ZERO
 ## 이 소대가 최근 본 적: element_id → 틱. 사격 표적은 여기서 고른다.
 var contacts: Dictionary[int, int] = {}
 

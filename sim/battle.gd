@@ -29,6 +29,8 @@ var platoon_ai: PlatoonAI
 var detection: DetectionSystem
 var combat: CombatSystem
 var morale: MoraleSystem
+var fires: FireSupportSystem
+var supply: SupplySystem
 ## 연막 구름(M5 화력지원이 만든다).
 var smokes: Array[Los.Smoke] = []
 ## 명령 전파 시스템. null 이면 명령을 즉시 실행한다(이동 테스트용 instant 모드).
@@ -57,7 +59,7 @@ static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_overrid
 	b.world = SimWorld.new(b.scenario.seed_value if seed_override < 0 else seed_override)
 	b.factory = ForceFactory.new(b)
 	b.executor = OrderExecutor.new(b)
-	# 시스템 실행 순서(결정론): 통신 → 승계 → 명령 전파 → 자율 반응 → 이동 → 탐지 → 사격 → 사기.
+	# 시스템 실행 순서(결정론): 통신 → 승계 → 명령 전파 → 자율 반응 → 이동 → 탐지 → 사격 → 화력지원 → 보급 → 사기.
 	b.comms = CommsNet.new(b)
 	b.morale = MoraleSystem.new(b)
 	b.world.add_system(b.comms)
@@ -74,6 +76,10 @@ static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_overrid
 	b.world.add_system(b.detection)
 	b.combat = CombatSystem.new(b)
 	b.world.add_system(b.combat)
+	b.fires = FireSupportSystem.new(b)
+	b.world.add_system(b.fires)
+	b.supply = SupplySystem.new(b)
+	b.world.add_system(b.supply)
 	b.world.add_system(b.morale)
 	return b
 
@@ -183,6 +189,8 @@ func dispose() -> void:
 	detection = null
 	combat = null
 	morale = null
+	fires = null
+	supply = null
 	smokes.clear()
 	factory = null
 
@@ -209,6 +217,18 @@ func deploy_unit(u: Unit, pos: Vector2, heading: float) -> bool:
 		u = u.parent
 	factory.redeploy(u, p, heading)
 	return true
+
+
+## 제대 자신의 판단으로 내는 명령(자율 반응·보급·증원). 지휘망을 타지 않고 바로 실행한다.
+func self_order(u: Unit, type: int, pos: Vector2, params: Dictionary = {}) -> Order:
+	var o: Order = Order.make(type, u.id, params)
+	o.issuer = &"self"
+	o.set_pos(terrain.clamp_to_map(pos, 20.0))
+	register_order(o)
+	o.state = Order.State.RECEIVED
+	o.received_tick = world.tick
+	executor.execute(u, o)
+	return o
 
 
 func step_tick() -> void:

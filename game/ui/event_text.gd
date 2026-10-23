@@ -46,4 +46,40 @@ static func describe(battle: Battle, ev: Dictionary, player_side: StringName) ->
 			return ["%s: 지휘관 손실 — 승계까지 %.0f초" % [unit_name, seconds], BAD]
 		&"succession_done":
 			return ["%s: 지휘권 승계 완료" % unit_name, INFO]
+		&"element_destroyed":
+			var eid: int = p.get("element", -1)
+			var e: Element = battle.get_element(eid)
+			return ["%s: %s 격파됨" % [unit_name, e.def.display_name if e != null else "엘리먼트"], BAD]
+		&"routed":
+			return ["%s: 패주!" % unit_name, BAD]
+		&"rally":
+			return ["%s: 재집결" % unit_name, INFO]
+		&"order_refused":
+			return ["%s: 사기 저하로 공격 명령 거부" % unit_name, WARN]
+		&"auto_withdraw":
+			return ["%s: 전투력 저하 — 스스로 철수" % unit_name, WARN]
+		&"fire_mission":
+			var ph: int = p.get("phase", 0)
+			var asset: int = p.get("asset", 0)
+			if ph == FireSupportSystem.Phase.EFFECT:
+				return ["%s: 효력사 시작" % FireSupportSystem.ASSET_NAMES[asset], INFO]
+			if ph == FireSupportSystem.Phase.DONE:
+				return ["%s: 사격 완료" % FireSupportSystem.ASSET_NAMES[asset], INFO]
+			return []
+		&"cas_shot_down":
+			return ["근접항공지원: 적 방공에 격추됨", BAD]
+		&"resupplied":
+			return ["%s: 보급 완료" % unit_name, GOOD]
+		&"supply_dispatched":
+			var tid: int = p.get("target", -1)
+			var target: Unit = battle.get_unit(tid)
+			return ["%s: %s 로 보급 출발" % [unit_name, target.label() if target != null else "?"], INFO]
+		&"supply_returning":
+			return ["%s: 보급소로 재보급 복귀" % unit_name, INFO]
+		&"repaired":
+			return ["%s: 손상 차량 수리 완료" % unit_name, GOOD]
+		&"disperse":
+			return ["%s: 포격 — 분산 이동" % unit_name, WARN]
+		&"reinforcement_arrived":
+			return ["%s: 증원 도착" % unit_name, GOOD]
 	return []
