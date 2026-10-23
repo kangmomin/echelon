@@ -1,7 +1,7 @@
 class_name RtsCamera
 extends Node3D
 ## RTS 카메라: 피벗(지면 위 초점) + 거리·기울기·회전.
-## 화살표 키/화면 가장자리 = 이동, 휠 = 확대·축소, 가운데 버튼 드래그 = 회전·기울기.
+## WASD·화살표 키/화면 가장자리 = 이동(Broken Arrow 와 같은 WASD), 휠 = 확대·축소, 가운데 버튼 드래그 = 회전·기울기.
 
 const MIN_DISTANCE: float = 80.0
 const MAX_DISTANCE: float = 6000.0
@@ -51,13 +51,16 @@ func height_above_ground() -> float:
 
 func _process(delta: float) -> void:
 	var move := Vector2.ZERO
-	if Input.is_physical_key_pressed(KEY_LEFT):
+	# Ctrl·Alt 조합(부대 지정 등)일 때는 WASD 로 움직이지 않는다.
+	var wasd: bool = not Input.is_key_pressed(KEY_CTRL) and not Input.is_key_pressed(KEY_ALT) \
+		and get_viewport().gui_get_focus_owner() == null
+	if Input.is_physical_key_pressed(KEY_LEFT) or (wasd and Input.is_physical_key_pressed(KEY_A)):
 		move.x -= 1.0
-	if Input.is_physical_key_pressed(KEY_RIGHT):
+	if Input.is_physical_key_pressed(KEY_RIGHT) or (wasd and Input.is_physical_key_pressed(KEY_D)):
 		move.x += 1.0
-	if Input.is_physical_key_pressed(KEY_UP):
+	if Input.is_physical_key_pressed(KEY_UP) or (wasd and Input.is_physical_key_pressed(KEY_W)):
 		move.y += 1.0
-	if Input.is_physical_key_pressed(KEY_DOWN):
+	if Input.is_physical_key_pressed(KEY_DOWN) or (wasd and Input.is_physical_key_pressed(KEY_S)):
 		move.y -= 1.0
 	if edge_scroll and DisplayServer.window_is_focused():
 		var vp: Viewport = get_viewport()

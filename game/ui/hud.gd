@@ -10,8 +10,8 @@ signal fire_mode_selected(asset: int, smoke: bool)
 
 const PANEL_BG: Color = Color(0.06, 0.07, 0.09, 0.93)
 const ORDER_MODES: Array[Array] = [
-	[Order.Type.MOVE, "이동", "M"], [Order.Type.FAST_MOVE, "급속 이동", "G"], [Order.Type.ATTACK_MOVE, "공격 이동", "A"],
-	[Order.Type.SEIZE, "확보", "S"], [Order.Type.DEFEND, "방어", "D"], [Order.Type.WITHDRAW, "철수", "X"],
+	[Order.Type.MOVE, "이동", "M"], [Order.Type.FAST_MOVE, "급속 이동", "F"], [Order.Type.ATTACK_MOVE, "공격 이동", "Q"],
+	[Order.Type.SEIZE, "확보", "Y"], [Order.Type.DEFEND, "방어", "J"], [Order.Type.WITHDRAW, "철수", "B"],
 ]
 const PLATOON_FORMATIONS: Array[StringName] = [&"column", &"wedge", &"line", &"echelon_left", &"echelon_right", &"vee", &"coil"]
 const COMPANY_FORMATIONS: Array[StringName] = [&"co_column", &"co_wedge", &"co_line", &"co_echelon_left", &"co_echelon_right", &"co_vee", &"co_box"]
@@ -157,7 +157,7 @@ func _build_command_panel() -> void:
 		modes.add_child(b)
 		_mode_buttons[t] = b
 	var halt := Button.new()
-	halt.text = "정지 [H]"
+	halt.text = "정지·취소 [E]"
 	halt.focus_mode = Control.FOCUS_NONE
 	halt.pressed.connect(func() -> void: immediate_order.emit(Order.Type.HALT, {}))
 	modes.add_child(halt)
@@ -167,12 +167,14 @@ func _build_command_panel() -> void:
 
 	_misc_box = HBoxContainer.new()
 	v.add_child(_misc_box)
-	_add_misc("경계 이동 [W]", Order.Type.SET_SOP, {"sop": {"technique": "overwatch"}})
-	_add_misc("교대 약진 [E]", Order.Type.SET_SOP, {"sop": {"technique": "bounding"}})
-	_add_misc("일반 이동 [Q]", Order.Type.SET_SOP, {"sop": {"technique": "traveling"}})
-	_add_misc("보급 [R]", Order.Type.RESUPPLY, {})
+	_add_misc("일반 이동", Order.Type.SET_SOP, {"sop": {"technique": "traveling"}})
+	_add_misc("경계 이동", Order.Type.SET_SOP, {"sop": {"technique": "overwatch"}})
+	_add_misc("교대 약진", Order.Type.SET_SOP, {"sop": {"technique": "bounding"}})
+	_add_misc("사격 중지 [H]", Order.Type.SET_SOP, {"sop": {"roe": "hold_fire"}})
+	_add_misc("사격 자유", Order.Type.SET_SOP, {"sop": {"roe": "fire_at_will"}})
+	_add_misc("보급 [K]", Order.Type.RESUPPLY, {})
 	_add_misc("탑승", Order.Type.MOUNT, {})
-	_add_misc("하차", Order.Type.DISMOUNT, {})
+	_add_misc("하차 [U]", Order.Type.DISMOUNT, {})
 	_add_misc("분리", Order.Type.DETACH, {})
 	_add_misc("복귀", Order.Type.REJOIN, {})
 	set_order_mode(Order.Type.MOVE)
@@ -180,9 +182,9 @@ func _build_command_panel() -> void:
 
 ## 화력 지원 패널(오른쪽 아래): 자산 버튼, 남은 횟수, 진행 중인 임무. PLAN 10.1.
 const FIRE_BUTTONS: Array[Array] = [
-	["박격포 [Z]", FireSupportSystem.Asset.MORTAR, false], ["박격포 연막 [V]", FireSupportSystem.Asset.MORTAR, true],
-	["포병 [C]", FireSupportSystem.Asset.ARTILLERY, false], ["포병 연막", FireSupportSystem.Asset.ARTILLERY, true],
-	["근접항공지원 [B]", FireSupportSystem.Asset.CAS, false],
+	["박격포 [T]", FireSupportSystem.Asset.MORTAR, false], ["박격포 연막 [G]", FireSupportSystem.Asset.MORTAR, true],
+	["포병 [T T]", FireSupportSystem.Asset.ARTILLERY, false], ["포병 연막 [G G]", FireSupportSystem.Asset.ARTILLERY, true],
+	["근접항공지원 [P]", FireSupportSystem.Asset.CAS, false],
 ]
 
 
@@ -271,7 +273,7 @@ func _rebuild_formation_buttons() -> void:
 		if f == null:
 			continue
 		var b := Button.new()
-		b.text = "%s [%d]" % [f.display_name, i + 1]
+		b.text = "%s [Alt+%d]" % [f.display_name, i + 1]
 		b.focus_mode = Control.FOCUS_NONE
 		b.toggle_mode = true
 		b.button_pressed = selection[0].formation == f
@@ -284,7 +286,7 @@ func _update_selection_text() -> void:
 	if _sel_label == null:
 		return
 	if selection.is_empty() or battle == null:
-		_sel_label.text = "[color=#aaa]부대를 선택하세요.\n좌클릭: 선택  우클릭: 명령  우클릭 드래그: 방향 지정\nShift: 명령 대기열  Ctrl: 추가 선택[/color]"
+		_sel_label.text = "[color=#aaa]부대를 선택하세요.\n좌클릭: 선택  우클릭: 명령  우클릭 드래그: 방향 지정\nShift: 명령 대기열  Ctrl+클릭: 추가 선택\nWASD: 카메라  Ctrl+1~9: 부대 지정  1~9: 불러오기\nTab: 하위 제대  L: 이동 방식 전환[/color]"
 		return
 	var u: Unit = selection[0]
 	var lines: PackedStringArray = []
@@ -293,7 +295,8 @@ func _update_selection_text() -> void:
 		lines.append("외 %d개 제대 선택" % (selection.size() - 1))
 	lines.append("전투력 %d%%   사기 %d   통신 %s" % [roundi(u.strength() * 100.0), roundi(u.morale), u.comms_name()])
 	var f_name: String = u.formation.display_name if u.formation != null else "-"
-	lines.append("대형 %s   이동 방식 %s" % [f_name, _technique_name(u.sop.technique)])
+	lines.append("대형 %s   이동 방식 %s   사격 %s" % [f_name, _technique_name(u.sop.technique),
+		"중지" if u.sop.roe == &"hold_fire" else "자유"])
 	var mission: String = _order_name(u.mission.type) if u.mission != null and not u.mission.is_finished() else "없음"
 	lines.append("자세 %s   임무 %s" % [_posture_name(u.posture), mission])
 	if u.detached:

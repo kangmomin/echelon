@@ -28,6 +28,10 @@ var selection: Array[Unit] = []
 var _rclick_screen: Vector2 = Vector2.INF
 var _rclick_world: Vector2 = Vector2.INF
 var _last_click_ms: int = 0
+## 부대 지정(Ctrl+숫자): 번호 → 제대 목록.
+var _groups: Dictionary[int, Array] = {}
+var _last_group: int = -1
+var _last_group_ms: int = 0
 var _advance_usec: int = 0
 var _advance_peak_usec: int = 0
 
@@ -231,9 +235,25 @@ func _on_mouse_button(mb: InputEventMouseButton) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## 단축키는 Broken Arrow 기본 배치를 따른다(공식 매뉴얼 기준). 이 게임에만 있는 명령은 빈 키에 둔다.
+## WASD = 카메라(RtsCamera), Q 공격 이동, F 급속 이동, E 명령 취소(정지), H 사격 중지 토글, U 탑승/하차,
+## B 철수, T 화력 요청(박격포 → 포병), G 연막(박격포 → 포병), P 근접항공지원, 1~9 부대 지정 선택, Ctrl+1~9 지정,
+## Tab 하위 제대 선택(Shift+Tab 상위). BA 에는 있지만 이 게임에 없는 명령(R 후진, Z 질주, X 연막탄, C 기만체, V 고도)은 안내만 한다.
 func _on_key(k: InputEventKey) -> void:
 	var handled: bool = true
-	match k.physical_keycode:
+	var code: Key = k.physical_keycode
+	# 숫자: 1~9 부대 지정 선택, Ctrl 지정, Shift 추가, Alt 대형.
+	if code >= KEY_1 and code <= KEY_9:
+		var n: int = code - KEY_1
+		if k.alt_pressed:
+			_formation_hotkey(n)
+		elif k.ctrl_pressed:
+			_assign_group(n + 1)
+		else:
+			_recall_group(n + 1, k.shift_pressed)
+		get_viewport().set_input_as_handled()
+		return
+	match code:
 		KEY_SPACE:
 			if not battle.deploying:
 				battle.world.toggle_pause()
@@ -248,41 +268,45 @@ func _on_key(k: InputEventKey) -> void:
 			notifications.push("전장의 안개 %s" % ("켬" if fog_enabled else "끔"), Color(0.8, 0.8, 0.8))
 		KEY_M:
 			hud.set_order_mode(Order.Type.MOVE)
-		KEY_G:
+		KEY_F:
 			hud.set_order_mode(Order.Type.FAST_MOVE)
-		KEY_A:
-			hud.set_order_mode(Order.Type.ATTACK_MOVE)
-		KEY_S:
-			hud.set_order_mode(Order.Type.SEIZE)
-		KEY_D:
-			hud.set_order_mode(Order.Type.DEFEND)
-		KEY_X:
-			hud.set_order_mode(Order.Type.WITHDRAW)
-		KEY_H:
-			_on_immediate_order(Order.Type.HALT, {})
 		KEY_Q:
-			_on_immediate_order(Order.Type.SET_SOP, {"sop": {"technique": "traveling"}})
-		KEY_W:
-			_on_immediate_order(Order.Type.SET_SOP, {"sop": {"technique": "overwatch"}})
-		KEY_E:
-			_on_immediate_order(Order.Type.SET_SOP, {"sop": {"technique": "bounding"}})
-		KEY_F1, KEY_F2, KEY_F3, KEY_F4:
-			_select_company(k.physical_keycode)
-		KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7:
-			_formation_hotkey(k.physical_keycode - KEY_1)
-		KEY_Z:
-			hud.set_fire_mode(FireSupportSystem.Asset.MORTAR, false)
-		KEY_V:
-			hud.set_fire_mode(FireSupportSystem.Asset.MORTAR, true)
-		KEY_C:
-			hud.set_fire_mode(FireSupportSystem.Asset.ARTILLERY, false)
+			hud.set_order_mode(Order.Type.ATTACK_MOVE)
+		KEY_Y:
+			hud.set_order_mode(Order.Type.SEIZE)
+		KEY_J:
+			hud.set_order_mode(Order.Type.DEFEND)
 		KEY_B:
-			hud.set_fire_mode(FireSupportSystem.Asset.CAS, false)
-		KEY_R:
+			hud.set_order_mode(Order.Type.WITHDRAW)
+		KEY_E:
+			_on_immediate_order(Order.Type.HALT, {})
+			hud.set_order_mode(Order.Type.MOVE)
+		KEY_H:
+			_toggle_hold_fire()
+		KEY_U:
+			_toggle_mount()
+		KEY_L:
+			_cycle_technique()
+		KEY_K:
 			_on_immediate_order(Order.Type.RESUPPLY, {})
+		KEY_T:
+			_cycle_fire_mode(false)
+		KEY_G:
+			_cycle_fire_mode(true)
+		KEY_P:
+			hud.set_fire_mode(FireSupportSystem.Asset.CAS, false)
+		KEY_TAB:
+			_sub_select(not k.shift_pressed)
+		KEY_F1, KEY_F2, KEY_F3, KEY_F4:
+			_select_company(code)
+		KEY_R, KEY_Z, KEY_X, KEY_C, KEY_V:
+			const MISSING: Dictionary[Key, String] = {KEY_R: "후진", KEY_Z: "질주", KEY_X: "연막탄 발사", KEY_C: "기만체",
+				KEY_V: "고도 변경"}
+			notifications.push("%s 명령은 이 게임에 아직 없습니다" % MISSING[code], Color(0.7, 0.7, 0.7))
 		KEY_ESCAPE:
 			if hud.fire_asset >= 0:
 				hud.set_fire_mode(-1, false)
+				get_viewport().set_input_as_handled()
 				return
 			selection = []
 			_selection_changed()
@@ -290,6 +314,97 @@ func _on_key(k: InputEventKey) -> void:
 			handled = false
 	if handled:
 		get_viewport().set_input_as_handled()
+
+
+## T·G 를 거듭 누르면 박격포 → 포병 → 끔 순서로 바뀐다.
+func _cycle_fire_mode(smoke: bool) -> void:
+	if hud.fire_asset == FireSupportSystem.Asset.MORTAR and hud.fire_smoke == smoke:
+		hud.set_fire_mode(FireSupportSystem.Asset.ARTILLERY, smoke)
+	elif hud.fire_asset == FireSupportSystem.Asset.ARTILLERY and hud.fire_smoke == smoke:
+		hud.set_fire_mode(-1, false)
+	else:
+		hud.set_fire_mode(FireSupportSystem.Asset.MORTAR, smoke)
+
+
+func _toggle_hold_fire() -> void:
+	if selection.is_empty():
+		return
+	var hold: bool = selection[0].sop.roe != &"hold_fire"
+	_on_immediate_order(Order.Type.SET_SOP, {"sop": {"roe": "hold_fire" if hold else "fire_at_will"}})
+	notifications.push("사격 %s" % ("중지(응사만)" if hold else "자유"), Color(0.8, 0.8, 0.8))
+
+
+## U: 선택 제대 중 탑승한 보병이 있으면 하차, 아니면 탑승.
+func _toggle_mount() -> void:
+	var any_mounted: bool = false
+	for u: Unit in selection:
+		var plts: Array[Unit] = [u]
+		plts.append_array(u.children_units())
+		for c: Unit in plts:
+			if c is Platoon and (c as Platoon).has_squads() and (c as Platoon).mounted:
+				any_mounted = true
+	_on_immediate_order(Order.Type.DISMOUNT if any_mounted else Order.Type.MOUNT, {})
+
+
+func _cycle_technique() -> void:
+	if selection.is_empty():
+		return
+	const ORDER: Array[String] = ["traveling", "overwatch", "bounding"]
+	var i: int = ORDER.find(String(selection[0].sop.technique))
+	var next: String = ORDER[(i + 1) % ORDER.size()]
+	_on_immediate_order(Order.Type.SET_SOP, {"sop": {"technique": next}})
+	notifications.push("이동 방식: %s" % Hud._technique_name(StringName(next)), Color(0.8, 0.8, 0.8))
+
+
+# --- 부대 지정(컨트롤 그룹) ------------------------------------------------
+
+func _assign_group(n: int) -> void:
+	if selection.is_empty():
+		return
+	_groups[n] = selection.duplicate()
+	notifications.push("부대 지정 %d: %d개 제대" % [n, selection.size()], Color(0.8, 0.8, 0.8))
+
+
+func _recall_group(n: int, additive: bool) -> void:
+	if not _groups.has(n):
+		return
+	var units: Array[Unit] = []
+	for u: Unit in _groups[n]:
+		if not u.is_destroyed():
+			units.append(u)
+	_groups[n] = units
+	if units.is_empty():
+		return
+	var now: int = Time.get_ticks_msec()
+	var double: bool = n == _last_group and now - _last_group_ms < DOUBLE_CLICK_MS
+	_last_group = n
+	_last_group_ms = now
+	if additive:
+		for u: Unit in units:
+			if not selection.has(u):
+				selection.append(u)
+	else:
+		selection = units.duplicate()
+	_selection_changed()
+	if double:
+		rts_camera.look_at_point(units[0].centroid())
+
+
+## Tab: 선택한 제대의 하위 제대(중대 → 소대)를 선택. Shift+Tab: 상위 제대.
+func _sub_select(down: bool) -> void:
+	if selection.is_empty():
+		return
+	var result: Array[Unit] = []
+	for u: Unit in selection:
+		if down:
+			for c: Unit in u.children_units():
+				if not c.is_destroyed() and not result.has(c):
+					result.append(c)
+		elif u.parent != null and u.parent.level != Unit.Level.TASK_FORCE and not result.has(u.parent):
+			result.append(u.parent)
+	if not result.is_empty():
+		selection = result
+		_selection_changed()
 
 
 # --- 명령 ----------------------------------------------------------------
