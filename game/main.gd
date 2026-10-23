@@ -5,7 +5,7 @@ extends Node
 ##   --smoke-ticks=N        헤드리스로 N 틱 돌리고 종료(실시간 경로, 4배속)
 ##   --screenshot=PATH      잠시 뒤 화면을 PNG 로 저장하고 종료(렌더러 필요)
 ##   --screenshot-series=K,M  K장을 M프레임 간격으로 저장(PATH 의 .png 앞에 _0, _1 … 를 붙임). --fixed-fps 와 함께 쓰면 좋다
-##   --scene=NAME           시작 화면: menu(기본) | builder | skirmish(기본 편성으로 배치 단계) | sandbox
+##   --scene=NAME           시작 화면: menu(기본) | builder | skirmish(기본 편성으로 배치 단계) | sandbox | tutorial
 ##                          --smoke-ticks / --screenshot 만 주면 sandbox
 ##   --start                skirmish 배치 단계를 바로 끝내고 전투 시작
 ##   --ai-vs-ai             skirmish 양쪽 모두 TF AI 가 지휘(관전)
@@ -64,6 +64,8 @@ func _ready() -> void:
 			start_skirmish(catalog.default_force(&"US"))
 		"sandbox":
 			start_battle(BattleSetup.sandbox(catalog))
+		"tutorial":
+			start_tutorial()
 		_:
 			show_menu()
 
@@ -84,9 +86,23 @@ func show_menu() -> void:
 	var m := MainMenu.new()
 	m.skirmish_requested.connect(show_builder)
 	m.sandbox_requested.connect(func() -> void: start_battle(BattleSetup.sandbox(catalog)))
+	m.tutorial_requested.connect(start_tutorial)
+	m.guide_requested.connect(show_guide)
 	m.quit_requested.connect(func() -> void: get_tree().quit())
 	screen = m
 	ui_root.add_child(m)
+
+
+func start_tutorial() -> void:
+	start_battle(BattleSetup.tutorial(catalog))
+	var t: Tutorial = battle_scene.start_tutorial()
+	t.finished.connect(func(_to_menu: bool) -> void: show_menu())
+
+
+## 메뉴 위에 가이드를 띄운다.
+func show_guide() -> void:
+	var g := GuideScreen.new()
+	ui_root.add_child(g)
 
 
 func show_builder(initial: ForceSpec = null) -> void:
@@ -126,6 +142,8 @@ func _close_screen() -> void:
 
 ## 전투가 끝나면 전장 위에 AAR 을 띄운다.
 func show_aar(aar: Dictionary) -> void:
+	if battle_scene != null and battle_scene.tutorial != null:
+		return  # 튜토리얼은 마지막 단계 패널이 대신한다
 	if screen != null:
 		screen.queue_free()
 	var a := AarScreen.new()

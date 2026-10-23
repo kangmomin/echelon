@@ -4,6 +4,10 @@ extends Node3D
 ## 플레이어 입력 → Order → battle.issue_order(). 시뮬 상태는 읽기만 한다.
 
 signal battle_finished(result: Dictionary)
+## 시뮬 이벤트(드레인한 순서대로). 튜토리얼 등 표현 쪽 관찰자용.
+signal sim_event(ev: Dictionary)
+## 플레이어가 내린 명령(지연 전파 전, 발행 시점).
+signal player_order(order: Order)
 
 const DOUBLE_CLICK_MS: int = 350
 const DRAG_THRESHOLD_PX: float = 18.0
@@ -23,6 +27,8 @@ var notifications: Notifications
 var ui_layer: CanvasLayer
 var deploy_panel: PanelContainer
 var minimap: Minimap
+var tutorial: Tutorial = null
+var guide: GuideScreen = null
 
 var selection: Array[Unit] = []
 var _rclick_screen: Vector2 = Vector2.INF
@@ -93,6 +99,11 @@ func _ready() -> void:
 	hud.immediate_order.connect(_on_immediate_order)
 	hud.formation_selected.connect(_on_formation_selected)
 
+	var guide_button: Button = UiKit.button("가이드  /", toggle_guide, 0)
+	guide_button.position = Vector2(8, 8)
+	guide_button.add_theme_font_size_override(&"font_size", 13)
+	ui_layer.add_child(guide_button)
+
 	overlay = DebugOverlay.new()
 	overlay.visible = false
 	add_child(overlay)
@@ -117,6 +128,29 @@ func _build_deploy_panel() -> void:
 	v.add_child(l)
 	v.add_child(UiKit.button("전투 시작", start_battle, 120))
 	ui_layer.add_child(deploy_panel)
+
+
+## 가이드 화면 열기·닫기. 여는 동안 일시정지했다가, 닫을 때 원래대로.
+func toggle_guide() -> void:
+	if guide != null:
+		guide.close()
+		return
+	guide = GuideScreen.new()
+	var was_paused: bool = battle.world.paused
+	battle.world.set_paused(true)
+	guide.closed.connect(func() -> void:
+		guide = null
+		if not was_paused and not battle.deploying and battle.result.is_empty():
+			battle.world.set_paused(false))
+	ui_layer.add_child(guide)
+
+
+## 튜토리얼 진행 패널을 붙인다(BattleSetup.tutorial 전장에서).
+func start_tutorial() -> Tutorial:
+	tutorial = Tutorial.new()
+	tutorial.setup(self)
+	ui_layer.add_child(tutorial)
+	return tutorial
 
 
 ## 배치 단계를 끝내고 시뮬을 돌린다.
@@ -162,6 +196,7 @@ func _process(delta: float) -> void:
 		_advance_peak_usec = maxi(_advance_peak_usec, floori(_advance_usec / float(ran)))
 	for ev: Dictionary in battle.world.events.drain():
 		fx.on_event(ev)
+		sim_event.emit(ev)
 		if ev["type"] == &"battle_ended":
 			battle_finished.emit(battle.stats.summary())
 		var line: Array = EventText.describe(battle, ev, battle.player_side)
@@ -261,6 +296,8 @@ func _on_key(k: InputEventKey) -> void:
 			battle.world.speed_up()
 		KEY_MINUS, KEY_KP_SUBTRACT:
 			battle.world.speed_down()
+		KEY_SLASH:
+			toggle_guide()
 		KEY_F10:
 			overlay.toggle()
 		KEY_F9:
@@ -358,6 +395,16 @@ func _cycle_technique() -> void:
 
 # --- 부대 지정(컨트롤 그룹) ------------------------------------------------
 
+## n 번에 지정된 제대(격파된 것 제외).
+func group_units(n: int) -> Array[Unit]:
+	var out: Array[Unit] = []
+	if _groups.has(n):
+		for u: Unit in _groups[n]:
+			if not u.is_destroyed():
+				out.append(u)
+	return out
+
+
 func _assign_group(n: int) -> void:
 	if selection.is_empty():
 		return
@@ -427,6 +474,7 @@ func _issue_move_orders(target: Vector2, facing: float, append: bool) -> void:
 		o.issuer = &"player"
 		o.bypass = u.level == Unit.Level.PLATOON and (u as Platoon).follows_parent()
 		battle.issue_order(o)
+		player_order.emit(o)
 	hud.set_order_mode(Order.Type.MOVE)
 
 
@@ -447,6 +495,7 @@ func _on_immediate_order(type: int, params: Dictionary) -> void:
 		var o: Order = Order.make(type, u.id, params.duplicate(true))
 		o.issuer = &"player"
 		battle.issue_order(o)
+		player_order.emit(o)
 
 
 func _on_formation_selected(fid: StringName) -> void:

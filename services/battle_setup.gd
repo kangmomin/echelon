@@ -16,6 +16,38 @@ static func sandbox(catalog: DataCatalog, seed_value: int = -1) -> Battle:
 	return b
 
 
+## 튜토리얼 전장: 청군 전차 중대 + 박격포 소대, 적은 BMP-3 소대 하나(처음엔 지도 밖, 튜토리얼이 꺼낸다).
+const TUTORIAL_START: Vector2 = Vector2(750, 650)
+const TUTORIAL_WAYPOINT: Vector2 = Vector2(900, 1500)
+const TUTORIAL_ENEMY: Vector2 = Vector2(1150, 2050)
+const _OFF_MAP_PARK: Vector2 = Vector2(3900, 3950)
+
+
+static func tutorial(catalog: DataCatalog) -> Battle:
+	var b: Battle = Battle.create(catalog, &"skirmish_01", 20261023)
+	var blue: TaskForce = b.factory.create_task_force(&"blue", catalog.get_toe(&"us_armor_bn_tf"), Vector2(500, 250), 0.0)
+	blue.artillery_missions = 1
+	blue.cas_sorties = 1
+	blue.companies.append(b.factory.spawn_company(catalog.get_unit_template(&"us_tank_co"), &"blue", TUTORIAL_START, 0.0, blue, 0))
+	blue.organic.append(b.factory.spawn_platoon(catalog.get_unit_template(&"us_mortar_plt"), &"blue", Vector2(600, 380), 0.0, blue))
+	var red: TaskForce = b.factory.create_task_force(&"red", catalog.get_toe(&"ru_btg_bmp"), Vector2(3700, 3850), PI)
+	var enemy: Platoon = b.factory.spawn_platoon(catalog.get_unit_template(&"ru_msr_plt_bmp3"), &"red", _OFF_MAP_PARK, PI, red)
+	enemy.phase = 99  # 증원 시스템이 꺼내지 않게
+	red.organic.append(enemy)
+	b.factory.set_off_map(enemy, _OFF_MAP_PARK, PI)
+	return b
+
+
+## 지도 밖 소대를 pos 에 꺼낸다(튜토리얼·시나리오 연출용). 증원 시스템의 배치와 같은 순서.
+static func reveal_platoon(b: Battle, p: Platoon, pos: Vector2, heading: float) -> void:
+	p.on_map = true
+	for e: Element in p.elements:
+		e.on_map = true
+	p.guide.reset(pos, heading)
+	b.factory.place_elements(p)
+	p.posture = &"idle"
+
+
 ## 편성(ForceSpec) 두 개로 스커미시를 만든다. 배치 단계에서 시작하므로 시뮬은 일시정지 상태.
 ## ai_sides: TF AI 가 지휘할 진영(기본: 적군). AI 끼리 붙이려면 [&"blue", &"red"].
 static func skirmish(catalog: DataCatalog, blue: ForceSpec, red: ForceSpec, scenario_id: StringName = &"skirmish_01",
