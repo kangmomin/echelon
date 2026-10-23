@@ -1,5 +1,10 @@
 # ECHELON (가제)
 
+[![CI / Deploy](https://github.com/kangmomin/echelon/actions/workflows/ci-deploy.yml/badge.svg)](https://github.com/kangmomin/echelon/actions/workflows/ci-deploy.yml)
+
+- **웹에서 바로 하기:** https://kangmomin.github.io/echelon/ (WebGL 2 브라우저. 큰 전투는 데스크톱 판이 더 빠르다)
+- **실행 파일(Windows·Linux):** [Releases](https://github.com/kangmomin/echelon/releases)
+
 Broken Arrow 를 기반으로 **제대(梯隊) 지휘·편제표·전술 대형·지휘통제**를 더한 현대전 RTT 프로토타입.
 설계는 [`docs/PLAN.md`](docs/PLAN.md), 설계 변경 기록은 [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
@@ -87,6 +92,16 @@ GODOT=/path/to/godot ./tools/check_warnings.sh   # 타입·안전성 경고를 �
 ```
 
 에디터에서는 하단 GUT 패널 → Run All 로도 돌릴 수 있다.
+
+## 배포
+
+`.github/workflows/ci-deploy.yml` 이 `main` 에 올라올 때마다 정적 타입 검사 → GUT 테스트 → 스모크를 돌리고,
+통과하면 웹·Windows·Linux 로 내보내 **웹 빌드를 GitHub Pages 에 배포**한다. `v*` 태그를 올리면 Windows·Linux
+실행 파일을 Releases 에 첨부한다(예: `git tag v0.1.1 && git push origin v0.1.1`).
+
+- 내보내기 프리셋: `export_presets.cfg` (웹은 단일 스레드 빌드라 Pages 에서 별도 헤더 없이 돈다)
+- 웹은 Compatibility 렌더러(WebGL 2)로 바뀌고, 한글은 내장 글꼴 Noto Sans KR(SIL OFL, `assets/fonts`)로 그린다.
+- 로컬 내보내기: Godot 4.7.2 내보내기 템플릿 설치 후 `godot --headless --path . --export-release Web build/web/index.html`
 
 ## 폴더 구조
 
