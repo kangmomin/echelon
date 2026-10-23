@@ -8,6 +8,8 @@ var is_hq_section: bool = false
 ## 기계화 소대: 분대가 차량에 타고 있는지.
 var mounted: bool = true
 var loadout: StringName = &""
+## 이 소대가 최근 본 적: element_id → 틱. 사격 표적은 여기서 고른다.
+var contacts: Dictionary[int, int] = {}
 
 
 func _init() -> void:
@@ -90,7 +92,7 @@ func base_speed() -> float:
 
 
 func follows_parent() -> bool:
-	return parent != null and parent.level == Level.COMPANY and not detached
+	return parent != null and parent.level == Level.COMPANY and not detached and not routed
 
 
 func company() -> Company:

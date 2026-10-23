@@ -100,7 +100,7 @@ func _update_company(c: Company, tick: int, dt: float) -> void:
 		speed *= 0.5
 	if c.column_mode and battle.terrain.type_at(c.guide.pos) == Terrain.Type.ROAD:
 		speed = _road_march_speed(c, c.base_speed())
-	if c.formation_error > COMPANY_WAIT_M:
+	if c.formation_error > COMPANY_WAIT_M or tick < c.contact_halt_until:
 		speed = 0.0
 	# 소대들이 번역 명령을 받을 때까지(최대 BRIEFING_TIMEOUT) 출발하지 않는다.
 	if c.mission != null and c.mission.received_tick >= 0 and tick - c.mission.received_tick < BRIEFING_TIMEOUT_TICKS:
@@ -194,7 +194,7 @@ func _update_platoon(p: Platoon, tick: int, dt: float) -> void:
 		_poll_path(p)
 		if p.guide.is_moving() and battle.terrain.type_at(p.guide.pos) == Terrain.Type.ROAD and _on_road_ahead(p.guide):
 			speed = _road_march_speed(p, base)
-		if waiting:
+		if waiting or tick < p.contact_halt_until:
 			speed = 0.0
 		p.guide_speed_limit = speed
 		var moved: float = _advance_guide(p, dt, speed)
@@ -430,7 +430,7 @@ func _on_road_ahead(g: Guide) -> bool:
 ## 앞길에 다리(물가 도로)가 있으면 종대로 좁힌다.
 func _choke_ahead(g: Guide) -> bool:
 	for p: Vector2 in g.points_ahead(CHOKE_LOOKAHEAD_M, 20.0):
-		if battle.terrain.type_at(p) == Terrain.Type.ROAD and battle.terrain.has_type_near(p, Terrain.Type.WATER, 30.0):
+		if battle.terrain.is_bridge(p):
 			return true
 	return false
 

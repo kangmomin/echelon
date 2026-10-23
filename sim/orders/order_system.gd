@@ -312,7 +312,7 @@ func _hop_seconds(h: Dictionary) -> float:
 	if from_unit == null or to_unit == null or to_unit.is_destroyed():
 		return -1.0
 	var tick: int = battle.world.tick
-	if to_unit.is_leaderless(tick) or from_unit.is_leaderless(tick):
+	if to_unit.is_leaderless(tick) or from_unit.is_leaderless(tick) or to_unit.routed:
 		return -1.0
 	var k_comms: float = 1.0
 	var relays: int = 0

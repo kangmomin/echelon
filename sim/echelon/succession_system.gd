@@ -93,6 +93,8 @@ func _check(u: Unit, tick: int) -> void:
 	if successor == null:
 		return
 	var lost_id: int = u.commander.id if u.commander != null else -1
+	if battle.morale != null:
+		battle.morale.on_commander_lost(u)
 	u.commander = null
 	u.pending_successor = successor
 	u.succession_until_tick = tick + wait

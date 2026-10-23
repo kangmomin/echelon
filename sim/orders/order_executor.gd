@@ -14,6 +14,13 @@ func execute(unit: Unit, order: Order) -> void:
 	# 플레이어가 중대 대형 안의 소대에 직접 명령하면 그 소대는 분리된다. PLAN 5.1.
 	if order.bypass and unit is Platoon and (unit as Platoon).follows_parent():
 		unit.detached = true
+	# 사기가 꺾였거나 전투 불능인 제대는 공격 명령을 거부한다. PLAN 5.1, 9.4.
+	if (order.type == Order.Type.ATTACK_MOVE or order.type == Order.Type.SEIZE) and order.issuer != &"self" \
+			and unit.level != Unit.Level.TASK_FORCE and (MoraleSystem.is_shaken(unit) or unit.is_combat_ineffective()):
+		order.state = Order.State.CANCELLED
+		battle.world.events.emit_event(&"order_refused", battle.world.tick, {"unit": unit.id, "side": unit.side,
+			"type": order.type})
+		return
 	# Shift 대기열: 진행 중인 이동 임무가 끝나면 실행.
 	if order.is_movement() and order.params.get("append", false) == true and unit.mission != null and not unit.mission.is_finished():
 		order.state = Order.State.RECEIVED

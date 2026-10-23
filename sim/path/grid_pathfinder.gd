@@ -57,8 +57,6 @@ func _init(p_terrain: Terrain) -> void:
 		threat.resize(terrain.width * terrain.height_cells)
 		_threat[side] = threat
 		_threat_cells[side] = {}
-		for mob: StringName in MOBILITIES:
-			_grids[_key(side, mob)] = _make_grid(mob)
 
 
 # --- 요청 큐 -------------------------------------------------------------
@@ -96,7 +94,7 @@ func process(budget: int = MAX_REQUESTS_PER_TICK) -> int:
 
 ## 단순화된 경유점 배열. 첫 점은 from(또는 가까운 통행 가능 점), 끝 점은 to(또는 가장 가까이 갈 수 있는 점).
 func find_path_now(from: Vector2, to: Vector2, mobility: StringName, side: StringName = &"blue") -> PackedVector2Array:
-	var grid: AStarGrid2D = _grids[_key(side if SIDES.has(side) else &"blue", mobility)]
+	var grid: AStarGrid2D = _grid(side if SIDES.has(side) else &"blue", mobility)
 	var start: Vector2 = terrain.nearest_passable(from, mobility)
 	var goal: Vector2 = terrain.nearest_passable(to, mobility)
 	var c_from: Vector2i = terrain.cell_of(start)
@@ -191,6 +189,21 @@ func _key(side: StringName, mobility: StringName) -> StringName:
 	return StringName("%s:%s" % [side, mobility])
 
 
+## 그리드는 처음 쓸 때 만든다(진영·기동 유형마다 16만 셀 설정이 0.2초쯤 걸린다).
+func _grid(side: StringName, mobility: StringName) -> AStarGrid2D:
+	var key: StringName = _key(side, mobility)
+	if not _grids.has(key):
+		var grid: AStarGrid2D = _make_grid(mobility)
+		_grids[key] = grid
+		var threat: PackedFloat32Array = _threat[side]
+		var weights: PackedFloat32Array = _base_weights[mobility]
+		for key2: Variant in (_threat_cells[side] as Dictionary).keys():
+			var idx: int = key2
+			if weights[idx] > 0.0:
+				grid.set_point_weight_scale(Vector2i(idx % terrain.width, floori(float(idx) / terrain.width)), weights[idx] + threat[idx])
+	return _grids[key]
+
+
 func _compute_base_weights(mobility: StringName) -> PackedFloat32Array:
 	var table: Array[float] = WEIGHT_VEHICLE if mobility == &"vehicle" else WEIGHT_FOOT
 	var out := PackedFloat32Array()
@@ -236,7 +249,10 @@ func _make_grid(mobility: StringName) -> AStarGrid2D:
 func _apply_cells(side: StringName, cell_indices: Array) -> void:
 	var threat: PackedFloat32Array = _threat[side]
 	for mob: StringName in MOBILITIES:
-		var grid: AStarGrid2D = _grids[_key(side, mob)]
+		var grid_key: StringName = _key(side, mob)
+		if not _grids.has(grid_key):
+			continue
+		var grid: AStarGrid2D = _grids[grid_key]
 		var weights: PackedFloat32Array = _base_weights[mob]
 		for key: Variant in cell_indices:
 			var idx: int = key

@@ -68,3 +68,40 @@ static func seconds_until_moving(b: Battle, u: Unit, limit_sec: float) -> float:
 			if not e.is_mounted() and e.velocity.length() > 0.5:
 				return (b.tick() - start) / float(SimConst.TICK_RATE)
 	return -1.0
+
+
+## 평지 시험 지도(4×4 km). forest_rect 를 주면 그 사각형이 숲이 된다.
+static func flat_map(forest_rect: Rect2 = Rect2()) -> MapDef:
+	var m := MapDef.new()
+	m.id = &"test_flat"
+	m.display_name = "평지"
+	m.size_m = Vector2(4000, 4000)
+	m.cell_m = 10.0
+	m.height_seed = 1
+	m.base_m = 40.0
+	m.amplitude_m = 0.0
+	m.frequency = 0.001
+	m.octaves = 1
+	if forest_rect.has_area():
+		var f := MapDef.Feature.new()
+		f.name = "시험 숲"
+		f.points = PackedVector2Array([forest_rect.position, Vector2(forest_rect.end.x, forest_rect.position.y),
+			forest_rect.end, Vector2(forest_rect.position.x, forest_rect.end.y)])
+		m.forests.append(f)
+	return m
+
+
+static func battle_on(map: MapDef, seed_value: int = 1, instant: bool = true) -> Battle:
+	var cat: DataCatalog = catalog()
+	var b: Battle = Battle.create(cat, &"skirmish_01", seed_value, instant, map)
+	b.factory.create_task_force(&"blue", cat.get_toe(&"us_armor_bn_tf"), Vector2(200, 2000), PI / 2.0)
+	b.factory.create_task_force(&"red", cat.get_toe(&"ru_btg_bmp"), Vector2(3800, 3800), -PI / 2.0)
+	return b
+
+
+static func losses(u: Unit) -> int:
+	var n: int = 0
+	for e: Element in u.all_elements():
+		if not e.is_alive():
+			n += 1
+	return n

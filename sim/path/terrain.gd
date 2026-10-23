@@ -30,6 +30,11 @@ var types: PackedByteArray
 var heights: PackedFloat32Array
 ## 셀의 최대 경사(도).
 var slopes: PackedFloat32Array
+## 통행 가능 비트맵(1 = 가능). 자주 쓰는 판정을 함수 호출 없이 배열 조회로 한다.
+var passable_vehicle: PackedByteArray
+var passable_foot: PackedByteArray
+## 다리(하천 30 m 안의 도로) 셀.
+var bridge_mask: PackedByteArray
 
 
 static func build(p_map: MapDef) -> Terrain:
@@ -58,6 +63,7 @@ static func build(p_map: MapDef) -> Terrain:
 	for f: MapDef.Feature in p_map.roads:
 		t._fill_polyline(f.points, f.width_m, Type.ROAD)
 	t._build_slopes()
+	t._build_masks()
 	return t
 
 
@@ -132,15 +138,27 @@ func ground_height(p: Vector2) -> float:
 
 
 func is_passable_cell(c: Vector2i, mobility: StringName) -> bool:
-	var t: int = type_at_cell(c)
-	if t == Type.WATER:
+	if c.x < 0 or c.y < 0 or c.x >= width or c.y >= height_cells:
 		return false
-	var max_slope: float = VEHICLE_MAX_SLOPE_DEG if mobility == MOBILITY_VEHICLE else FOOT_MAX_SLOPE_DEG
-	return t == Type.ROAD or slope_at_cell(c) <= max_slope
+	var mask: PackedByteArray = passable_vehicle if mobility == MOBILITY_VEHICLE else passable_foot
+	return mask[c.y * width + c.x] == 1
 
 
 func is_passable(p: Vector2, mobility: StringName) -> bool:
-	return is_passable_cell(cell_of(p), mobility)
+	var cx: int = floori(p.x / cell_m)
+	var cy: int = floori(p.y / cell_m)
+	if cx < 0 or cy < 0 or cx >= width or cy >= height_cells:
+		return false
+	var mask: PackedByteArray = passable_vehicle if mobility == MOBILITY_VEHICLE else passable_foot
+	return mask[cy * width + cx] == 1
+
+
+func is_bridge(p: Vector2) -> bool:
+	var cx: int = floori(p.x / cell_m)
+	var cy: int = floori(p.y / cell_m)
+	if cx < 0 or cy < 0 or cx >= width or cy >= height_cells:
+		return false
+	return bridge_mask[cy * width + cx] == 1
 
 
 func speed_factor(type: int, mobility: StringName) -> float:
@@ -149,11 +167,27 @@ func speed_factor(type: int, mobility: StringName) -> float:
 
 ## a→b 직선이 통행 가능한 셀만 지나는지. 셀 절반 간격으로 샘플링한다.
 func line_passable(a: Vector2, b: Vector2, mobility: StringName) -> bool:
+	var mask: PackedByteArray = passable_vehicle if mobility == MOBILITY_VEHICLE else passable_foot
 	var dist: float = a.distance_to(b)
 	var steps: int = maxi(1, ceili(dist / (cell_m * 0.5)))
+	var inv: float = 1.0 / cell_m
+	var dx: float = (b.x - a.x) / steps
+	var dy: float = (b.y - a.y) / steps
+	var x: float = a.x
+	var y: float = a.y
+	var last: int = -1
 	for i: int in steps + 1:
-		if not is_passable(a.lerp(b, float(i) / steps), mobility):
+		var cx: int = floori(x * inv)
+		var cy: int = floori(y * inv)
+		if cx < 0 or cy < 0 or cx >= width or cy >= height_cells:
 			return false
+		var idx: int = cy * width + cx
+		if idx != last:
+			if mask[idx] == 0:
+				return false
+			last = idx
+		x += dx
+		y += dy
 	return true
 
 
@@ -233,6 +267,40 @@ func _carve_river(river: MapDef.Feature) -> void:
 		_for_cells_near_segment(river.points[i], river.points[i + 1], half, func(idx: int, dist: float) -> void:
 			var depth: float = RIVER_DEPTH_M * (1.0 - clampf(dist / half, 0.0, 1.0))
 			heights[idx] = heights[idx] - depth * 0.5)
+
+
+func _build_masks() -> void:
+	var n: int = width * height_cells
+	passable_vehicle = PackedByteArray()
+	passable_vehicle.resize(n)
+	passable_foot = PackedByteArray()
+	passable_foot.resize(n)
+	bridge_mask = PackedByteArray()
+	bridge_mask.resize(n)
+	for i: int in n:
+		var t: int = types[i]
+		if t == Type.WATER:
+			continue
+		passable_vehicle[i] = 1 if t == Type.ROAD or slopes[i] <= VEHICLE_MAX_SLOPE_DEG else 0
+		passable_foot[i] = 1 if t == Type.ROAD or slopes[i] <= FOOT_MAX_SLOPE_DEG else 0
+	var r: int = ceili(30.0 / cell_m)
+	for cy: int in height_cells:
+		for cx: int in width:
+			var idx: int = cy * width + cx
+			if types[idx] != Type.ROAD:
+				continue
+			var near_water: bool = false
+			for dy: int in range(-r, r + 1):
+				for dx: int in range(-r, r + 1):
+					var x: int = cx + dx
+					var y: int = cy + dy
+					if x >= 0 and y >= 0 and x < width and y < height_cells and types[y * width + x] == Type.WATER:
+						near_water = true
+						break
+				if near_water:
+					break
+			if near_water:
+				bridge_mask[idx] = 1
 
 
 func _build_slopes() -> void:

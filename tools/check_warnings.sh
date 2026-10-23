@@ -15,6 +15,7 @@ block = "[debug]\n\n" + "\n".join(f"gdscript/warnings/{k}=2" for k in keys) + "\
 s = re.sub(r"\[debug\]\n\n(.*?)\n\n", lambda m: block, s, flags=re.S)
 open("project.godot", "w").write(s)
 PY
+"$GODOT" --headless --path . --import >/dev/null 2>&1 || true
 fail=0; n=0
 for f in $(find sim services game tests -name "*.gd" | sort); do
   n=$((n+1))

@@ -129,13 +129,22 @@ func _draw_elements(p: Platoon, hostile: bool, alpha: float) -> void:
 	for e: Element in p.elements:
 		if not e.on_map or e.is_mounted():
 			continue
-		if hostile and fog and e.is_alive() and not battle.task_forces[player_side].known_enemies.has(e.id):
-			continue
 		var wp: Vector2 = e.prev_pos.lerp(e.pos, alpha)
+		var stale: bool = false
+		if hostile and fog and e.is_alive() and not battle.detection.seen_recently(player_side, e.id, battle.tick()):
+			# 지금 안 보이면 대대에 보고된 마지막 위치를 흐리게.
+			var tf: TaskForce = battle.task_forces[player_side]
+			if not tf.known_enemies.has(e.id):
+				continue
+			var info: Dictionary = tf.known_enemies[e.id]
+			wp = info["pos"]
+			stale = true
 		var sp: Vector2 = _screen(wp)
 		if sp == Vector2.INF:
 			continue
 		var c: Color = fill if e.is_alive() else Color(0.3, 0.3, 0.3, 0.8)
+		if stale:
+			c.a = STALE_ALPHA
 		var h: float = lerp_angle(e.prev_heading, e.heading, alpha)
 		if e.is_infantry():
 			draw_circle(sp, 5.0, c)
@@ -340,7 +349,7 @@ func _unit_world_pos(u: Unit, alpha: float) -> Vector2:
 	return sum / n if n > 0 else u.guide.pos
 
 
-## 적 제대의 보고된 위치(안개 모드). 보고된 엘리먼트가 없으면 빈 딕셔너리.
+## 안개 모드에서 적 제대를 어디에 그릴지: 지금 보이는 엘리먼트가 있으면 실제 위치, 없으면 대대에 보고된 위치(오래되면 흐리게).
 func _known_info(u: Unit) -> Dictionary:
 	var tf: TaskForce = battle.task_forces.get(player_side)
 	if tf == null:
@@ -348,6 +357,15 @@ func _known_info(u: Unit) -> Dictionary:
 	var sum := Vector2.ZERO
 	var n: int = 0
 	var newest: int = -1000000
+	var tick: int = battle.world.tick
+	var live_sum := Vector2.ZERO
+	var live_n: int = 0
+	for e: Element in u.all_elements():
+		if e.is_alive() and e.on_map and not e.is_mounted() and battle.detection.seen_recently(player_side, e.id, tick):
+			live_sum += e.pos
+			live_n += 1
+	if live_n > 0:
+		return {"pos": live_sum / live_n, "stale": false}
 	for e: Element in u.all_elements():
 		if tf.known_enemies.has(e.id):
 			var info: Dictionary = tf.known_enemies[e.id]

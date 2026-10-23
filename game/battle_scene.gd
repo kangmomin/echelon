@@ -13,6 +13,9 @@ var rts_camera: RtsCamera
 var symbols: SymbolLayer
 var hud: Hud
 var element_view: ElementView
+var fx: FxLayer
+## 전장의 안개(플레이어 진영 기준). F9 로 끈다(디버그).
+var fog_enabled: bool = true
 var overlay: DebugOverlay
 var orbat: OrbatPanel
 var notifications: Notifications
@@ -43,6 +46,10 @@ func _ready() -> void:
 	element_view.name = "Elements"
 	add_child(element_view)
 	element_view.setup(battle)
+	fx = FxLayer.new()
+	fx.name = "Fx"
+	add_child(fx)
+	fx.setup(battle)
 
 	rts_camera = RtsCamera.new()
 	rts_camera.name = "RtsCamera"
@@ -77,6 +84,15 @@ func _ready() -> void:
 	overlay = DebugOverlay.new()
 	overlay.visible = false
 	add_child(overlay)
+	set_fog(fog_enabled)
+
+
+func set_fog(on: bool) -> void:
+	fog_enabled = on
+	var side: StringName = battle.player_side if on else &""
+	element_view.fog_side = side
+	fx.fog_side = side
+	symbols.fog = on
 
 
 func _exit_tree() -> void:
@@ -91,6 +107,7 @@ func _process(delta: float) -> void:
 	if ran > 0:
 		_advance_peak_usec = maxi(_advance_peak_usec, floori(_advance_usec / float(ran)))
 	for ev: Dictionary in battle.world.events.drain():
+		fx.on_event(ev)
 		var line: Array = EventText.describe(battle, ev, battle.player_side)
 		if not line.is_empty():
 			var text: String = line[0]
@@ -160,6 +177,9 @@ func _on_key(k: InputEventKey) -> void:
 			battle.world.speed_down()
 		KEY_F10:
 			overlay.toggle()
+		KEY_F9:
+			set_fog(not fog_enabled)
+			notifications.push("전장의 안개 %s" % ("켬" if fog_enabled else "끔"), Color(0.8, 0.8, 0.8))
 		KEY_M:
 			hud.set_order_mode(Order.Type.MOVE)
 		KEY_G:

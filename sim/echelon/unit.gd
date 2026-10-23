@@ -63,6 +63,16 @@ var routed_until_tick: int = -1
 var initial_element_count: int = 0
 ## 마지막 접촉(적 탐지·피격) 틱.
 var last_contact_tick: int = -1000000
+## 마지막으로 사격을 받은 틱.
+var last_hit_tick: int = -1000000
+## 접촉 시 정지(SOP) 끝나는 틱.
+var contact_halt_until: int = -1
+## 공격 이동 중 다음 "짧은 정지"를 할 수 있는 틱(정지 후 일정 시간은 계속 전진).
+var next_halt_tick: int = -1
+## 패주 중(사기 20 이하). routed_until_tick 까지 후방으로 달아나고 명령을 받지 않는다.
+var routed: bool = false
+## SOP 철수 기준으로 이미 한 번 스스로 철수했다.
+var auto_withdrawn: bool = false
 
 
 func children_units() -> Array[Unit]:

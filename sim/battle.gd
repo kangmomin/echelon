@@ -25,6 +25,12 @@ var executor: OrderExecutor
 var movement: MovementSystem
 var comms: CommsNet
 var succession: SuccessionSystem
+var platoon_ai: PlatoonAI
+var detection: DetectionSystem
+var combat: CombatSystem
+var morale: MoraleSystem
+## 연막 구름(M5 화력지원이 만든다).
+var smokes: Array[Los.Smoke] = []
 ## 명령 전파 시스템. null 이면 명령을 즉시 실행한다(이동 테스트용 instant 모드).
 var order_system: OrderSystem = null
 
@@ -38,27 +44,35 @@ var _next_order_id: int = 1
 
 ## 시나리오의 지도로 빈 전장을 만든다. 부대는 따로 생성한다.
 static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_override: int = -1,
-		instant_orders: bool = false) -> Battle:
+		instant_orders: bool = false, map_override: MapDef = null) -> Battle:
 	var b := Battle.new()
 	b.catalog = p_catalog
 	b.scenario = p_catalog.get_scenario(scenario_id)
 	assert(b.scenario != null, "시나리오 없음: %s" % scenario_id)
-	b.map = p_catalog.get_map(b.scenario.map_id)
+	b.map = map_override if map_override != null else p_catalog.get_map(b.scenario.map_id)
 	b.terrain = Terrain.build(b.map)
 	b.pathfinder = GridPathfinder.new(b.terrain)
 	b.world = SimWorld.new(b.scenario.seed_value if seed_override < 0 else seed_override)
 	b.factory = ForceFactory.new(b)
 	b.executor = OrderExecutor.new(b)
-	# 시스템 실행 순서(결정론): 통신 → 승계 → 명령 전파 → 이동.
+	# 시스템 실행 순서(결정론): 통신 → 승계 → 명령 전파 → 자율 반응 → 이동 → 탐지 → 사격 → 사기.
 	b.comms = CommsNet.new(b)
+	b.morale = MoraleSystem.new(b)
 	b.world.add_system(b.comms)
 	b.succession = SuccessionSystem.new(b)
 	b.world.add_system(b.succession)
 	if not instant_orders:
 		b.order_system = OrderSystem.new(b, b.comms)
 		b.world.add_system(b.order_system)
+	b.platoon_ai = PlatoonAI.new(b)
+	b.world.add_system(b.platoon_ai)
 	b.movement = MovementSystem.new(b)
 	b.world.add_system(b.movement)
+	b.detection = DetectionSystem.new(b)
+	b.world.add_system(b.detection)
+	b.combat = CombatSystem.new(b)
+	b.world.add_system(b.combat)
+	b.world.add_system(b.morale)
 	return b
 
 
@@ -163,6 +177,11 @@ func dispose() -> void:
 	order_system = null
 	comms = null
 	succession = null
+	platoon_ai = null
+	detection = null
+	combat = null
+	morale = null
+	smokes.clear()
 	factory = null
 
 

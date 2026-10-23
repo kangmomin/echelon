@@ -17,7 +17,7 @@ const SIZES: Dictionary[StringName, Vector3] = {
 var battle: Battle
 var _views: Dictionary[int, MeshInstance3D] = {}
 var _materials: Dictionary[String, StandardMaterial3D] = {}
-## 적을 숨길지(전장의 안개). known 콜백이 true 를 준 적만 보인다.
+## 전장의 안개 기준 진영. 이 진영이 지금 보고 있는 적만 3D 로 그린다("" = 다 보임).
 var fog_side: StringName = &""
 
 
@@ -48,8 +48,7 @@ func _process(_delta: float) -> void:
 func _is_visible_to_player(e: Element) -> bool:
 	if fog_side == &"" or e.side == fog_side or not e.is_alive():
 		return true
-	var tf: TaskForce = battle.task_forces.get(fog_side)
-	return tf != null and tf.known_enemies.has(e.id)
+	return battle.detection.seen_recently(fog_side, e.id, battle.tick())
 
 
 func _ensure_view(e: Element) -> MeshInstance3D:

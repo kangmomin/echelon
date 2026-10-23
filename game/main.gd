@@ -5,6 +5,8 @@ extends Node
 ##   --smoke-ticks=N        헤드리스로 N 틱 돌리고 종료(실시간 경로, 4배속)
 ##   --screenshot=PATH      잠시 뒤 화면을 PNG 로 저장하고 종료(렌더러 필요)
 ##   --sandbox              메뉴 없이 샌드박스 전투로 바로 시작
+##   --nofog                전장의 안개 끔(F9 와 같음)
+##   --red-attack=X,Y       시작하자마자 적 중대들에 공격 이동 명령(교전 화면 확인용)
 
 const SMOKE_TIMEOUT_SEC: float = 60.0
 const SCREENSHOT_DELAY_FRAMES: int = 30
@@ -81,12 +83,17 @@ func _parse_cmdline() -> void:
 		elif arg.begins_with("--camera="):
 			# x,y,distance,pitch_deg,yaw_deg
 			var parts: PackedStringArray = value.split(",")
-			_camera_args = {"x": parts[0].to_float(), "y": parts[1].to_float(), "d": parts[2].to_float(),
-				"pitch": parts[3].to_float() if parts.size() > 3 else 55.0, "yaw": parts[4].to_float() if parts.size() > 4 else 0.0}
+			_camera_args.merge({"x": parts[0].to_float(), "y": parts[1].to_float(), "d": parts[2].to_float(),
+				"pitch": parts[3].to_float() if parts.size() > 3 else 55.0, "yaw": parts[4].to_float() if parts.size() > 4 else 0.0}, true)
 		elif arg.begins_with("--select="):
 			_camera_args["select"] = value.to_int()
 		elif arg.begins_with("--run-sec="):
 			_camera_args["run_sec"] = value.to_float()
+		elif arg == "--nofog":
+			_camera_args["nofog"] = true
+		elif arg.begins_with("--red-attack="):
+			var xy: PackedStringArray = value.split(",")
+			_camera_args["red_attack"] = Vector2(xy[0].to_float(), xy[1].to_float())
 
 
 ## 스크린샷 검증용: 카메라 위치·선택·미리 돌릴 시간.
@@ -104,6 +111,15 @@ func _apply_camera_args() -> void:
 		cam.yaw = deg_to_rad(yaw_deg)
 		cam.edge_scroll = false
 		cam.call_deferred(&"_apply")
+	if _camera_args.has("nofog"):
+		battle_scene.set_fog(false)
+	if _camera_args.has("red_attack"):
+		var target: Vector2 = _camera_args["red_attack"]
+		var red: TaskForce = battle_scene.battle.task_forces[&"red"]
+		for i: int in red.companies.size():
+			var o: Order = Order.make(Order.Type.ATTACK_MOVE, red.companies[i].id)
+			o.set_pos(target + Vector2(i * 500.0 - 250.0, 0.0))
+			battle_scene.battle.issue_order(o)
 	if _camera_args.has("run_sec"):
 		var run_sec: float = _camera_args["run_sec"]
 		battle_scene.battle.run_seconds(run_sec)
