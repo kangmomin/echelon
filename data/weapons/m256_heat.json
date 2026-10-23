@@ -1,0 +1,23 @@
+{
+  "id": "m256_heat",
+  "type": "HEAT",
+  "range_m": {
+    "min": 100,
+    "max": 3000
+  },
+  "penetration": 600,
+  "pen_falloff_per_km": 0.0,
+  "damage": 90,
+  "accuracy": {
+    "base": 0.7,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 6,
+  "suppression": 40,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 8
+}

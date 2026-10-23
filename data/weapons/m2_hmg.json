@@ -1,0 +1,23 @@
+{
+  "id": "m2_hmg",
+  "type": "MG",
+  "range_m": {
+    "min": 0,
+    "max": 1500
+  },
+  "penetration": 25,
+  "pen_falloff_per_km": 0.3,
+  "damage": 8,
+  "accuracy": {
+    "base": 0.4,
+    "at_max_range": 0.12
+  },
+  "rof_rpm": 500,
+  "suppression": 18,
+  "fire_on_move": true,
+  "targets": [
+    "infantry",
+    "vehicle"
+  ],
+  "he_radius_m": 0
+}

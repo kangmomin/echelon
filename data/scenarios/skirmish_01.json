@@ -1,0 +1,124 @@
+{
+  "id": "skirmish_01",
+  "name": "교차로 FOX",
+  "map": "map01",
+  "size_m": [
+    4000,
+    4000
+  ],
+  "seed": 20261023,
+  "time_limit_min": 40,
+  "collapse_threshold": 0.4,
+  "sides": {
+    "blue": {
+      "faction": "US",
+      "toe": "us_armor_bn_tf",
+      "budget": 2000,
+      "deploy_zone": [
+        [
+          0,
+          0
+        ],
+        [
+          4000,
+          800
+        ]
+      ],
+      "entry_points": [
+        [
+          600,
+          0
+        ],
+        [
+          3400,
+          0
+        ]
+      ]
+    },
+    "red": {
+      "faction": "RU",
+      "toe": "ru_btg_bmp",
+      "budget": 2000,
+      "deploy_zone": [
+        [
+          0,
+          3200
+        ],
+        [
+          4000,
+          4000
+        ]
+      ],
+      "entry_points": [
+        [
+          600,
+          4000
+        ],
+        [
+          3400,
+          4000
+        ]
+      ]
+    }
+  },
+  "control_points": [
+    {
+      "id": "cp_fox",
+      "name": "교차로 FOX",
+      "pos": [
+        1820,
+        2410
+      ],
+      "radius_m": 300,
+      "vp_per_min": 1
+    },
+    {
+      "id": "cp_bravo",
+      "name": "능선 BRAVO",
+      "pos": [
+        900,
+        1900
+      ],
+      "radius_m": 300,
+      "vp_per_min": 1
+    },
+    {
+      "id": "cp_charlie",
+      "name": "마을 CHARLIE",
+      "pos": [
+        3100,
+        1700
+      ],
+      "radius_m": 300,
+      "vp_per_min": 1
+    },
+    {
+      "id": "cp_delta",
+      "name": "교량 DELTA",
+      "pos": [
+        2400,
+        1200
+      ],
+      "radius_m": 300,
+      "vp_per_min": 1
+    }
+  ],
+  "objectives": [
+    {
+      "id": "obj_fox",
+      "side": "blue",
+      "type": "seize",
+      "point": "cp_fox",
+      "minutes": 25,
+      "vp": 30
+    },
+    {
+      "id": "obj_bravo",
+      "side": "red",
+      "type": "hold",
+      "point": "cp_bravo",
+      "minutes": 30,
+      "vp": 20
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "us_m1a2_sepv3",
+  "name": "M1A2 SEPv3",
+  "faction": "US",
+  "class": "tank",
+  "hp": 100,
+  "armor": {
+    "front": 900,
+    "side": 350,
+    "rear": 150,
+    "top": 60
+  },
+  "size": 1.2,
+  "stealth": 0.1,
+  "optics_m": 2500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "m256_apfsds",
+    "m256_heat",
+    "m240_coax"
+  ],
+  "ammo": {
+    "m256_apfsds": 22,
+    "m256_heat": 18,
+    "m240_coax": 4000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 95,
+  "supply_full": 10,
+  "loadouts": [
+    "sepv3",
+    "sepv3_tusk"
+  ]
+}

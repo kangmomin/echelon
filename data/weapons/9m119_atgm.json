@@ -1,0 +1,22 @@
+{
+  "id": "9m119_atgm",
+  "type": "ATGM",
+  "range_m": {
+    "min": 100,
+    "max": 5000
+  },
+  "penetration": 850,
+  "pen_falloff_per_km": 0.0,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.8,
+    "at_max_range": 0.7
+  },
+  "rof_rpm": 2,
+  "suppression": 40,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle"
+  ],
+  "he_radius_m": 0
+}

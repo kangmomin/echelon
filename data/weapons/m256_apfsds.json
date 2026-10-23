@@ -1,0 +1,22 @@
+{
+  "id": "m256_apfsds",
+  "type": "KE",
+  "range_m": {
+    "min": 100,
+    "max": 3500
+  },
+  "penetration": 850,
+  "pen_falloff_per_km": 0.05,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.75,
+    "at_max_range": 0.35
+  },
+  "rof_rpm": 6,
+  "suppression": 30,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle"
+  ],
+  "he_radius_m": 0
+}

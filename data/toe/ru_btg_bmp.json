@@ -1,0 +1,60 @@
+{
+  "id": "ru_btg_bmp",
+  "faction": "RU",
+  "name": "BTG (BMP형)",
+  "hq": {
+    "element": "ru_bmp1ksh_cp",
+    "count": 1
+  },
+  "company_slots": [
+    {
+      "id": "co_1",
+      "allowed": [
+        "ru_msr_co_bmp3"
+      ],
+      "required": true
+    },
+    {
+      "id": "co_2",
+      "allowed": [
+        "ru_msr_co_bmp3"
+      ],
+      "required": true
+    },
+    {
+      "id": "co_3",
+      "allowed": [
+        "ru_msr_co_bmp3",
+        "ru_tank_co"
+      ],
+      "required": true
+    },
+    {
+      "id": "co_4",
+      "allowed": [
+        "ru_tank_co"
+      ],
+      "required": false
+    }
+  ],
+  "constraints": {
+    "min_tank_co": 1
+  },
+  "organic": [
+    "ru_recon_plt",
+    "ru_mortar_bty",
+    "ru_supply_section"
+  ],
+  "attachment_slots": [
+    {
+      "allowed": [
+        "ru_fo_team",
+        "ru_ada_section",
+        "ru_engineer_plt"
+      ],
+      "max": 3
+    }
+  ],
+  "command_capacity_per_min": 6,
+  "max_companies": 4
+}

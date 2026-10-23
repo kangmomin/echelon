@@ -1,0 +1,32 @@
+{
+  "id": "us_m1068_cp",
+  "name": "M1068 지휘소",
+  "faction": "US",
+  "class": "cp",
+  "hp": 60,
+  "armor": {
+    "front": 40,
+    "side": 30,
+    "rear": 20,
+    "top": 10
+  },
+  "size": 1.0,
+  "stealth": 0.15,
+  "optics_m": 1500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 30
+  },
+  "weapons": [
+    "m2_hmg"
+  ],
+  "ammo": {
+    "m2_hmg": 1200
+  },
+  "radio_range_m": 8000,
+  "transport_capacity": 0,
+  "crew": 5,
+  "cost": 40,
+  "supply_full": 2,
+  "loadouts": []
+}

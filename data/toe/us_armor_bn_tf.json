@@ -1,0 +1,56 @@
+{
+  "id": "us_armor_bn_tf",
+  "faction": "US",
+  "name": "기갑 대대 전투단",
+  "hq": {
+    "element": "us_m1068_cp",
+    "count": 1
+  },
+  "company_slots": [
+    {
+      "id": "co_a",
+      "allowed": [
+        "us_tank_co",
+        "us_mech_co"
+      ],
+      "required": true
+    },
+    {
+      "id": "co_b",
+      "allowed": [
+        "us_tank_co",
+        "us_mech_co"
+      ],
+      "required": true
+    },
+    {
+      "id": "co_c",
+      "allowed": [
+        "us_tank_co",
+        "us_mech_co"
+      ],
+      "required": false
+    }
+  ],
+  "constraints": {
+    "min_tank_co": 2
+  },
+  "organic": [
+    "us_scout_plt",
+    "us_mortar_plt",
+    "us_supply_section"
+  ],
+  "attachment_slots": [
+    {
+      "allowed": [
+        "us_fo_team",
+        "us_jtac_team",
+        "us_ada_section",
+        "us_engineer_plt"
+      ],
+      "max": 3
+    }
+  ],
+  "command_capacity_per_min": 6,
+  "max_companies": 4
+}
