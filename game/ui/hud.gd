@@ -58,6 +58,14 @@ func top_bar_text() -> String:
 	var w: SimWorld = battle.world
 	var sec: int = int(w.get_sim_time_sec())
 	var parts: PackedStringArray = ["%02d:%02d" % [floori(sec / 60.0), sec % 60], "%.1fx" % w.get_speed()]
+	if battle.scoring != null:
+		var mine: StringName = battle.player_side
+		var theirs: StringName = Battle.enemy_of(mine)
+		parts.append("승점 %.0f : %.0f" % [battle.scoring.vp[mine], battle.scoring.vp[theirs]])
+		var left: int = maxi(0, roundi(battle.scenario.time_limit_min * 60.0 - w.get_sim_time_sec()))
+		parts.append("남은 %02d:%02d" % [floori(left / 60.0), left % 60])
+		parts.append("전력 %d%% : %d%%" % [roundi(battle.scoring.value_ratio(mine) * 100.0),
+			roundi(battle.scoring.value_ratio(theirs) * 100.0)])
 	if battle.deploying:
 		parts.append("배치 단계")
 	elif w.paused:
@@ -99,8 +107,8 @@ func _panel(anchor_preset: int) -> PanelContainer:
 
 func _build_top_bar() -> void:
 	var p: PanelContainer = _panel(Control.PRESET_CENTER_TOP)
-	p.offset_left = -240
-	p.offset_right = 240
+	p.offset_left = -360
+	p.offset_right = 360
 	p.offset_top = 6
 	p.offset_bottom = 40
 	p.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -296,18 +304,8 @@ func _update_selection_text() -> void:
 		lines.append("[color=#9fd3ff]대형 전환 중[/color]")
 	if u is Platoon and (u as Platoon).has_squads():
 		lines.append("보병 %s" % ("탑승" if (u as Platoon).mounted else "하차"))
-	lines.append("탄약 %d%%" % roundi(ammo_ratio(u) * 100.0))
+	lines.append("탄약 %d%%" % roundi(SupplySystem.ammo_ratio(u) * 100.0))
 	_sel_label.text = "\n".join(lines)
-
-
-## 제대 탄약 비율(엘리먼트 보급 필요량 기준).
-static func ammo_ratio(u: Unit) -> float:
-	var full: float = 0.0
-	var need: float = 0.0
-	for e: Element in u.alive_elements():
-		full += e.def.supply_full
-		need += SupplySystem.element_need(e)
-	return 1.0 - need / full if full > 0.0 else 1.0
 
 
 static func _order_name(type: int) -> String:

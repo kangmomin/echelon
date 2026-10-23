@@ -17,11 +17,13 @@ static func sandbox(catalog: DataCatalog, seed_value: int = -1) -> Battle:
 
 
 ## 편성(ForceSpec) 두 개로 스커미시를 만든다. 배치 단계에서 시작하므로 시뮬은 일시정지 상태.
+## ai_sides: TF AI 가 지휘할 진영(기본: 적군). AI 끼리 붙이려면 [&"blue", &"red"].
 static func skirmish(catalog: DataCatalog, blue: ForceSpec, red: ForceSpec, scenario_id: StringName = &"skirmish_01",
-		seed_value: int = -1) -> Battle:
+		seed_value: int = -1, ai_sides: Array[StringName] = [&"red"]) -> Battle:
 	var b: Battle = Battle.create(catalog, scenario_id, seed_value)
 	b.factory.build_task_force(blue, &"blue")
 	b.factory.build_task_force(red, &"red")
+	b.tf_ai.sides = ai_sides.duplicate()
 	b.deploying = true
 	b.world.set_paused(true)
 	return b

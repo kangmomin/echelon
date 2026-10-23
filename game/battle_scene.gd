@@ -150,6 +150,8 @@ func _process(delta: float) -> void:
 		_advance_peak_usec = maxi(_advance_peak_usec, floori(_advance_usec / float(ran)))
 	for ev: Dictionary in battle.world.events.drain():
 		fx.on_event(ev)
+		if ev["type"] == &"battle_ended":
+			battle_finished.emit(battle.stats.summary())
 		var line: Array = EventText.describe(battle, ev, battle.player_side)
 		if not line.is_empty():
 			var text: String = line[0]

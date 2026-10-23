@@ -15,6 +15,24 @@ static func describe(battle: Battle, ev: Dictionary, player_side: StringName) ->
 	var unit_id: int = p.get("unit", -1)
 	var unit: Unit = battle.get_unit(unit_id)
 	var side: StringName = p.get("side", unit.side if unit != null else &"")
+	# 양쪽 모두 알릴 이벤트.
+	match type:
+		&"point_captured":
+			var mine: bool = side == player_side
+			return ["%s: %s 점령" % ["아군" if mine else "적", str(p.get("name", ""))], GOOD if mine else BAD]
+		&"objective_done":
+			var mine2: bool = side == player_side
+			var gained: int = p.get("vp", 0)
+			return ["%s 임무 목표 달성: %s (+%d)" % ["아군" if mine2 else "적", str(p.get("name", "")), gained],
+				GOOD if mine2 else BAD]
+		&"battle_ended":
+			var winner: String = p.get("winner", "")
+			if winner == "":
+				return ["전투 종료 — 무승부", WARN]
+			return ["전투 종료 — %s" % ("승리" if winner == String(player_side) else "패배"), GOOD if winner == String(player_side) else BAD]
+		&"cas_shot_down":
+			if side != player_side:
+				return ["아군 방공이 적 항공기를 격추", GOOD]
 	if side != player_side and type != &"order_waiting_capacity":
 		return []
 	var unit_name: String = unit.display_name if unit != null and unit.level != Unit.Level.PLATOON else (unit.label() if unit != null else "?")

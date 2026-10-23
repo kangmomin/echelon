@@ -80,6 +80,7 @@ func _draw() -> void:
 		return
 	var level: int = current_level()
 	var alpha: float = battle.world.get_interpolation_alpha()
+	_draw_control_points()
 	if battle.deploying:
 		_draw_deploy_zone()
 	for side: StringName in Battle.SIDES:
@@ -106,6 +107,33 @@ func _draw() -> void:
 		var b: Vector2 = _screen(drag_to)
 		draw_line(a, b, SELECT_COLOR, 2.0)
 		_draw_arrow_head(a, b, SELECT_COLOR)
+
+
+## 거점: 반경 원(소유 진영 색), 이름, 경합 표시. PLAN 11.1.
+func _draw_control_points() -> void:
+	if battle.scoring == null:
+		return
+	for ps: ScoringSystem.PointState in battle.scoring.points:
+		var c: Vector2 = _screen(ps.def.pos)
+		if c == Vector2.INF:
+			continue
+		var edge: Vector2 = _screen(ps.def.pos + Vector2(ps.def.radius_m, 0.0))
+		var r: float = c.distance_to(edge) if edge != Vector2.INF else 20.0
+		var col: Color = Color(0.85, 0.85, 0.85)
+		if ps.owner != &"":
+			col = FRIENDLY_FILL if ps.owner == player_side else HOSTILE_FILL
+		if ps.contested and Engine.get_process_frames() % 40 < 20:
+			col = SELECT_COLOR
+		draw_arc(c, r, 0.0, TAU, 48, Color(col, 0.85), 2.0)
+		draw_circle(c, r, Color(col, 0.06))
+		var flag := PackedVector2Array([c + Vector2(-7, -10), c + Vector2(7, -10), c + Vector2(7, 4), c + Vector2(-7, 4)])
+		draw_colored_polygon(flag, Color(col, 0.95))
+		flag.append(flag[0])
+		draw_polyline(flag, FRAME_COLOR, 1.5)
+		var label: String = ps.def.display_name
+		if ps.contested:
+			label += " (경합)"
+		_text(c + Vector2(-40, 20), label, 13, Color(1, 1, 1, 0.95))
 
 
 ## 배치 단계: 아군 배치 구역(채운 사각형 + 테두리)과 증원 진입 지점.

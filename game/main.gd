@@ -7,6 +7,7 @@ extends Node
 ##   --scene=NAME           시작 화면: menu(기본) | builder | skirmish(기본 편성으로 배치 단계) | sandbox
 ##                          --smoke-ticks / --screenshot 만 주면 sandbox
 ##   --start                skirmish 배치 단계를 바로 끝내고 전투 시작
+##   --ai-vs-ai             skirmish 양쪽 모두 TF AI 가 지휘(관전)
 ##   --nofog                전장의 안개 끔(F9 와 같음)
 ##   --red-attack=X,Y       시작하자마자 적 중대들에 공격 이동 명령(교전 화면 확인용)
 ##   --fire=A,X,Y[,smoke]   시작하자마자 화력 요청(A: 0 박격포, 1 포병, 2 CAS)
@@ -21,6 +22,8 @@ var ui_root: CanvasLayer
 
 var _scene_arg: String = ""
 var _auto_start: bool = false
+var _ai_vs_ai: bool = false
+var _aar_out: String = ""
 
 var _smoke_ticks: int = -1
 var _smoke_elapsed: float = 0.0
@@ -44,6 +47,7 @@ func _ready() -> void:
 			get_tree().quit(1)
 		return
 	ui_root = CanvasLayer.new()
+	ui_root.layer = 10
 	ui_root.name = "Screens"
 	add_child(ui_root)
 	var first: String = _scene_arg
@@ -102,9 +106,35 @@ func start_skirmish(player: ForceSpec) -> void:
 			player_side = side
 	var blue: ForceSpec = player if player_side == &"blue" else enemy
 	var red: ForceSpec = enemy if player_side == &"blue" else player
-	var b: Battle = BattleSetup.skirmish(catalog, blue, red, sc.id)
+	var ai: Array[StringName] = [Battle.enemy_of(player_side)]
+	if _ai_vs_ai:
+		ai = [&"blue", &"red"]
+	var b: Battle = BattleSetup.skirmish(catalog, blue, red, sc.id, -1, ai)
 	b.player_side = player_side
 	start_battle(b, _auto_start)
+
+
+func _close_screen() -> void:
+	if screen != null:
+		screen.queue_free()
+		screen = null
+
+
+## 전투가 끝나면 전장 위에 AAR 을 띄운다.
+func show_aar(aar: Dictionary) -> void:
+	if screen != null:
+		screen.queue_free()
+	var a := AarScreen.new()
+	a.setup(aar, battle_scene.battle.player_side if battle_scene != null else &"blue")
+	a.menu_requested.connect(show_menu)
+	a.close_requested.connect(_close_screen)
+	screen = a
+	ui_root.add_child(a)
+	if _aar_out != "":
+		var f: FileAccess = FileAccess.open(_aar_out, FileAccess.WRITE)
+		if f != null:
+			f.store_string(JSON.stringify(aar, "  "))
+			f.close()
 
 
 func start_battle(b: Battle, auto_begin: bool = false) -> void:
@@ -113,6 +143,7 @@ func start_battle(b: Battle, auto_begin: bool = false) -> void:
 	battle_scene.name = "Battle"
 	battle_scene.setup(b)
 	add_child(battle_scene)
+	battle_scene.battle_finished.connect(show_aar)
 	if auto_begin:
 		battle_scene.start_battle()
 	if _smoke_ticks >= 0:
@@ -165,6 +196,10 @@ func _parse_cmdline() -> void:
 			_scene_arg = "sandbox"
 		elif arg == "--start":
 			_auto_start = true
+		elif arg.begins_with("--aar-out="):
+			_aar_out = value
+		elif arg == "--ai-vs-ai":
+			_ai_vs_ai = true
 		elif arg.begins_with("--fire="):
 			# asset(0 박격포·1 포병·2 CAS),x,y[,smoke]
 			var fp: PackedStringArray = value.split(",")

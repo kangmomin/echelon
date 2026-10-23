@@ -67,6 +67,16 @@ static func element_need(e: Element) -> float:
 	return e.def.supply_full * (missing / n) if n > 0 else 0.0
 
 
+## 제대 탄약 비율(1 = 가득). 엘리먼트 보급 필요량 기준.
+static func ammo_ratio(u: Unit) -> float:
+	var full: float = 0.0
+	var need: float = 0.0
+	for e: Element in u.alive_elements():
+		full += e.def.supply_full
+		need += element_need(e)
+	return 1.0 - need / full if full > 0.0 else 1.0
+
+
 static func platoon_need(p: Platoon) -> float:
 	var total: float = 0.0
 	for e: Element in p.elements:

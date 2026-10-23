@@ -373,7 +373,8 @@ func _deliver(o: Order, tick: int) -> void:
 	o.received_tick = tick
 	if o.issuer != &"unit":
 		delay_samples.append((tick - o.tick_issued) / float(SimConst.TICK_RATE))
-	battle.world.events.emit_event(&"order_received", tick, {"order": o.id, "unit": unit.id, "type": o.type_name()})
+	battle.world.events.emit_event(&"order_received", tick, {"order": o.id, "unit": unit.id, "type": o.type_name(),
+		"side": unit.side, "issuer": String(o.issuer), "delay": (tick - o.tick_issued) / float(SimConst.TICK_RATE)})
 	battle.executor.execute(unit, o)
 
 

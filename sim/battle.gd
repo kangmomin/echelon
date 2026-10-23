@@ -31,6 +31,12 @@ var combat: CombatSystem
 var morale: MoraleSystem
 var fires: FireSupportSystem
 var supply: SupplySystem
+var reinforcements: ReinforcementSystem
+var scoring: ScoringSystem
+var tf_ai: TaskForceAI
+var stats: BattleStats
+## 승패 결과(끝나면 채워진다): {"winner", "reason", "tick", "vp", ...}
+var result: Dictionary = {}
 ## 연막 구름(M5 화력지원이 만든다).
 var smokes: Array[Los.Smoke] = []
 ## 명령 전파 시스템. null 이면 명령을 즉시 실행한다(이동 테스트용 instant 모드).
@@ -59,7 +65,8 @@ static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_overrid
 	b.world = SimWorld.new(b.scenario.seed_value if seed_override < 0 else seed_override)
 	b.factory = ForceFactory.new(b)
 	b.executor = OrderExecutor.new(b)
-	# 시스템 실행 순서(결정론): 통신 → 승계 → 명령 전파 → 자율 반응 → 이동 → 탐지 → 사격 → 화력지원 → 보급 → 사기.
+	# 시스템 실행 순서(결정론): 통신 → 승계 → 명령 전파 → 증원 → TF AI → 자율 반응 → 이동 → 탐지 → 사격 → 화력지원
+	# → 보급 → 사기 → 승점·승패.
 	b.comms = CommsNet.new(b)
 	b.morale = MoraleSystem.new(b)
 	b.world.add_system(b.comms)
@@ -68,6 +75,10 @@ static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_overrid
 	if not instant_orders:
 		b.order_system = OrderSystem.new(b, b.comms)
 		b.world.add_system(b.order_system)
+	b.reinforcements = ReinforcementSystem.new(b)
+	b.world.add_system(b.reinforcements)
+	b.tf_ai = TaskForceAI.new(b)
+	b.world.add_system(b.tf_ai)
 	b.platoon_ai = PlatoonAI.new(b)
 	b.world.add_system(b.platoon_ai)
 	b.movement = MovementSystem.new(b)
@@ -81,6 +92,9 @@ static func create(p_catalog: DataCatalog, scenario_id: StringName, seed_overrid
 	b.supply = SupplySystem.new(b)
 	b.world.add_system(b.supply)
 	b.world.add_system(b.morale)
+	b.scoring = ScoringSystem.new(b)
+	b.world.add_system(b.scoring)
+	b.stats = BattleStats.new(b)
 	return b
 
 
@@ -179,6 +193,7 @@ func dispose() -> void:
 	task_forces.clear()
 	orders_by_id.clear()
 	spatial.clear()
+	world.events.clear_listeners()
 	world = SimWorld.new(0)
 	executor = null
 	movement = null
@@ -191,6 +206,10 @@ func dispose() -> void:
 	morale = null
 	fires = null
 	supply = null
+	reinforcements = null
+	scoring = null
+	tf_ai = null
+	stats = null
 	smokes.clear()
 	factory = null
 
