@@ -42,7 +42,8 @@ var _drawn: Array[Dictionary] = []
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_font = ThemeDB.fallback_font
+	# 프로젝트 테마의 한글 글꼴(웹 빌드에는 시스템 글꼴 대체가 없다).
+	_font = get_theme_default_font()
 
 
 func _process(_delta: float) -> void:

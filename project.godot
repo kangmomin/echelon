@@ -32,6 +32,10 @@ window/size/viewport_height=900
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
+[gui]
+
+theme/custom="res://assets/theme.tres"
+
 [rendering]
 
 renderer/rendering_method="forward_plus"
