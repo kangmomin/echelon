@@ -21,6 +21,8 @@ var cp_lost: bool = false
 ## 지도 밖 화력 자원.
 var artillery_missions: int = 0
 var cas_sorties: int = 0
+## 증원 진입 지점.
+var entry_pos: Vector2 = Vector2.ZERO
 
 
 func _init() -> void:

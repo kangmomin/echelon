@@ -138,6 +138,12 @@ func capacity_queue_size(side: StringName) -> int:
 	return (_capacity_queue[side] as Array).size()
 
 
+## 현재 남은 지휘 용량(아직 한 번도 안 돌았으면 최대치).
+func capacity_now(side: StringName) -> float:
+	var c: float = capacity.get(side, -1.0)
+	return capacity_max(side) if c < 0.0 else c
+
+
 func capacity_max(side: StringName) -> float:
 	var tf: TaskForce = battle.task_forces.get(side)
 	if tf == null:

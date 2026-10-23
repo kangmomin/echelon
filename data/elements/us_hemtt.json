@@ -22,7 +22,7 @@
   "radio_range_m": 1500,
   "transport_capacity": 0,
   "crew": 2,
-  "cost": 15,
+  "cost": 8,
   "supply_full": 0,
   "supply_capacity": 100
 }

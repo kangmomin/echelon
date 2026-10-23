@@ -2,7 +2,7 @@ class_name TOETemplate
 extends RefCounted
 ## 대대 전투단 편제표 템플릿. data/toe/*.json. PLAN 6장, 16.4.
 ## company_slots / organic / attachment_slots 는 중대·소대 템플릿 id 를 가리킨다.
-## 중대·소대 템플릿(UnitTemplate)은 M4 에서 들어온다. 그 전까지 이 참조는 경고로만 검사한다.
+## support: 편성 때 포인트로 사는 지원(지도 밖 포병 사격 임무, 근접항공지원 출격). PLAN 6.2.
 
 
 class CompanySlot:
@@ -30,6 +30,11 @@ var organic: PackedStringArray
 var attachment_slots: Array[AttachmentSlot] = []
 var command_capacity_per_min: float
 var max_companies: int
+## 지원 구매 단가·상한.
+var artillery_mission_cost: int = 30
+var max_artillery: int = 6
+var cas_sortie_cost: int = 70
+var max_cas: int = 2
 
 
 static func from_dict(d: Dictionary, r: DefReader) -> TOETemplate:
@@ -69,6 +74,11 @@ static func from_dict(d: Dictionary, r: DefReader) -> TOETemplate:
 		slot.max_count = r.req_int(raw, "max")
 		t.attachment_slots.append(slot)
 
+	var sup: Dictionary = r.opt_dict(d, "support")
+	t.artillery_mission_cost = r.opt_int(sup, "artillery_mission", 30)
+	t.max_artillery = r.opt_int(sup, "max_artillery", 6)
+	t.cas_sortie_cost = r.opt_int(sup, "cas_sortie", 70)
+	t.max_cas = r.opt_int(sup, "max_cas", 2)
 	t.command_capacity_per_min = r.req_number(d, "command_capacity_per_min")
 	r.check_range(t.command_capacity_per_min, 1.0, 20.0, "command_capacity_per_min")
 	t.max_companies = r.req_int(d, "max_companies")

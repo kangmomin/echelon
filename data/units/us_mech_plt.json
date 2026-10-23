@@ -17,5 +17,18 @@
       "element": "us_inf_squad",
       "count": 4
     }
+  ],
+  "loadouts": [
+    {
+      "id": "jav1",
+      "name": "분대 재블린 1기"
+    },
+    {
+      "id": "jav2",
+      "name": "분대 재블린 2기",
+      "replace": {
+        "us_inf_squad": "us_inf_squad_jav2"
+      }
+    }
   ]
 }

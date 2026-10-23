@@ -20,6 +20,7 @@ var overlay: DebugOverlay
 var orbat: OrbatPanel
 var notifications: Notifications
 var ui_layer: CanvasLayer
+var deploy_panel: PanelContainer
 
 var selection: Array[Unit] = []
 var _rclick_screen: Vector2 = Vector2.INF
@@ -85,6 +86,46 @@ func _ready() -> void:
 	overlay.visible = false
 	add_child(overlay)
 	set_fog(fog_enabled)
+	if battle.deploying:
+		_build_deploy_panel()
+
+
+func _build_deploy_panel() -> void:
+	deploy_panel = UiKit.panel(10)
+	deploy_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	deploy_panel.offset_top = 46
+	deploy_panel.offset_left = -300
+	deploy_panel.offset_right = 300
+	deploy_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	var v := HBoxContainer.new()
+	v.add_theme_constant_override(&"separation", 12)
+	deploy_panel.add_child(v)
+	var l: Label = UiKit.label("배치 단계 — 부대를 고르고 우클릭(드래그로 방향)으로 배치 구역 안에 옮긴다.", 13)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD
+	l.custom_minimum_size.x = 400
+	v.add_child(l)
+	v.add_child(UiKit.button("전투 시작", start_battle, 120))
+	ui_layer.add_child(deploy_panel)
+
+
+## 배치 단계를 끝내고 시뮬을 돌린다.
+func start_battle() -> void:
+	if not battle.deploying:
+		return
+	battle.begin_battle()
+	if deploy_panel != null:
+		deploy_panel.queue_free()
+		deploy_panel = null
+	notifications.push("전투 시작", UiKit.ACCENT)
+
+
+func _deploy_selection(target: Vector2, facing: float) -> void:
+	var n: int = selection.size()
+	for i: int in n:
+		var u: Unit = selection[i]
+		var heading: float = facing if not is_nan(facing) else u.guide.heading
+		var offset: float = (i - (n - 1) * 0.5) * 350.0
+		battle.deploy_unit(u, target + FormationSolver.right_vector(heading) * offset, heading)
 
 
 func set_fog(on: bool) -> void:
@@ -159,7 +200,10 @@ func _on_mouse_button(mb: InputEventMouseButton) -> void:
 			var facing: float = NAN
 			if symbols.drag_to != Vector2.INF and symbols.drag_to.distance_to(_rclick_world) > 10.0:
 				facing = FormationSolver.heading_from_vector(symbols.drag_to - _rclick_world)
-			_issue_move_orders(_rclick_world, facing, mb.shift_pressed)
+			if battle.deploying:
+				_deploy_selection(_rclick_world, facing)
+			else:
+				_issue_move_orders(_rclick_world, facing, mb.shift_pressed)
 			_rclick_world = Vector2.INF
 			symbols.drag_from = Vector2.INF
 			symbols.drag_to = Vector2.INF
@@ -170,7 +214,8 @@ func _on_key(k: InputEventKey) -> void:
 	var handled: bool = true
 	match k.physical_keycode:
 		KEY_SPACE:
-			battle.world.toggle_pause()
+			if not battle.deploying:
+				battle.world.toggle_pause()
 		KEY_EQUAL, KEY_KP_ADD:
 			battle.world.speed_up()
 		KEY_MINUS, KEY_KP_SUBTRACT:
@@ -289,6 +334,9 @@ func _on_orbat_selected(u: Unit, additive: bool) -> void:
 ## 커서 옆에 "명령하면 몇 초 뒤 실행" 미리보기. PLAN 12.2.
 func _update_preview(screen_pos: Vector2) -> void:
 	symbols.preview_pos = screen_pos
+	if battle.deploying:
+		symbols.preview_text = "배치: 우클릭으로 옮기기" if not selection.is_empty() else ""
+		return
 	if selection.is_empty() or battle.order_system == null:
 		symbols.preview_text = ""
 		return
@@ -307,7 +355,7 @@ func _status_extra() -> String:
 		return ""
 	var side: StringName = battle.player_side
 	var q: int = battle.order_system.capacity_queue_size(side)
-	return "지휘 용량 %.1f / %.0f%s" % [battle.order_system.capacity[side], battle.order_system.capacity_max(side),
+	return "지휘 용량 %.1f / %.0f%s" % [battle.order_system.capacity_now(side), battle.order_system.capacity_max(side),
 		"  (대기 %d)" % q if q > 0 else ""]
 
 

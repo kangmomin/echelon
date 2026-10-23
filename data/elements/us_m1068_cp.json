@@ -26,7 +26,7 @@
   "radio_range_m": 8000,
   "transport_capacity": 0,
   "crew": 5,
-  "cost": 40,
+  "cost": 20,
   "supply_full": 2,
   "loadouts": []
 }

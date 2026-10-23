@@ -135,6 +135,130 @@ func spawn_company(template: UnitTemplate, side: StringName, pos: Vector2, headi
 	return c
 
 
+## 편성 결과(ForceSpec)로 전투단 전체를 만든다. 초기 배치 부대는 spec.deploy(없으면 자동 배치) 위치에,
+## 증원 부대는 진입 지점에 지도 밖(on_map = false)으로 만든다. 등장 처리는 증원 시스템이 한다. PLAN 6장, 11.2.
+func build_task_force(spec: ForceSpec, side: StringName) -> TaskForce:
+	var toe: TOETemplate = catalog.get_toe(spec.toe)
+	assert(toe != null, "편제표 없음: %s" % spec.toe)
+	var setup: ScenarioDef.SideSetup = battle.scenario.sides.get(side)
+	var zone: Rect2 = setup.deploy_zone if setup != null else Rect2(Vector2.ZERO, battle.terrain.size_m)
+	var deploy_spec: ForceSpec = spec.duplicate_spec()
+	Deployment.auto_fill(deploy_spec, zone, battle.terrain.size_m, battle.terrain)
+	var entry: Vector2 = zone.get_center()
+	if setup != null and not setup.entry_points.is_empty():
+		entry = setup.entry_points[clampi(spec.entry_point, 0, setup.entry_points.size() - 1)]
+	entry = battle.terrain.nearest_passable(battle.terrain.clamp_to_map(entry, 30.0), Terrain.MOBILITY_VEHICLE)
+	var heading: float = Deployment.facing(zone, battle.terrain.size_m)
+	var report: ForceRules.Report = ForceRules.evaluate(catalog, spec, setup.budget if setup != null else 100000)
+
+	var cp: Vector3 = deploy_spec.deploy["cp"]
+	var tf: TaskForce = create_task_force(side, toe, Vector2(cp.x, cp.y), cp.z)
+	tf.display_name = spec.name if spec.name != "" else toe.display_name
+	tf.artillery_missions = spec.artillery_missions
+	tf.cas_sorties = spec.cas_sorties
+	tf.entry_pos = entry
+
+	for i: int in spec.companies.size():
+		var cs: ForceSpec.CompanySpec = spec.companies[i]
+		var ut: UnitTemplate = catalog.get_unit_template(cs.template)
+		var plts: Array[UnitTemplate] = []
+		var los: Array[StringName] = []
+		for ps: ForceSpec.PlatoonSpec in cs.platoons:
+			plts.append(catalog.get_unit_template(ps.template))
+			los.append(ps.loadout)
+		var wave: int = cs.wave()
+		var key: String = "co:%s" % cs.slot
+		var at: Vector3 = deploy_spec.deploy.get(key, Vector3(entry.x, entry.y, heading))
+		var c: Company = spawn_company(ut, side, Vector2(at.x, at.y), at.z, tf, i, plts, los)
+		c.ad_hoc = report.ad_hoc.has(cs.slot)
+		c.phase = wave
+		c.hq.phase = wave
+		tf.companies.append(c)
+		for j: int in c.platoons.size():
+			var ps: ForceSpec.PlatoonSpec = cs.platoons[j]
+			var p: Platoon = c.platoons[j]
+			p.phase = ps.wave
+			p.ad_hoc = c.ad_hoc
+			if ps.home != cs.slot and ps.home != &"":
+				var home_index: int = _slot_index(spec, ps.home)
+				var from_letter: String = COMPANY_LETTERS[home_index % COMPANY_LETTERS.size()] if home_index >= 0 else "?"
+				p.display_name += " (%s 중대에서 배속)" % from_letter
+			if ps.wave > 0:
+				set_off_map(p, entry, heading)
+		if wave > 0:
+			set_off_map(c, entry, heading)
+			set_off_map(c.hq, entry, heading)
+	var org_specs: Array[ForceSpec.PlatoonSpec] = []
+	var org_keys: Array[String] = []
+	for i: int in spec.organic.size():
+		org_specs.append(spec.organic[i])
+		org_keys.append("org:%d" % i)
+	for i: int in spec.attachments.size():
+		org_specs.append(spec.attachments[i])
+		org_keys.append("att:%d" % i)
+	for i: int in org_specs.size():
+		var ps: ForceSpec.PlatoonSpec = org_specs[i]
+		var at: Vector3 = deploy_spec.deploy.get(org_keys[i], Vector3(entry.x, entry.y, heading))
+		var p: Platoon = spawn_platoon(catalog.get_unit_template(ps.template), side, Vector2(at.x, at.y), at.z, tf,
+			"", "", ps.loadout)
+		p.phase = ps.wave
+		if org_keys[i].begins_with("att:"):
+			p.attached = true
+		tf.organic.append(p)
+		if ps.wave > 0:
+			set_off_map(p, entry, heading)
+	return tf
+
+
+static func _slot_index(spec: ForceSpec, slot_id: StringName) -> int:
+	for i: int in spec.companies.size():
+		if spec.companies[i].slot == slot_id:
+			return i
+	return -1
+
+
+## 증원 대기: 지도 밖으로 빼서 진입 지점에 둔다.
+func set_off_map(u: Unit, entry: Vector2, heading: float) -> void:
+	u.on_map = false
+	u.guide.reset(entry, heading)
+	for e: Element in u.all_elements():
+		e.on_map = false
+		e.pos = entry
+		e.prev_pos = entry
+		e.heading = heading
+		e.prev_heading = heading
+		e.velocity = Vector2.ZERO
+		e.has_move_target = false
+
+
+## 배치 단계에서 제대를 옮긴다(중대면 소대·본부까지 대형대로). 시뮬 시간이 흐르기 전에만 쓴다.
+func redeploy(u: Unit, pos: Vector2, heading: float) -> void:
+	if u is Company:
+		var c: Company = u
+		c.guide.reset(pos, heading)
+		var hq_pos: Vector2 = FormationSolver.local_to_world(Vector2(0.0, -HQ_OFFSET_BEHIND_M), pos, heading)
+		if c.hq != null and c.hq.on_map:
+			c.hq.guide.reset(battle.terrain.nearest_passable(hq_pos, Terrain.MOBILITY_VEHICLE), heading)
+			place_elements(c.hq)
+		var plts: Array[Platoon] = []
+		for p: Platoon in c.platoons:
+			if p.on_map:
+				plts.append(p)
+		var slots: PackedVector2Array = FormationSolver.world_slots(c.formation, plts.size(), pos, heading)
+		for i: int in plts.size():
+			plts[i].guide.reset(battle.terrain.nearest_passable(slots[i], Terrain.MOBILITY_VEHICLE), heading)
+			place_elements(plts[i])
+	elif u is Platoon:
+		u.guide.reset(battle.terrain.nearest_passable(pos, Terrain.MOBILITY_VEHICLE), heading)
+		place_elements(u as Platoon)
+	elif u is TaskForce:
+		var tf: TaskForce = u
+		tf.guide.reset(pos, heading)
+		if tf.cp_section != null:
+			tf.cp_section.guide.reset(battle.terrain.nearest_passable(pos, Terrain.MOBILITY_VEHICLE), heading)
+			place_elements(tf.cp_section)
+
+
 ## 소대 엘리먼트를 가이드 기준 대형 슬롯에 놓는다.
 func place_elements(p: Platoon) -> void:
 	var members: Array[Element] = p.formation_members()

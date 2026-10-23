@@ -8,6 +8,8 @@ var is_hq_section: bool = false
 ## 기계화 소대: 분대가 차량에 타고 있는지.
 var mounted: bool = true
 var loadout: StringName = &""
+## 대대 배속 자산(관측반·방공 등).
+var attached: bool = false
 ## 이 소대가 최근 본 적: element_id → 틱. 사격 표적은 여기서 고른다.
 var contacts: Dictionary[int, int] = {}
 

@@ -17,5 +17,18 @@
       "element": "ru_msr_squad",
       "count": 3
     }
+  ],
+  "loadouts": [
+    {
+      "id": "bmp3",
+      "name": "BMP-3"
+    },
+    {
+      "id": "bmp2m",
+      "name": "BMP-2M",
+      "replace": {
+        "ru_bmp3": "ru_bmp2m"
+      }
+    }
   ]
 }

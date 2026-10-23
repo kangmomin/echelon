@@ -51,5 +51,11 @@
     }
   ],
   "command_capacity_per_min": 6,
-  "max_companies": 4
+  "max_companies": 4,
+  "support": {
+    "artillery_mission": 30,
+    "max_artillery": 6,
+    "cas_sortie": 70,
+    "max_cas": 2
+  }
 }

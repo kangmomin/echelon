@@ -10,6 +10,7 @@ extends RefCounted
 ##   data/units/*.json      파일 하나 = UnitTemplate 하나(중대·소대)
 ##   data/maps/*.json       파일 하나 = MapDef 하나
 ##   data/formations.json   {"formations": [FormationDef, ...]}
+##   data/forces/*.json     파일 하나 = ForceSpec 하나(기본 편성. id = 파일 이름)
 ##
 ## 검증은 두 단계다. 1) 파일별 필드·타입·범위 검사, 2) 정의 사이 참조 검사(validate_references).
 ## 오류가 있어도 끝까지 읽어서 전부 보고한다. catalog.is_valid() 로 판정한다.
@@ -73,6 +74,12 @@ static func load_catalog(root: String = DEFAULT_ROOT) -> DataCatalog:
 			continue
 		r.context = path
 		_put(cat.scenarios, ScenarioDef.from_dict(d, r), r)
+
+	for path: String in list_json(root.path_join("forces")):
+		var d: Dictionary = _read_object(path, r)
+		if d.is_empty():
+			continue
+		cat.forces[StringName(path.get_file().get_basename())] = ForceSpec.from_dict(d)
 
 	validate_references(cat, r)
 	cat.errors = r.errors
@@ -168,6 +175,15 @@ static func validate_references(cat: DataCatalog, r: DefReader) -> void:
 				r.error("sides.%s.toe '%s' 정의가 없음" % [side_name, side.toe])
 			elif toe.faction != side.faction:
 				r.error("sides.%s 의 진영(%s)과 toe 진영(%s)이 다름" % [side_name, side.faction, toe.faction])
+		for side_name: StringName in s.sides.keys():
+			var side: ScenarioDef.SideSetup = s.sides[side_name]
+			for force_id: StringName in cat.forces.keys():
+				var spec: ForceSpec = cat.forces[force_id]
+				if spec.toe != side.toe:
+					continue
+				var rep: ForceRules.Report = ForceRules.evaluate(cat, spec, side.budget)
+				for msg: String in rep.errors:
+					r.error("기본 편성 '%s' (%s): %s" % [force_id, side_name, msg])
 		var m: MapDef = cat.get_map(s.map_id)
 		if m == null:
 			r.error("지도 '%s' 정의가 없음" % s.map_id)

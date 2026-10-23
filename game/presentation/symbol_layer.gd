@@ -78,6 +78,8 @@ func _draw() -> void:
 		return
 	var level: int = current_level()
 	var alpha: float = battle.world.get_interpolation_alpha()
+	if battle.deploying:
+		_draw_deploy_zone()
 	for side: StringName in Battle.SIDES:
 		var tf: TaskForce = battle.task_forces.get(side)
 		if tf == null:
@@ -102,6 +104,42 @@ func _draw() -> void:
 		var b: Vector2 = _screen(drag_to)
 		draw_line(a, b, SELECT_COLOR, 2.0)
 		_draw_arrow_head(a, b, SELECT_COLOR)
+
+
+## 배치 단계: 아군 배치 구역(채운 사각형 + 테두리)과 증원 진입 지점.
+func _draw_deploy_zone() -> void:
+	var setup: ScenarioDef.SideSetup = battle.scenario.sides.get(player_side)
+	if setup == null:
+		return
+	var z: Rect2 = setup.deploy_zone
+	var corners: Array[Vector2] = [z.position, Vector2(z.end.x, z.position.y), z.end, Vector2(z.position.x, z.end.y)]
+	var pts := PackedVector2Array()
+	for c: Vector2 in corners:
+		# 가장자리를 잘게 나눠 지형 높이를 따라가게 한다.
+		pts.append(_screen(c))
+	for p: Vector2 in pts:
+		if p == Vector2.INF:
+			return
+	var edges := PackedVector2Array()
+	for i: int in corners.size():
+		var a: Vector2 = corners[i]
+		var b2: Vector2 = corners[(i + 1) % corners.size()]
+		for k: int in 16:
+			var sp: Vector2 = _screen(a.lerp(b2, k / 16.0))
+			if sp != Vector2.INF:
+				edges.append(sp)
+	if edges.size() >= 3:
+		draw_colored_polygon(edges, Color(0.4, 0.7, 1.0, 0.10))
+		edges.append(edges[0])
+		draw_polyline(edges, Color(0.55, 0.8, 1.0, 0.9), 2.0)
+	var label_pos: Vector2 = _screen(Vector2(z.get_center().x, z.end.y if z.get_center().y < battle.terrain.size_m.y * 0.5 else z.position.y))
+	if label_pos != Vector2.INF:
+		_text(label_pos + Vector2(-40, -8), "배치 구역", 14, Color(0.7, 0.88, 1.0))
+	for i: int in setup.entry_points.size():
+		var ep: Vector2 = _screen(battle.terrain.clamp_to_map(setup.entry_points[i], 20.0))
+		if ep != Vector2.INF:
+			draw_circle(ep, 6.0, Color(0.55, 0.8, 1.0, 0.9))
+			_text(ep + Vector2(8, -4), "증원 진입 %d" % (i + 1), 12, Color(0.7, 0.88, 1.0))
 
 
 # --- 부호 ----------------------------------------------------------------

@@ -9,6 +9,8 @@ var toe_templates: Dictionary[StringName, TOETemplate] = {}
 var scenarios: Dictionary[StringName, ScenarioDef] = {}
 var unit_templates: Dictionary[StringName, UnitTemplate] = {}
 var maps: Dictionary[StringName, MapDef] = {}
+## 기본 편성(data/forces). 키 = 파일 이름.
+var forces: Dictionary[StringName, ForceSpec] = {}
 
 var errors: PackedStringArray = []
 var warnings: PackedStringArray = []
@@ -65,6 +67,20 @@ func formations_for(echelon: StringName) -> Array[FormationDef]:
 
 
 func summary() -> String:
-	return "elements %d, weapons %d, formations %d, units %d, toe %d, maps %d, scenarios %d, errors %d, warnings %d" % [
+	return "elements %d, weapons %d, formations %d, units %d, toe %d, maps %d, scenarios %d, forces %d, errors %d, warnings %d" % [
 		elements.size(), weapons.size(), formations.size(), unit_templates.size(), toe_templates.size(),
-		maps.size(), scenarios.size(), errors.size(), warnings.size()]
+		maps.size(), scenarios.size(), forces.size(), errors.size(), warnings.size()]
+
+
+## 진영의 기본 편성(첫 번째). 없으면 TOE 기본값.
+func default_force(faction: StringName) -> ForceSpec:
+	var keys: Array[StringName] = forces.keys()
+	keys.sort()
+	for key: StringName in keys:
+		var f: ForceSpec = forces[key]
+		if f.faction == faction:
+			return f.duplicate_spec()
+	for t: TOETemplate in toe_templates.values():
+		if t.faction == faction:
+			return ForceSpec.from_toe(self, t.id)
+	return null

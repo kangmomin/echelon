@@ -14,3 +14,14 @@ static func sandbox(catalog: DataCatalog, seed_value: int = -1) -> Battle:
 	red.companies.append(b.factory.spawn_company(catalog.get_unit_template(&"ru_tank_co"), &"red", Vector2(2100, 3300), PI, red, 0))
 	red.companies.append(b.factory.spawn_company(catalog.get_unit_template(&"ru_msr_co_bmp3"), &"red", Vector2(1000, 3200), PI, red, 1))
 	return b
+
+
+## 편성(ForceSpec) 두 개로 스커미시를 만든다. 배치 단계에서 시작하므로 시뮬은 일시정지 상태.
+static func skirmish(catalog: DataCatalog, blue: ForceSpec, red: ForceSpec, scenario_id: StringName = &"skirmish_01",
+		seed_value: int = -1) -> Battle:
+	var b: Battle = Battle.create(catalog, scenario_id, seed_value)
+	b.factory.build_task_force(blue, &"blue")
+	b.factory.build_task_force(red, &"red")
+	b.deploying = true
+	b.world.set_paused(true)
+	return b

@@ -5,12 +5,18 @@ Broken Arrow 를 기반으로 **제대(梯隊) 지휘·편제표·전술 대형�
 
 - 엔진: **Godot 4.7.2** (Forward+), 정적 타입 GDScript
 - 테스트: GUT 9.7.1 (`addons/gut`)
-- 현재 단계: **M3 (전투 핵심) 완료**
+- 현재 단계: **M4 (편성) 완료**
 
 ## 실행
 
 Godot 4.7.2 로 이 폴더의 `project.godot` 를 연다. 처음 열 때 에디터가 import 를 한 번 수행한다.
-F5 로 실행하면 샌드박스 전투(청군 전차·기계화 중대, 정찰 소대 / 적군 2개 중대)가 시작된다.
+F5 로 실행하면 메뉴가 뜬다.
+
+- **스커미시**: 편성 화면 → 배치 단계 → 전투. 편성 화면에서 대대 편제표의 중대 슬롯을 채우고, 소대 줄의
+  "이동…"으로 교차 배속, 장비 템플릿(TUSK, 재블린 2기, BMP-2M, T-72B3), 증원 단계(T+10분 10% 할인, T+20분 20% 할인),
+  직할·배속 자산, 포병·CAS 구매를 고른다. 포인트(2,000점)·제약·비편제·예상 지속 교전 시간이 바로 보인다.
+  "저장"은 `user://forces/이름.json` 에 남는다. 배치 단계에서는 부대를 고르고 우클릭으로 배치 구역 안에 옮긴 뒤 "전투 시작".
+- **샌드박스**: 편성 없이 청군 전차·기계화 중대, 정찰 소대 / 적군 2개 중대로 바로 시작.
 
 | 입력 | 동작 |
 | --- | --- |
@@ -44,7 +50,7 @@ Windows (PowerShell). 콘솔 출력이 보이도록 `_console.exe` 를 쓴다.
 ```powershell
 $env:GODOT = "C:\path\to\Godot_v4.7.2-stable_win64_console.exe"
 .\tools\run_tests.ps1     # GUT 단위 테스트
-.\tools\run_smoke.ps1     # 메인 씬을 헤드리스로 50틱 돌려 보기
+.\tools\run_smoke.ps1     # 샌드박스·기본 편성 스커미시를 헤드리스로 50틱씩 돌려 보기
 ```
 
 Linux / macOS:
@@ -60,7 +66,7 @@ GODOT=/path/to/godot ./tools/check_warnings.sh   # 타입·안전성 경고를 �
 ## 폴더 구조
 
 ```
-data/        JSON 정의 (elements, weapons, units, formations.json, toe, maps, scenarios)
+data/        JSON 정의 (elements, weapons, units, formations.json, toe, maps, scenarios, forces=기본 편성)
 sim/         시뮬레이션. 노드·Engine·Time 에 의존하지 않는 순수 GDScript (RefCounted)
   battle.gd    한 판 전체(지형·경로·제대·시스템)
   defs/        데이터 정의 클래스 + DefReader(검증)
@@ -69,6 +75,7 @@ sim/         시뮬레이션. 노드·Engine·Time 에 의존하지 않는 순�
   path/        지형 그리드, 경로탐색(AStarGrid2D), 공간 해시
   formation/   대형 슬롯 계산
   combat/      탐지·보고, 사격·피해, 제압·사기
+  force/       편성(ForceSpec)·편성 규칙(포인트·제약·비편제)·자동 배치
   ai/          소대·중대 자율 반응(SOP)
   world.gd     10 Hz 고정 틱 루프, 배속, 일시정지, 시드 RNG
 game/        씬, 표현 계층, UI (Node)

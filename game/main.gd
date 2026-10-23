@@ -4,7 +4,9 @@ extends Node
 ## 커맨드라인(-- 뒤):
 ##   --smoke-ticks=N        헤드리스로 N 틱 돌리고 종료(실시간 경로, 4배속)
 ##   --screenshot=PATH      잠시 뒤 화면을 PNG 로 저장하고 종료(렌더러 필요)
-##   --sandbox              메뉴 없이 샌드박스 전투로 바로 시작
+##   --scene=NAME           시작 화면: menu(기본) | builder | skirmish(기본 편성으로 배치 단계) | sandbox
+##                          --smoke-ticks / --screenshot 만 주면 sandbox
+##   --start                skirmish 배치 단계를 바로 끝내고 전투 시작
 ##   --nofog                전장의 안개 끔(F9 와 같음)
 ##   --red-attack=X,Y       시작하자마자 적 중대들에 공격 이동 명령(교전 화면 확인용)
 
@@ -13,6 +15,11 @@ const SCREENSHOT_DELAY_FRAMES: int = 30
 
 var catalog: DataCatalog
 var battle_scene: BattleScene
+var screen: Control = null
+var ui_root: CanvasLayer
+
+var _scene_arg: String = ""
+var _auto_start: bool = false
 
 var _smoke_ticks: int = -1
 var _smoke_elapsed: float = 0.0
@@ -35,16 +42,78 @@ func _ready() -> void:
 		if _smoke_ticks >= 0:
 			get_tree().quit(1)
 		return
-	start_battle(BattleSetup.sandbox(catalog))
+	ui_root = CanvasLayer.new()
+	ui_root.name = "Screens"
+	add_child(ui_root)
+	var first: String = _scene_arg
+	if first == "":
+		first = "sandbox" if (_smoke_ticks >= 0 or _screenshot_path != "") else "menu"
+	match first:
+		"builder":
+			show_builder()
+		"skirmish":
+			start_skirmish(catalog.default_force(&"US"))
+		"sandbox":
+			start_battle(BattleSetup.sandbox(catalog))
+		_:
+			show_menu()
 
 
-func start_battle(b: Battle) -> void:
+# --- 화면 전환 -------------------------------------------------------------
+
+func _clear_screens() -> void:
+	if screen != null:
+		screen.queue_free()
+		screen = null
 	if battle_scene != null:
 		battle_scene.queue_free()
+		battle_scene = null
+
+
+func show_menu() -> void:
+	_clear_screens()
+	var m := MainMenu.new()
+	m.skirmish_requested.connect(show_builder)
+	m.sandbox_requested.connect(func() -> void: start_battle(BattleSetup.sandbox(catalog)))
+	m.quit_requested.connect(func() -> void: get_tree().quit())
+	screen = m
+	ui_root.add_child(m)
+
+
+func show_builder(initial: ForceSpec = null) -> void:
+	_clear_screens()
+	var fb := ForceBuilder.new()
+	fb.setup(catalog, catalog.get_scenario(&"skirmish_01"), initial)
+	fb.back_requested.connect(show_menu)
+	fb.start_requested.connect(start_skirmish)
+	screen = fb
+	ui_root.add_child(fb)
+
+
+## 플레이어 편성으로 스커미시(배치 단계부터). 상대는 다른 진영의 기본 편성.
+func start_skirmish(player: ForceSpec) -> void:
+	var enemy_faction: StringName = &"RU" if player.faction == &"US" else &"US"
+	var enemy: ForceSpec = catalog.default_force(enemy_faction)
+	var sc: ScenarioDef = catalog.get_scenario(&"skirmish_01")
+	var player_side: StringName = &"blue"
+	for side: StringName in sc.sides.keys():
+		if sc.sides[side].faction == player.faction:
+			player_side = side
+	var blue: ForceSpec = player if player_side == &"blue" else enemy
+	var red: ForceSpec = enemy if player_side == &"blue" else player
+	var b: Battle = BattleSetup.skirmish(catalog, blue, red, sc.id)
+	b.player_side = player_side
+	start_battle(b, _auto_start)
+
+
+func start_battle(b: Battle, auto_begin: bool = false) -> void:
+	_clear_screens()
 	battle_scene = BattleScene.new()
 	battle_scene.name = "Battle"
 	battle_scene.setup(b)
 	add_child(battle_scene)
+	if auto_begin:
+		battle_scene.start_battle()
 	if _smoke_ticks >= 0:
 		b.world.set_speed_index(SimConst.SPEED_STEPS.size() - 1)
 	if not _camera_args.is_empty():
@@ -89,6 +158,12 @@ func _parse_cmdline() -> void:
 			_camera_args["select"] = value.to_int()
 		elif arg.begins_with("--run-sec="):
 			_camera_args["run_sec"] = value.to_float()
+		elif arg.begins_with("--scene="):
+			_scene_arg = value
+		elif arg == "--sandbox":
+			_scene_arg = "sandbox"
+		elif arg == "--start":
+			_auto_start = true
 		elif arg == "--nofog":
 			_camera_args["nofog"] = true
 		elif arg.begins_with("--red-attack="):

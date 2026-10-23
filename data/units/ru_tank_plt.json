@@ -11,5 +11,18 @@
     }
   ],
   "default_formation": "wedge",
-  "skill": "regular"
+  "skill": "regular",
+  "loadouts": [
+    {
+      "id": "t90m",
+      "name": "T-90M"
+    },
+    {
+      "id": "t72b3",
+      "name": "T-72B3",
+      "replace": {
+        "ru_t90m": "ru_t72b3"
+      }
+    }
+  ]
 }

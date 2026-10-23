@@ -30,7 +30,7 @@
   "radio_range_m": 1000,
   "transport_capacity": 0,
   "crew": 3,
-  "cost": 90,
+  "cost": 45,
   "supply_full": 10,
   "loadouts": [
     "t90m"

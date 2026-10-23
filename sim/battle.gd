@@ -36,6 +36,8 @@ var order_system: OrderSystem = null
 
 ## 플레이어가 조종하는 진영.
 var player_side: StringName = &"blue"
+## 배치 단계: 시뮬이 멈춰 있고 플레이어는 배치 구역 안에서 부대를 옮길 수 있다. PLAN 6.1.
+var deploying: bool = false
 
 var _next_element_id: int = 1
 var _next_unit_id: int = 1
@@ -186,6 +188,28 @@ func dispose() -> void:
 
 
 # --- 진행 ----------------------------------------------------------------
+
+## 배치 단계를 끝내고 전투를 시작한다.
+func begin_battle() -> void:
+	deploying = false
+	world.set_paused(false)
+	world.events.emit_event(&"battle_started", world.tick, {})
+
+
+## 배치 단계에서 side 의 제대를 pos 로 옮긴다. 배치 구역 밖이나 지도 밖 부대면 false.
+func deploy_unit(u: Unit, pos: Vector2, heading: float) -> bool:
+	if not deploying or u == null or not u.on_map:
+		return false
+	var setup: ScenarioDef.SideSetup = scenario.sides.get(u.side)
+	if setup == null:
+		return false
+	var p: Vector2 = Deployment.clamp_to_zone(pos, setup.deploy_zone, terrain)
+	if u is Platoon and (u as Platoon).follows_parent():
+		# 중대 안 소대는 중대를 옮긴다.
+		u = u.parent
+	factory.redeploy(u, p, heading)
+	return true
+
 
 func step_tick() -> void:
 	world.step_tick()

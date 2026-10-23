@@ -50,7 +50,9 @@ func top_bar_text() -> String:
 	var w: SimWorld = battle.world
 	var sec: int = int(w.get_sim_time_sec())
 	var parts: PackedStringArray = ["%02d:%02d" % [floori(sec / 60.0), sec % 60], "%.1fx" % w.get_speed()]
-	if w.paused:
+	if battle.deploying:
+		parts.append("배치 단계")
+	elif w.paused:
 		parts.append("일시정지")
 	if status_extra.is_valid():
 		var extra: String = status_extra.call()

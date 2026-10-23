@@ -1,0 +1,35 @@
+{
+  "id": "ru_t72b3",
+  "name": "T-72B3",
+  "faction": "RU",
+  "class": "tank",
+  "hp": 100,
+  "armor": {
+    "front": 700,
+    "side": 250,
+    "rear": 100,
+    "top": 40
+  },
+  "size": 1.0,
+  "stealth": 0.12,
+  "optics_m": 2000,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "2a46m_apfsds",
+    "9m119_atgm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "2a46m_apfsds": 22,
+    "9m119_atgm": 4,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 3,
+  "cost": 35,
+  "supply_full": 10
+}

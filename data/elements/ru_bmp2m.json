@@ -1,0 +1,35 @@
+{
+  "id": "ru_bmp2m",
+  "name": "BMP-2M",
+  "faction": "RU",
+  "class": "ifv",
+  "hp": 100,
+  "armor": {
+    "front": 250,
+    "side": 80,
+    "rear": 40,
+    "top": 20
+  },
+  "size": 1.0,
+  "stealth": 0.1,
+  "optics_m": 2000,
+  "speed_kmh": {
+    "road": 65,
+    "offroad": 40
+  },
+  "weapons": [
+    "9m117_atgm",
+    "2a72_30mm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "9m117_atgm": 4,
+    "2a72_30mm": 500,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 1,
+  "crew": 3,
+  "cost": 17,
+  "supply_full": 6
+}
