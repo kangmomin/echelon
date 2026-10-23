@@ -7,7 +7,7 @@ extends RefCounted
 ## - 요청은 큐에 쌓고 틱마다 최대 MAX_REQUESTS_PER_TICK 개를 FIFO 로 처리한다(결정론).
 ## - jumping_enabled 는 가중치를 무시하므로 켜지 않는다.
 
-const MAX_REQUESTS_PER_TICK: int = 4
+const MAX_REQUESTS_PER_TICK: int = 2
 ## [OPEN, ROAD, FOREST, URBAN, WATER]
 const WEIGHT_VEHICLE: Array[float] = [1.0, 0.6, 1.8, 1.5, 0.0]
 const WEIGHT_FOOT: Array[float] = [1.0, 0.8, 1.2, 1.0, 0.0]
@@ -124,13 +124,21 @@ func simplify(points: PackedVector2Array, mobility: StringName) -> PackedVector2
 	var weights: PackedFloat32Array = _base_weights[mobility]
 	var out := PackedVector2Array([points[0]])
 	var i: int = 0
+	var w_at := PackedFloat32Array()
+	w_at.resize(n)
+	for k: int in n:
+		w_at[k] = _weight_at(weights, points[k])
+	var prefix_max := PackedFloat32Array()
+	prefix_max.resize(SIMPLIFY_LOOKAHEAD + 1)
 	while i < n - 1:
 		var j: int = mini(n - 1, i + SIMPLIFY_LOOKAHEAD)
+		# i 부터의 누적 최대 가중치(성능: j 마다 다시 훑지 않는다).
+		var running: float = 0.0
+		for k: int in range(i, j + 1):
+			running = maxf(running, w_at[k])
+			prefix_max[k - i] = running
 		while j > i + 1:
-			var max_w: float = 0.0
-			for k: int in range(i, j + 1):
-				max_w = maxf(max_w, _weight_at(weights, points[k]))
-			if _segment_ok(points[i], points[j], mobility, weights, max_w + SIMPLIFY_WEIGHT_TOLERANCE):
+			if _segment_ok(points[i], points[j], mobility, weights, prefix_max[j - i] + SIMPLIFY_WEIGHT_TOLERANCE):
 				break
 			j -= 1
 		out.append(points[j])

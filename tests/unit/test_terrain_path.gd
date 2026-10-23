@@ -78,9 +78,11 @@ func test_request_queue_processes_fifo_with_budget() -> void:
 	var reqs: Array[GridPathfinder.PathRequest] = []
 	for i: int in 6:
 		reqs.append(pf.request(Vector2(2600, 3300), Vector2(2700 + i * 50, 3500), Terrain.MOBILITY_VEHICLE, &"blue"))
-	assert_eq(pf.process(), GridPathfinder.MAX_REQUESTS_PER_TICK)
-	assert_true(reqs[3].done and not reqs[4].done)
-	pf.process()
+	var budget: int = GridPathfinder.MAX_REQUESTS_PER_TICK
+	assert_eq(pf.process(), budget)
+	assert_true(reqs[budget - 1].done and not reqs[budget].done, "틱당 %d건, 요청 순서대로" % budget)
+	for i: int in 6:
+		pf.process()
 	assert_true(reqs[5].done and reqs[5].ok)
 
 

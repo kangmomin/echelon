@@ -6,8 +6,8 @@ extends RefCounted
 ## 앞선(적 쪽 구역 경계)에서 중대 가이드까지 거리.
 const FRONT_INSET_M: float = 180.0
 ## 직할·배속 줄이 중대 줄 뒤로 떨어지는 거리.
-const SUPPORT_DEPTH_M: float = 320.0
-const CP_DEPTH_M: float = 480.0
+const SUPPORT_DEPTH_M: float = 480.0
+const CP_DEPTH_M: float = 600.0
 const EDGE_MARGIN_M: float = 150.0
 
 

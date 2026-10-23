@@ -20,50 +20,29 @@
         },
         {
           "template": "us_tank_plt",
-          "wave": 1,
+          "wave": 0,
           "home": "co_a"
         }
       ]
     },
     {
       "slot": "co_b",
-      "template": "us_tank_co",
-      "platoons": [
-        {
-          "template": "us_tank_plt",
-          "wave": 0,
-          "home": "co_b"
-        },
-        {
-          "template": "us_tank_plt",
-          "wave": 0,
-          "home": "co_b"
-        },
-        {
-          "template": "us_tank_plt",
-          "wave": 0,
-          "home": "co_b"
-        }
-      ]
-    },
-    {
-      "slot": "co_c",
       "template": "us_mech_co",
       "platoons": [
         {
           "template": "us_mech_plt",
           "wave": 0,
-          "home": "co_c"
+          "home": "co_b"
         },
         {
           "template": "us_mech_plt",
           "wave": 0,
-          "home": "co_c"
+          "home": "co_b"
         },
         {
           "template": "us_mech_plt",
-          "wave": 0,
-          "home": "co_c"
+          "wave": 1,
+          "home": "co_b"
         }
       ]
     }
@@ -93,7 +72,7 @@
     }
   ],
   "support": {
-    "artillery_missions": 0,
+    "artillery_missions": 2,
     "cas_sorties": 0
   },
   "deploy": {},

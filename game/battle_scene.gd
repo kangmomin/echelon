@@ -22,6 +22,7 @@ var orbat: OrbatPanel
 var notifications: Notifications
 var ui_layer: CanvasLayer
 var deploy_panel: PanelContainer
+var minimap: Minimap
 
 var selection: Array[Unit] = []
 var _rclick_screen: Vector2 = Vector2.INF
@@ -79,6 +80,11 @@ func _ready() -> void:
 	orbat.unit_focused.connect(func(u: Unit) -> void: rts_camera.look_at_point(u.centroid()))
 	notifications = Notifications.new()
 	ui_layer.add_child(notifications)
+	minimap = Minimap.new()
+	minimap.battle = battle
+	minimap.rts_camera = rts_camera
+	minimap.player_side = battle.player_side
+	ui_layer.add_child(minimap)
 	hud.order_mode_selected.connect(func(_t: int) -> void: pass)
 	hud.immediate_order.connect(_on_immediate_order)
 	hud.formation_selected.connect(_on_formation_selected)
@@ -135,6 +141,8 @@ func set_fog(on: bool) -> void:
 	element_view.fog_side = side
 	fx.fog_side = side
 	symbols.fog = on
+	if minimap != null:
+		minimap.fog = on
 
 
 func _exit_tree() -> void:

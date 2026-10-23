@@ -113,15 +113,15 @@ func test_reinforcements_arrive_and_join_company() -> void:
 	assert_eq(ReinforcementSystem.wave_tick(1), 6000, "1차 증원 T+10분")
 	assert_eq(ReinforcementSystem.wave_tick(2), 12000, "2차 증원 T+20분")
 	var tf: TaskForce = b.task_forces[&"blue"]
-	var a3: Platoon = tf.companies[0].platoons[2]
+	var a3: Platoon = tf.companies[1].platoons[2]
 	assert_false(a3.on_map)
 	b.reinforcements._bring_in(&"blue", 1, b.tick())
 	assert_true(a3.on_map, "증원 소대 진입")
 	for e: Element in a3.elements:
 		assert_true(e.is_active())
-	var start_d: float = a3.centroid().distance_to(tf.companies[0].guide.pos)
+	var start_d: float = a3.centroid().distance_to(tf.companies[1].guide.pos)
 	b.run_seconds(60.0)
-	var d: float = a3.centroid().distance_to(tf.companies[0].guide.pos)
+	var d: float = a3.centroid().distance_to(tf.companies[1].guide.pos)
 	assert_lt(d, start_d - 100.0, "중대 대형으로 합류하러 이동 (%.0f → %.0f m)" % [start_d, d])
 	# 적 3중대(1차 증원)도 같은 단계에 들어온다.
 	var red_c3: Company = b.task_forces[&"red"].companies[2]

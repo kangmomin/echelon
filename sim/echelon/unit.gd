@@ -130,7 +130,10 @@ func strength() -> float:
 
 
 func is_destroyed() -> bool:
-	return alive_elements().is_empty()
+	for e: Element in all_elements():
+		if e.state == Element.State.OK or e.state == Element.State.DAMAGED:
+			return false
+	return true
 
 
 ## 전투력 50% 이하 = 전투 불능. PLAN 5.1.

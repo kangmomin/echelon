@@ -33,7 +33,7 @@
     }
   ],
   "constraints": {
-    "min_tank_co": 2
+    "min_tank_co": 1
   },
   "organic": [
     "us_scout_plt",

@@ -46,6 +46,17 @@ const FOLLOW_REPATH_INTERVAL: int = 10
 
 var battle: Battle
 var _company_targets: Dictionary[int, Vector2] = {}
+## 틱 단위 캐시(성능): 제대 id → 대형 구성원 / 기준 속도 / 대형 소대.
+var _members_cache: Dictionary[int, Array] = {}
+var _speed_cache: Dictionary[int, float] = {}
+var _plts_cache: Dictionary[int, Array] = {}
+## 정지한 중대의 소대 목표 재사용: 중대 id → {"key": Vector3, "n": int, "targets": {소대 id: Vector2}}
+var _company_rest: Dictionary[int, Dictionary] = {}
+
+
+## 정지한 소대의 엘리먼트 목표 재계산 주기(틱)와 "정렬됨"으로 보는 대형 오차(m).
+const REST_ASSIGN_INTERVAL: int = 10
+const REST_ERROR_M: float = 15.0
 
 
 func _init(p_battle: Battle) -> void:
@@ -63,6 +74,9 @@ func step(world: SimWorld) -> void:
 		e.prev_heading = e.heading
 	battle.pathfinder.process()
 	_company_targets.clear()
+	_members_cache.clear()
+	_speed_cache.clear()
+	_plts_cache.clear()
 	for side: StringName in Battle.SIDES:
 		var tf: TaskForce = battle.task_forces.get(side)
 		if tf == null:
@@ -91,30 +105,86 @@ func state_hash() -> int:
 	return h
 
 
+# --- 틱 캐시 --------------------------------------------------------------
+
+func _members(p: Platoon) -> Array[Element]:
+	if not _members_cache.has(p.id):
+		_members_cache[p.id] = p.formation_members()
+	var m: Array[Element] = []
+	m.assign(_members_cache[p.id])
+	return m
+
+
+func _platoon_speed(p: Platoon) -> float:
+	if not _speed_cache.has(p.id):
+		var best: float = INF
+		for e: Element in _members(p):
+			best = minf(best, e.base_speed_mps())
+		_speed_cache[p.id] = 0.0 if best == INF else best
+	return _speed_cache[p.id]
+
+
+func _plts(c: Company) -> Array[Platoon]:
+	if not _plts_cache.has(c.id):
+		_plts_cache[c.id] = c.formation_platoons()
+	var out: Array[Platoon] = []
+	out.assign(_plts_cache[c.id])
+	return out
+
+
+## Company.base_speed() 와 같은 값(캐시 사용).
+func _company_speed(c: Company) -> float:
+	if _speed_cache.has(c.id):
+		return _speed_cache[c.id]
+	var best: float = INF
+	for p: Platoon in _plts(c):
+		var sp: float = _platoon_speed(p)
+		if sp > 0.0:
+			best = minf(best, sp)
+	if c.hq != null and not c.hq.is_destroyed():
+		var hs: float = _platoon_speed(c.hq)
+		if hs > 0.0:
+			best = minf(best, hs)
+	_speed_cache[c.id] = 0.0 if best == INF else best
+	return _speed_cache[c.id]
+
+
 # --- 중대 ----------------------------------------------------------------
 
 func _update_company(c: Company, tick: int, dt: float) -> void:
 	_poll_path(c)
-	var speed: float = c.base_speed() * c.formation.get_mod(&"speed", 1.0)
+	var speed: float = _company_speed(c) * c.formation.get_mod(&"speed", 1.0)
 	if c.is_reforming(tick):
 		speed *= 0.5
 	if c.column_mode and battle.terrain.type_at(c.guide.pos) == Terrain.Type.ROAD:
-		speed = _road_march_speed(c, c.base_speed())
+		speed = _road_march_speed(c, _company_speed(c))
 	if c.formation_error > COMPANY_WAIT_M or tick < c.contact_halt_until:
 		speed = 0.0
 	# 소대들이 번역 명령을 받을 때까지(최대 BRIEFING_TIMEOUT) 출발하지 않는다.
 	if c.mission != null and c.mission.received_tick >= 0 and tick - c.mission.received_tick < BRIEFING_TIMEOUT_TICKS:
-		for p: Platoon in c.formation_platoons():
+		for p: Platoon in _plts(c):
 			if p.awaiting_follow:
 				speed = 0.0
 				break
 	if c.is_routed(tick) or c.is_leaderless(tick):
-		speed = minf(speed, c.base_speed() * 0.5)
+		speed = minf(speed, _company_speed(c) * 0.5)
 	c.guide_speed_limit = speed
 	var moved: float = _advance_guide(c, dt, speed)
+	# 성능: 정지해 정렬된 중대는 소대 목표를 REST_ASSIGN_INTERVAL 틱마다만 다시 계산한다.
+	var rest_key: Vector3 = Vector3(c.guide.pos.x, c.guide.pos.y, c.guide.heading)
+	var n_plts: int = _plts(c).size()
+	var saved: Dictionary = _company_rest.get(c.id, {})
+	if not saved.is_empty() and saved["key"] == rest_key and saved["n"] == n_plts and c.formation_error < REST_ERROR_M \
+			and (tick + c.id) % REST_ASSIGN_INTERVAL != 0:
+		var kept: Dictionary = saved["targets"]
+		for pid: Variant in kept.keys():
+			var tgt: Vector2 = kept[pid]
+			var unit_id: int = pid
+			_company_targets[unit_id] = tgt
+		return
 
 	# 소대 목표 위치 계산.
-	var plts: Array[Platoon] = c.formation_platoons()
+	var plts: Array[Platoon] = _plts(c)
 	if c.guide.is_moving() and (_on_road_ahead(c.guide) or _choke_ahead(c.guide)):
 		c.column_hold_m = maxf(c.column_hold_m, (plts.size() + 2) * COMPANY_COLUMN_SPACING_M + 100.0)
 	c.column_hold_m = maxf(0.0, c.column_hold_m - moved)
@@ -152,6 +222,12 @@ func _update_company(c: Company, tick: int, dt: float) -> void:
 		_company_targets[c.hq.id] = battle.terrain.nearest_passable(hq_target, Terrain.MOBILITY_VEHICLE)
 	c.formation_error = worst
 	_check_settled(c)
+	var targets_copy: Dictionary = {}
+	for p: Platoon in plts:
+		targets_copy[p.id] = _company_targets[p.id]
+	if c.hq != null and _company_targets.has(c.hq.id):
+		targets_copy[c.hq.id] = _company_targets[c.hq.id]
+	_company_rest[c.id] = {"key": rest_key, "n": n_plts, "targets": targets_copy}
 
 
 # --- 소대 ----------------------------------------------------------------
@@ -159,7 +235,7 @@ func _update_company(c: Company, tick: int, dt: float) -> void:
 func _update_platoon(p: Platoon, tick: int, dt: float) -> void:
 	if p.is_destroyed():
 		return
-	var base: float = p.base_speed()
+	var base: float = _platoon_speed(p)
 	var speed: float = base * p.formation.get_mod(&"speed", 1.0)
 	if p.is_reforming(tick):
 		speed *= 0.5
@@ -202,12 +278,20 @@ func _update_platoon(p: Platoon, tick: int, dt: float) -> void:
 			p.column_hold_m = maxf(p.column_hold_m, (p.elements.size() + 1) * PLATOON_COLUMN_SPACING_M + 50.0)
 		p.column_hold_m = maxf(0.0, p.column_hold_m - moved)
 		p.column_mode = p.guide.is_moving() and (p.column_hold_m > 0.0 or p.formation.id == &"column")
+	# 성능: 가이드가 그대로이고 대형이 맞춰진 소대는 엘리먼트 목표를 REST_ASSIGN_INTERVAL 틱마다만 다시 계산한다.
+	var key: Vector3 = Vector3(p.guide.pos.x, p.guide.pos.y, p.guide.heading)
+	var members: int = _members(p).size()
+	var unchanged: bool = key == p.last_assign_key and members == p.last_assign_members and p.formation_error < REST_ERROR_M
+	if unchanged and (tick + p.id) % REST_ASSIGN_INTERVAL != 0:
+		return
+	p.last_assign_key = key
+	p.last_assign_members = members
 	_assign_element_targets(p, tick)
 
 
 ## 소대 엘리먼트에게 목표 위치(대형 슬롯 또는 종대 위치)를 준다.
 func _assign_element_targets(p: Platoon, _tick: int) -> void:
-	var members: Array[Element] = p.formation_members()
+	var members: Array[Element] = _members(p)
 	var g: Guide = p.guide
 	var rest: float = g.heading
 	if p.posture == &"defending" and not is_nan(p.defend_facing):

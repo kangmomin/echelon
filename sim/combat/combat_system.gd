@@ -35,6 +35,9 @@ const RETURN_FIRE_TICKS: int = 100
 const MASK_RANGE_M: float = 250.0
 const MASK_HALF_WIDTH_M: float = 7.0
 const MASKED_SCORE: float = 0.2
+const LONG_RANGE_START_M: float = 1000.0
+const LONG_RANGE_END_M: float = 3000.0
+const LONG_RANGE_MULT: float = 0.4
 
 var battle: Battle
 var shots_fired: int = 0
@@ -207,7 +210,14 @@ func hit_chance(e: Element, w: WeaponDef, t: Element, d: float, tick: int) -> fl
 		p *= SUPPRESSED_ACC
 	p *= TARGET_COVER_ACC.get(battle.terrain.type_at(t.pos), 1.0)
 	p *= clampf(sqrt(t.def.size), 0.6, 1.2)
+	p *= long_range_factor(d)
 	return clampf(p, 0.01, 0.98)
+
+
+## 원거리 교전 감쇠(D-034): 1 km 까지 1, 3 km 에서 LONG_RANGE_MULT. 원거리 사격은 죽이기보다 제압한다.
+## 교전이 수십 초 만에 끝나면 15~30초 명령 지연이 의미를 잃는다(지휘가 개입할 시간을 만든다).
+static func long_range_factor(d: float) -> float:
+	return lerpf(1.0, LONG_RANGE_MULT, clampf((d - LONG_RANGE_START_M) / (LONG_RANGE_END_M - LONG_RANGE_START_M), 0.0, 1.0))
 
 
 ## 사선 가림: 같은 소대 차량이 사수와 표적 사이 가까이(사선 폭 안)에 있으면 쏠 수 없다.

@@ -13,6 +13,9 @@ var attached: bool = false
 ## 최근 포격을 받은 틱과 착탄점(포격 SOP 반응용).
 var last_shelled_tick: int = -1000000
 var last_shell_pos: Vector2 = Vector2.ZERO
+## 이동 시스템 캐시: 마지막으로 엘리먼트 목표를 계산한 가이드 위치·방향과 구성원 수.
+var last_assign_key: Vector3 = Vector3.INF
+var last_assign_members: int = -1
 ## 이 소대가 최근 본 적: element_id → 틱. 사격 표적은 여기서 고른다.
 var contacts: Dictionary[int, int] = {}
 
@@ -23,6 +26,14 @@ func _init() -> void:
 
 func all_elements() -> Array[Element]:
 	return elements
+
+
+## 성능: 배열을 만들지 않고 살아 있는 엘리먼트가 있는지만 본다(자주 불린다).
+func is_destroyed() -> bool:
+	for e: Element in elements:
+		if e.state == Element.State.OK or e.state == Element.State.DAMAGED:
+			return false
+	return true
 
 
 func vehicles() -> Array[Element]:

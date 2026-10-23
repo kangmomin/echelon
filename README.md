@@ -5,7 +5,7 @@ Broken Arrow 를 기반으로 **제대(梯隊) 지휘·편제표·전술 대형�
 
 - 엔진: **Godot 4.7.2** (Forward+), 정적 타입 GDScript
 - 테스트: GUT 9.7.1 (`addons/gut`)
-- 현재 단계: **M6 (AI·스커미시) 완료**
+- 현재 단계: **M7 (다듬기·검증) 완료 — 프로토타입 1차 완성**. 결과 정리는 [`docs/REPORT.md`](docs/REPORT.md), 플레이테스트 기록은 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)
 
 ## 실행
 
@@ -32,6 +32,7 @@ F5 로 실행하면 메뉴가 뜬다.
 | Space, `=` / `-` | 일시정지, 배속 (0.5x · 1x · 2x · 4x) |
 | R | 보급 요청(선택 제대 → 가장 가까운 보급반이 온다) |
 | Z / V / C / B | 화력 요청 모드: 박격포 / 박격포 연막 / 포병 / 근접항공지원 → 좌클릭으로 표적, 우클릭·Esc 취소 |
+| 미니맵 클릭·드래그 | 카메라 이동 (오른쪽 아래) |
 | F9 | 전장의 안개 켜기/끄기(디버그) |
 | F10 | 디버그 오버레이 |
 
@@ -58,6 +59,13 @@ F5 로 실행하면 메뉴가 뜬다.
 
 ```bash
 $GODOT --headless --path . -s res://tools/headless_battle.gd -- --seed=7 --out=/tmp/aar.json
+# 편성 파일을 바꿔 붙이기: --blue=편성.json --red=편성.json (편성 화면에서 저장한 파일 형식)
+```
+
+성능 측정(엘리먼트 ~300개, 시스템별 틱 시간):
+
+```bash
+$GODOT --headless --path . -s res://tools/profile_sim.gd -- --ticks=1500 --extra=5
 ```
 
 ## 테스트

@@ -85,6 +85,34 @@ func _enemies_near(tf: TaskForce, pos: Vector2, radius: float) -> int:
 	return n
 
 
+## 대대가 알고 있는 적의 추정 전력(병과별 가치 표). 보고된 병과만 쓴다(실제 상태는 모른다).
+const CLASS_VALUE: Dictionary[StringName, float] = {
+	&"tank": 60.0, &"ifv": 30.0, &"recon": 30.0, &"inf_squad": 10.0, &"apc": 20.0, &"mortar": 15.0,
+	&"cp": 20.0, &"fo": 15.0, &"aa": 25.0, &"ew": 15.0, &"truck": 5.0,
+}
+
+
+func _enemy_value_near(tf: TaskForce, pos: Vector2, radius: float) -> float:
+	var v: float = 0.0
+	var tick: int = battle.world.tick
+	for key: int in tf.known_enemies.keys():
+		var info: Dictionary = tf.known_enemies[key]
+		var t: int = info["tick"]
+		var p: Vector2 = info["pos"]
+		if tick - t <= FRESH_TICKS * 4 and p.distance_to(pos) <= radius:
+			var cls: StringName = info.get("class", &"")
+			v += CLASS_VALUE.get(cls, 20.0)
+	return v
+
+
+## 아군 중대 전력(같은 병과 가치 표, 살아 있는 엘리먼트 × 상태).
+static func company_value(c: Company) -> float:
+	var v: float = 0.0
+	for e: Element in c.alive_elements():
+		v += CLASS_VALUE.get(e.def.element_class, 20.0) * e.strength()
+	return v
+
+
 func _assign_companies(tf: TaskForce) -> void:
 	var active: Array[Company] = []
 	for c: Company in tf.companies:
@@ -109,9 +137,11 @@ func _assign_companies(tf: TaskForce) -> void:
 		for c: Company in todo:
 			for ps: ScoringSystem.PointState in pts:
 				var already: int = point_load.get(ps.def.id, 0)
-				var enemy: int = _enemies_near(tf, ps.def.pos, ENEMY_NEAR_M)
+				var enemy_value: float = _enemy_value_near(tf, ps.def.pos, ENEMY_NEAR_M)
 				var dist_km: float = c.centroid().distance_to(ps.def.pos) / 1000.0
-				var score: float = _point_value(tf, ps) / (1.0 + dist_km) / (1.0 + 0.15 * enemy)
+				# 국지 전력비: 알려진 적이 이 중대보다 강하면 크게 깎는다(무모한 정면 공격을 피한다).
+				var ratio: float = enemy_value / maxf(company_value(c), 1.0)
+				var score: float = _point_value(tf, ps) / (1.0 + dist_km) / (1.0 + 3.0 * maxf(0.0, ratio - 0.7))
 				score /= 1.0 + already * 1.5
 				if assignment.get(c.id, &"") == ps.def.id:
 					score *= STICKY_BONUS
@@ -207,7 +237,8 @@ func _organic(tf: TaskForce) -> void:
 						_order(p, Order.Type.MOVE, screen, FormationSolver.heading_from_vector(enemy_dir))
 			&"fo", &"ew", &"aa":
 				if lead != null and idle:
-					var back: float = 500.0 if p.kind == &"fo" else 900.0
+					# 관측반은 선도 중대 바로 뒤, 방공·전자전은 직사 화기 사거리 밖(1.5 km 뒤).
+					var back: float = 600.0 if p.kind == &"fo" else 1500.0
 					var spot: Vector2 = lead.centroid() - enemy_dir * back
 					if p.centroid().distance_to(spot) > 400.0:
 						_order(p, Order.Type.MOVE, spot, NAN)

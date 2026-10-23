@@ -85,6 +85,11 @@
           "template": "ru_tank_plt",
           "wave": 0,
           "home": "co_4"
+        },
+        {
+          "template": "ru_tank_plt",
+          "wave": 0,
+          "home": "co_4"
         }
       ]
     }
@@ -118,7 +123,7 @@
     }
   ],
   "support": {
-    "artillery_missions": 4,
+    "artillery_missions": 7,
     "cas_sorties": 1
   },
   "deploy": {},

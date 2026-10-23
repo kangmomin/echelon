@@ -33,6 +33,9 @@ var slopes: PackedFloat32Array
 ## 통행 가능 비트맵(1 = 가능). 자주 쓰는 판정을 함수 호출 없이 배열 조회로 한다.
 var passable_vehicle: PackedByteArray
 var passable_foot: PackedByteArray
+## 차량 통행 여유(셀): 이 셀에서 체비셰프 거리 clearance 미만 안의 셀은 모두 차량 통행 가능(최대 255).
+## line_passable 이 짧은 선분을 배열 순회 없이 바로 통과시키는 데 쓴다(성능, M7).
+var clearance_vehicle: PackedByteArray
 ## 다리(하천 30 m 안의 도로) 셀.
 var bridge_mask: PackedByteArray
 
@@ -64,6 +67,7 @@ static func build(p_map: MapDef) -> Terrain:
 		t._fill_polyline(f.points, f.width_m, Type.ROAD)
 	t._build_slopes()
 	t._build_masks()
+	t._build_clearance()
 	return t
 
 
@@ -169,6 +173,12 @@ func speed_factor(type: int, mobility: StringName) -> float:
 func line_passable(a: Vector2, b: Vector2, mobility: StringName) -> bool:
 	var mask: PackedByteArray = passable_vehicle if mobility == MOBILITY_VEHICLE else passable_foot
 	var dist: float = a.distance_to(b)
+	# 빠른 길: 시작 셀 주변 여유 안에 선분이 다 들어가면 통과(차량이 통행 가능하면 도보도 가능).
+	var ax: int = floori(a.x / cell_m)
+	var ay: int = floori(a.y / cell_m)
+	if ax >= 0 and ay >= 0 and ax < width and ay < height_cells and not clearance_vehicle.is_empty():
+		if dist / cell_m + 1.0 < clearance_vehicle[ay * width + ax]:
+			return true
 	var steps: int = maxi(1, ceili(dist / (cell_m * 0.5)))
 	var inv: float = 1.0 / cell_m
 	var dx: float = (b.x - a.x) / steps
@@ -267,6 +277,41 @@ func _carve_river(river: MapDef.Feature) -> void:
 		_for_cells_near_segment(river.points[i], river.points[i + 1], half, func(idx: int, dist: float) -> void:
 			var depth: float = RIVER_DEPTH_M * (1.0 - clampf(dist / half, 0.0, 1.0))
 			heights[idx] = heights[idx] - depth * 0.5)
+
+
+## 두 번 훑는 체비셰프 거리 변환. 통행 불가 셀 = 0.
+func _build_clearance() -> void:
+	var n: int = width * height_cells
+	var d := PackedInt32Array()
+	d.resize(n)
+	for i: int in n:
+		d[i] = 0 if passable_vehicle[i] == 0 else 255
+	for cy: int in height_cells:
+		for cx: int in width:
+			var i: int = cy * width + cx
+			if d[i] == 0:
+				continue
+			var v: int = d[i]
+			if cx == 0 or cy == 0:
+				v = 1
+			else:
+				v = mini(v, mini(mini(d[i - 1], d[i - width]), mini(d[i - width - 1], d[i - width + 1] if cx + 1 < width else 0)) + 1)
+			d[i] = v
+	for cy: int in range(height_cells - 1, -1, -1):
+		for cx: int in range(width - 1, -1, -1):
+			var i: int = cy * width + cx
+			if d[i] == 0:
+				continue
+			var v: int = d[i]
+			if cx == width - 1 or cy == height_cells - 1:
+				v = 1
+			else:
+				v = mini(v, mini(mini(d[i + 1], d[i + width]), mini(d[i + width + 1], d[i + width - 1] if cx > 0 else 0)) + 1)
+			d[i] = v
+	clearance_vehicle = PackedByteArray()
+	clearance_vehicle.resize(n)
+	for i: int in n:
+		clearance_vehicle[i] = mini(d[i], 255)
 
 
 func _build_masks() -> void:

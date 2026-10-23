@@ -31,6 +31,15 @@ func all_elements() -> Array[Element]:
 	return out
 
 
+func is_destroyed() -> bool:
+	if hq != null and not hq.is_destroyed():
+		return false
+	for p: Platoon in platoons:
+		if not p.is_destroyed():
+			return false
+	return true
+
+
 ## 지금 중대 대형을 따르는 소대(분리·전멸·지도 밖 제외), 원래 순서.
 func formation_platoons() -> Array[Platoon]:
 	var out: Array[Platoon] = []

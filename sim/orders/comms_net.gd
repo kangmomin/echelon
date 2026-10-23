@@ -10,6 +10,8 @@ extends SimSystem
 ##   중대망 = 중대장·중대본부·그 중대 소대장들, 대대망 = 대대 지휘소·중대장들·직할 소대장들(DECISIONS D-015).
 
 const UPDATE_INTERVAL: int = 20
+## 적군 진영 갱신 위상(청군과 반 주기 어긋남).
+const HALF_INTERVAL: int = 10
 const FULL_QUALITY_RANGE: float = 0.6
 const EDGE_QUALITY: float = 0.3
 const FOREST_ATTEN: float = 0.8
@@ -49,9 +51,18 @@ func get_system_name() -> StringName:
 
 
 func step(world: SimWorld) -> void:
-	if _built_tick < 0 or world.tick - _built_tick >= UPDATE_INTERVAL:
+	if _built_tick < 0:
 		rebuild()
 		_update_unit_states()
+		return
+	# 성능: 두 진영을 반 주기 어긋나게 갱신해 한 틱에 몰리지 않게 한다.
+	var phase: int = world.tick % UPDATE_INTERVAL
+	if phase == 0:
+		_rebuild_side(&"blue")
+		_update_unit_states(&"blue")
+	elif phase == HALF_INTERVAL:
+		_rebuild_side(&"red")
+		_update_unit_states(&"red")
 
 
 func state_hash() -> int:
@@ -65,37 +76,43 @@ func state_hash() -> int:
 func rebuild() -> void:
 	_built_tick = battle.world.tick
 	for side: StringName in Battle.SIDES:
-		var nodes: Array = []
-		var tf: TaskForce = battle.task_forces.get(side)
-		if tf != null:
-			for u: Unit in tf.all_units():
-				var c: Element = u.leader()
-				if c != null and c.is_active() and not nodes.has(c):
-					nodes.append(c)
-		_nodes[side] = nodes
-		var jam: Array = []
-		for e: Element in battle.elements:
-			if e.side != side and e.is_active() and e.def.element_class == &"ew":
-				jam.append(e)
-		_jammers[side] = jam
-		var edges: Dictionary = {}
-		for a: Variant in nodes:
-			var ea: Element = a
-			var row: Dictionary = {}
-			for b: Variant in nodes:
-				var eb: Element = b
-				if ea == eb:
-					continue
-				var q: float = link_quality(ea, eb)
-				if q > 0.0:
-					row[eb.id] = q
-			edges[ea.id] = row
-		_edges[side] = edges
+		_rebuild_side(side)
+
+
+func _rebuild_side(side: StringName) -> void:
+	var nodes: Array = []
+	var tf: TaskForce = battle.task_forces.get(side)
+	if tf != null:
+		for u: Unit in tf.all_units():
+			var c: Element = u.leader()
+			if c != null and c.is_active() and not nodes.has(c):
+				nodes.append(c)
+	_nodes[side] = nodes
+	var jam: Array = []
+	for e: Element in battle.elements:
+		if e.side != side and e.is_active() and e.def.element_class == &"ew":
+			jam.append(e)
+	_jammers[side] = jam
+	var edges: Dictionary = {}
+	for a: Variant in nodes:
+		var ea: Element = a
+		var row: Dictionary = {}
+		for b: Variant in nodes:
+			var eb: Element = b
+			if ea == eb:
+				continue
+			var q: float = link_quality(ea, eb)
+			if q > 0.0:
+				row[eb.id] = q
+		edges[ea.id] = row
+	_edges[side] = edges
 
 
 ## sender → receiver 직결 품질(0 = 연결 없음).
 func link_quality(sender: Element, receiver: Element) -> float:
 	var d: float = sender.pos.distance_to(receiver.pos)
+	if d > sender.def.radio_range_m:
+		return 0.0  # 감쇠는 거리를 줄이기만 하므로 계산할 필요가 없다
 	var r: float = sender.def.radio_range_m * _attenuation(sender, receiver)
 	if d > r:
 		return 0.0
@@ -184,9 +201,9 @@ static func state_of(link: Link) -> int:
 
 
 ## 제대별 통신 상태(상위 지휘관과의 연결)를 갱신하고, 바뀌면 이벤트를 낸다.
-func _update_unit_states() -> void:
+func _update_unit_states(only_side: StringName = &"") -> void:
 	for u: Unit in battle.units:
-		if u.level == Unit.Level.TASK_FORCE or not u.on_map:
+		if u.level == Unit.Level.TASK_FORCE or not u.on_map or (only_side != &"" and u.side != only_side):
 			continue
 		var sup: Unit = superior_of(u)
 		if sup == null:

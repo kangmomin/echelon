@@ -39,24 +39,26 @@ func test_default_us_force_fits_2000_points_and_deploys() -> void:
 		else:
 			off_map += 1
 	assert_eq(on_map + off_map, rep.element_count, "편성한 엘리먼트 수 그대로 생성")
-	assert_eq(off_map, 4, "A 중대 3소대(전차 4대)는 1차 증원")
-	assert_eq(tf.companies.size(), 3)
+	assert_eq(off_map, 8, "B 중대 3소대(M2A3 4대 + 분대 4)는 1차 증원")
+	assert_eq(tf.companies.size(), 2)
 	assert_eq(tf.organic.size(), 5, "직할 3 + 배속 2")
 	b.dispose()
 
 
 func test_budget_and_constraint_errors() -> void:
 	var spec: ForceSpec = _us()
-	spec.artillery_missions = 4
+	spec.artillery_missions = 6
+	spec.attachments.append(ForceSpec.PlatoonSpec.new())
+	spec.attachments[2].template = &"us_ada_section"
 	var rep: ForceRules.Report = ForceRules.evaluate(cat, spec, 2000)
-	assert_false(rep.is_valid(), "포병 4회를 더 사면 예산 초과")
+	assert_false(rep.is_valid(), "포병 6회 + 방공반을 사면 예산 초과 (%d)" % rep.total)
 	assert_string_contains(" ".join(rep.errors), "예산 초과")
-	# 전차 중대를 기계화 중대로 바꾸면 최소 전차 중대 2 위반.
+	# 전차 중대를 기계화 중대로 바꾸면 최소 전차 중대 1 위반.
 	var s2: ForceSpec = _us()
-	s2.companies[1] = ForceSpec.make_company(cat, &"co_b", &"us_mech_co")
+	s2.companies[0] = ForceSpec.make_company(cat, &"co_a", &"us_mech_co")
 	var rep2: ForceRules.Report = ForceRules.evaluate(cat, s2, 5000)
 	assert_false(rep2.is_valid())
-	assert_string_contains(" ".join(rep2.errors), "전차 중대가 최소 2")
+	assert_string_contains(" ".join(rep2.errors), "전차 중대가 최소 1")
 	# 다른 진영 소대.
 	var s3: ForceSpec = _us()
 	s3.companies[0].platoons[0].template = &"ru_tank_plt"
@@ -90,28 +92,30 @@ func test_wave_discount_and_loadout_cost() -> void:
 ## 교차 배속: 전차 소대 ↔ 기계화 소대 교환은 편제 안(혼성 팀). 전차 위주 중대가 모자라게 되면 비편제.
 func test_cross_attachment_and_ad_hoc() -> void:
 	var spec: ForceSpec = _us()
-	# A 전차 중대 1소대 → C 기계화 중대, C 1소대 → A. 둘 다 3개 소대 유지, 전차 위주 중대 2 유지.
+	spec.companies.append(ForceSpec.make_company(cat, &"co_c", &"us_mech_co"))
+	# A 전차 중대 1소대 → C 기계화 중대, C 1소대 → A. 둘 다 3개 소대 유지, 전차 위주 중대 1 유지.
 	assert_true(spec.move_platoon(&"co_a", 0, &"co_c"))
 	assert_true(spec.move_platoon(&"co_c", 0, &"co_a"))
-	var rep: ForceRules.Report = ForceRules.evaluate(cat, spec, 2000)
+	var rep: ForceRules.Report = ForceRules.evaluate(cat, spec, 5000)
 	assert_true(rep.is_valid(), "%s" % [rep.errors])
 	assert_true(rep.ad_hoc.is_empty(), "팀 편성은 비편제가 아님: %s" % [rep.ad_hoc])
-	# B 전차 중대의 전차 소대 2개를 C 로 → B 는 소대 1개(비편제), 전차 위주 중대 수도 깨짐.
-	assert_true(spec.move_platoon(&"co_b", 0, &"co_c"))
-	assert_true(spec.move_platoon(&"co_b", 0, &"co_c"))
-	var rep2: ForceRules.Report = ForceRules.evaluate(cat, spec, 2000)
-	assert_true(rep2.is_valid(), "비편제는 경고일 뿐 편성은 가능")
-	assert_true(rep2.ad_hoc.has(&"co_b"), "소대 1개 중대는 비편제")
+	# A 의 전차 소대 2개를 C 로 → A 는 소대 1개(비편제), C 는 5개(비편제).
+	assert_true(spec.move_platoon(&"co_a", 0, &"co_c"))
+	assert_true(spec.move_platoon(&"co_a", 0, &"co_c"))
+	var rep2: ForceRules.Report = ForceRules.evaluate(cat, spec, 5000)
+	assert_true(rep2.is_valid(), "비편제는 경고일 뿐 편성은 가능: %s" % [rep2.errors])
+	assert_true(rep2.ad_hoc.has(&"co_a"), "소대 1개 중대는 비편제")
 	assert_true(rep2.ad_hoc.has(&"co_c"), "소대 5개 중대도 비편제")
+	assert_false(rep2.ad_hoc.has(&"co_b"))
 	# 전투에서는 비편제 중대의 명령 지연이 20% 길다.
 	var b: Battle = BattleSetup.skirmish(cat, spec, cat.default_force(&"RU"))
 	b.begin_battle()
 	var tf: TaskForce = b.task_forces[&"blue"]
-	var c_ad_hoc: Company = tf.companies[1]
-	var c_ok: Company = tf.companies[0]
+	var c_ad_hoc: Company = tf.companies[0]
+	var c_ok: Company = tf.companies[1]
 	assert_true(c_ad_hoc.ad_hoc)
 	assert_false(c_ok.ad_hoc)
-	assert_string_contains(c_ok.platoons[2].display_name, "배속", "배속 소대는 이름에 표시")
+	assert_string_contains(tf.companies[2].platoons[3].display_name, "배속", "배속 소대는 이름에 표시")
 	b.run_ticks(25)
 	var d_ad_hoc: float = b.order_system.estimate_delay_sec(c_ad_hoc, Order.Type.MOVE, false)
 	var d_ok: float = b.order_system.estimate_delay_sec(c_ok, Order.Type.MOVE, false)
@@ -132,7 +136,7 @@ func test_deploy_phase_moves_within_zone_only() -> void:
 	assert_true(b.deploy_unit(c.platoons[0], Vector2(2000, 400), 0.0))
 	assert_almost_eq(c.guide.pos.distance_to(Vector2(2000, 400)), 0.0, 30.0)
 	# 증원 부대는 배치할 수 없다.
-	var reserve: Platoon = c.platoons[2]
+	var reserve: Platoon = tf.companies[1].platoons[2]
 	assert_false(reserve.on_map)
 	assert_false(b.deploy_unit(reserve, Vector2(2000, 400), 0.0))
 	b.begin_battle()
@@ -147,14 +151,14 @@ func test_deploy_phase_moves_within_zone_only() -> void:
 
 func test_spec_json_roundtrip_with_cross_attachment_and_deploy() -> void:
 	var spec: ForceSpec = _us()
-	spec.move_platoon(&"co_a", 1, &"co_c")
+	spec.move_platoon(&"co_a", 1, &"co_b")
 	spec.companies[0].platoons[0].loadout = &"tusk"
 	spec.deploy["co:co_a"] = Vector3(1200, 500, 0.3)
 	spec.cas_sorties = 1
 	var text: String = spec.to_json()
 	var back: ForceSpec = ForceSpec.from_json(text)
-	assert_eq(back.companies[2].platoons.size(), 4)
-	assert_eq(back.companies[2].platoons[3].home, &"co_a")
+	assert_eq(back.companies[1].platoons.size(), 4)
+	assert_eq(back.companies[1].platoons[3].home, &"co_a")
 	assert_eq(back.companies[0].platoons[0].loadout, &"tusk")
 	assert_almost_eq(back.deploy["co:co_a"].z, 0.3, 0.001)
 	assert_eq(back.cas_sorties, 1)
