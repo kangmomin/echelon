@@ -18,7 +18,7 @@ namespace Echelon.Core.Tests
             Type[] expected =
             {
                 typeof(CommsNet), typeof(SuccessionSystem), typeof(OrderSystem), typeof(ReinforcementSystem),
-                typeof(TaskForceAI), typeof(PlatoonAI), typeof(MovementSystem), typeof(DetectionSystem),
+                typeof(TaskForceAI), typeof(PlatoonAI), typeof(AirOpsSystem), typeof(MovementSystem), typeof(DetectionSystem),
                 typeof(CombatSystem), typeof(FireSupportSystem), typeof(SupplySystem), typeof(EngineerSystem),
                 typeof(MoraleSystem), typeof(ScoringSystem)
             };

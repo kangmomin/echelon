@@ -20,6 +20,7 @@ namespace Echelon.Core
         public double EngProgress { get; set; }
         public int MinesLeft { get; set; }
         public int PositionsBuilt { get; set; }
+        public SimVec2 AirdropTarget { get; set; } = SimVec2.Inf;
 
         public Platoon()
         {
@@ -98,6 +99,19 @@ namespace Echelon.Core
             return false;
         }
 
+        public bool HasAirTransport()
+        {
+            foreach (Element element in Elements)
+            {
+                if (element.Def.TransportCapacity > 0 && element.IsAir())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public List<Element> FormationMembers()
         {
             List<Element> output = new List<Element>();
@@ -168,9 +182,12 @@ namespace Echelon.Core
             return double.IsPositiveInfinity(best) ? 0.0 : best;
         }
 
+        // 고정익 편대는 중대에 속해도 대형을 따르지 않고 편대마다 따로 날린다.
+        public bool IsAirWing => Kind == "fixed_wing";
+
         public override bool FollowsParent()
         {
-            return Parent != null && Parent.Level == UnitLevel.Company && !Detached && !Routed;
+            return Parent != null && Parent.Level == UnitLevel.Company && !Detached && !Routed && !IsAirWing;
         }
 
         public Company? Company()

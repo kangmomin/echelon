@@ -1,0 +1,26 @@
+{
+  "id": "us_heli_co",
+  "name": "헬기 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "aviation",
+  "hq": [
+    {
+      "element": "us_uh60m",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "us_aviation_sec",
+    "us_air_assault_plt"
+  ],
+  "default_formation": "co_line",
+  "role": "공격헬기 반(AH-64E 2대)과 공중강습 소대(UH-60M 3대·보병 3개 분대), 지휘 헬기 1대.",
+  "pros": [
+    "지형을 무시하고 보병과 화력을 함께 옮긴다"
+  ],
+  "cons": [
+    "방공·기관포에 약하다",
+    "비싸다"
+  ]
+}

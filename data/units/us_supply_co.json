@@ -1,0 +1,27 @@
+{
+  "id": "us_supply_co",
+  "name": "보급 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "supply",
+  "hq": [
+    {
+      "element": "us_hemtt",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "us_supply_section",
+    "us_supply_section",
+    "us_supply_section"
+  ],
+  "default_formation": "co_line",
+  "role": "보급반 3개(HEMTT 9대). 보급(K)을 받으면 반이 따로 떨어져 나가 탄약을 채운다.",
+  "pros": [
+    "보급반 셋이 동시에 여러 소대를 채운다",
+    "싸다"
+  ],
+  "cons": [
+    "무장 없음 — 후방에 둔다"
+  ]
+}

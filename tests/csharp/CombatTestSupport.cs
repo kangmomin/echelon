@@ -193,6 +193,7 @@ namespace Echelon.Core.Tests
         public IOrderSupply Supply => _battle.Supply!;
         public IOrderEngineers? Engineers => _battle.Engineers;
         public IOrderMorale? Morale => _battle.Morale;
+        public IOrderAir? Air => _battle.Air;
         public SpatialHash<Element> Spatial => _battle.Spatial;
         public List<Los.Smoke> Smokes => _battle.Smokes;
         public CommsNet Comms => _battle.Comms;

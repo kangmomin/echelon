@@ -10,7 +10,7 @@ namespace Echelon.Core
         public static readonly string[] Kinds =
         {
             "tank", "mech", "inf", "recon", "mortar", "supply", "hq", "cp", "fo", "aa", "ew", "engineer",
-            "wheeled", "at", "sniper", "aviation"
+            "wheeled", "at", "sniper", "aviation", "artillery", "fixed_wing"
         };
 
         public static readonly string[] Skills = { "recruit", "regular", "veteran", "elite" };

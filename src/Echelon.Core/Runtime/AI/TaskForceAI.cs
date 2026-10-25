@@ -182,7 +182,7 @@ namespace Echelon.Core
             List<Company> active = new List<Company>();
             foreach (Company company in taskForce.Companies)
             {
-                if (!company.OnMap || company.IsDestroyed())
+                if (!company.OnMap || company.IsDestroyed() || company.IsSupport)
                 {
                     continue;
                 }

@@ -1,0 +1,25 @@
+{
+  "id": "us_fighter_flight",
+  "name": "전투기 편대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "fixed_wing",
+  "elements": [
+    {
+      "element": "us_f16c",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "F-16C 2대. 우클릭하면 출격해 그 상공을 돌며 적 헬기·항공기를 공대공 미사일로 잡는다.",
+  "pros": [
+    "명령이 즉시 먹힌다",
+    "암람 6 km 로 적 항공기를 먼저 친다"
+  ],
+  "cons": [
+    "연료 3분 — 다 쓰면 돌아가 4분 재무장",
+    "지상 공격 못 함",
+    "지대공 미사일에 취약"
+  ]
+}

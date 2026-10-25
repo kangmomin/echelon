@@ -15,6 +15,13 @@ namespace Echelon.Core
         public const double SupportDepthM = 480.0;
         public const double CpDepthM = 600.0;
         public const double EdgeMarginM = 150.0;
+        public const string SupportSlotPrefix = "sup_";
+
+        // 지원 중대 슬롯(보급·포병·방공·헬기·고정익)은 기동 중대 대열이 아니라 후방 지원 대열에 둔다(D-050).
+        public static bool IsSupportSlot(string slot)
+        {
+            return slot.StartsWith(SupportSlotPrefix, StringComparison.Ordinal);
+        }
 
         public static double Facing(MapRect zone, SimVec2 mapSize)
         {
@@ -49,7 +56,7 @@ namespace Echelon.Core
             List<CompanySpec> firstWave = new List<CompanySpec>();
             foreach (CompanySpec company in spec.Companies)
             {
-                if (company.Wave() == 0)
+                if (company.Wave() == 0 && !IsSupportSlot(company.Slot))
                 {
                     firstWave.Add(company);
                 }
@@ -66,6 +73,14 @@ namespace Echelon.Core
             }
 
             List<string> support = new List<string>();
+            foreach (CompanySpec company in spec.Companies)
+            {
+                if (company.Wave() == 0 && IsSupportSlot(company.Slot))
+                {
+                    support.Add("co:" + company.Slot);
+                }
+            }
+
             for (int i = 0; i < spec.Organic.Count; ++i)
             {
                 if (spec.Organic[i].Wave == 0)

@@ -45,6 +45,8 @@ namespace Echelon.Core
         public IOrderSupply Supply { get; set; } = null!;
         public IOrderEngineers? Engineers { get; set; }
         public IOrderMorale? Morale { get; set; }
+        public AirOpsSystem Air { get; private set; } = null!;
+        IOrderAir? ICommandBattle.Air => Air;
         public ScoringSystem Scoring { get; private set; } = null!;
         public BattleStats Stats { get; private set; } = null!;
         private BattleSupportAdapter _support = null!;
@@ -98,6 +100,8 @@ namespace Echelon.Core
             battle.World.AddSystem(battle.TfAi);
             battle.PlatoonAi = new PlatoonAI(battle);
             battle.World.AddSystem(battle.PlatoonAi);
+            battle.Air = new AirOpsSystem(battle);
+            battle.World.AddSystem(battle.Air);
             battle.World.AddSystem(battle.Movement);
             battle._support = new BattleSupportAdapter(battle);
             battle.Morale = new MoraleSystem(battle);

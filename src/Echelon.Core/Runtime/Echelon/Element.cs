@@ -12,11 +12,21 @@ namespace Echelon.Core
         ABANDONED
     }
 
+    // 고정익 상태: 출격 준비 → 비행 → 귀환 → 재무장(지도 밖) → 출격 준비.
+    public enum AirState
+    {
+        READY,
+        AIRBORNE,
+        RETURNING,
+        REARMING
+    }
+
     public sealed class Element
     {
         public const double TurnRateVehicle = Math.PI / 3.0;
         public const double TurnRateFoot = Math.PI;
         public const double TurnRateAir = Math.PI * 0.75;
+        public const double TurnRatePlane = 0.4;
         public const double AltitudeLowM = 25.0;
         public const double AltitudeHighM = 90.0;
 
@@ -58,6 +68,10 @@ namespace Echelon.Core
         public double SupplyLeft { get; set; }
         public double RepairSec { get; set; }
         public long DestroyedTick { get; set; } = -1;
+        public AirState Air { get; set; } = AirState.READY;
+        public long AirReadyTick { get; set; }
+        public double FuelSec { get; set; }
+        public SimVec2 AirExit { get; set; } = SimVec2.Zero;
 
         public bool IsAlive()
         {
@@ -86,7 +100,12 @@ namespace Echelon.Core
 
         public bool IsAir()
         {
-            return Def.ElementClass == "heli";
+            return Def.ElementClass == "heli" || Def.ElementClass == "plane";
+        }
+
+        public bool IsFixedWing()
+        {
+            return Def.ElementClass == "plane";
         }
 
         public string TargetKind()
@@ -104,6 +123,11 @@ namespace Echelon.Core
             if (!IsAir() || !IsAlive())
             {
                 return 0.0;
+            }
+
+            if (IsFixedWing())
+            {
+                return Def.AltitudeM;
             }
 
             if (Platoon != null && Platoon.Sop.Altitude == "high")
@@ -179,7 +203,7 @@ namespace Echelon.Core
         public double TurnRate()
         {
             // 선회도 이동 속도와 같은 배율로 압축한다. 속도만 올리면 회전 반경이 커져 경유점 주위를 맴돈다.
-            double rate = IsAir() ? TurnRateAir : IsInfantry() ? TurnRateFoot : TurnRateVehicle;
+            double rate = IsFixedWing() ? TurnRatePlane : IsAir() ? TurnRateAir : IsInfantry() ? TurnRateFoot : TurnRateVehicle;
             return rate * SimConst.MovementSpeedScale;
         }
 

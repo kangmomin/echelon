@@ -8,8 +8,11 @@ namespace Echelon.Core
         public static readonly string[] Classes =
         {
             "tank", "ifv", "apc", "recon", "mortar", "aa", "cp", "truck", "inf_squad", "fo", "ew",
-            "heli", "eng", "at"
+            "heli", "eng", "at", "artillery", "plane"
         };
+
+        // 고정익(plane)은 지도 밖에서 출격해 날아다니다 연료가 떨어지면 돌아간다(D-050).
+        public const double MaxSpeedKmh = 1000.0;
 
         public static readonly string[] Factions = { "US", "RU" };
         public static readonly string[] ArmorFacings = { "front", "side", "rear", "top" };
@@ -33,6 +36,9 @@ namespace Echelon.Core
         public int Cost { get; set; }
         public int SupplyFull { get; set; }
         public int SupplyCapacity { get; set; }
+        public double AltitudeM { get; set; }
+        public double EnduranceSec { get; set; }
+        public double RearmSec { get; set; }
         public List<string> Loadouts { get; } = new List<string>();
 
         public static ElementDef FromJObject(JObject data, DefReader reader)
@@ -65,8 +71,9 @@ namespace Echelon.Core
             JObject speed = reader.ReqObject(data, "speed_kmh");
             element.SpeedRoadKmh = reader.ReqNumber(speed, "road");
             element.SpeedOffroadKmh = reader.ReqNumber(speed, "offroad");
-            reader.CheckRange(element.SpeedRoadKmh, 0.0, 350.0, "speed_kmh.road");
-            reader.CheckRange(element.SpeedOffroadKmh, 0.0, 350.0, "speed_kmh.offroad");
+            double speedCap = element.ElementClass == "plane" ? MaxSpeedKmh : 350.0;
+            reader.CheckRange(element.SpeedRoadKmh, 0.0, speedCap, "speed_kmh.road");
+            reader.CheckRange(element.SpeedOffroadKmh, 0.0, speedCap, "speed_kmh.offroad");
 
             element.Weapons.AddRange(reader.ReqStringArray(data, "weapons"));
             JObject ammo = reader.ReqObject(data, "ammo");
@@ -96,6 +103,16 @@ namespace Echelon.Core
             element.SupplyFull = reader.ReqInt(data, "supply_full");
             element.SupplyCapacity = reader.OptInt(data, "supply_capacity");
             element.Loadouts.AddRange(reader.OptStringArray(data, "loadouts"));
+            if (element.ElementClass == "plane")
+            {
+                element.AltitudeM = reader.ReqNumber(data, "altitude_m");
+                reader.CheckRange(element.AltitudeM, 50.0, 5000.0, "altitude_m");
+                element.EnduranceSec = reader.ReqNumber(data, "endurance_s");
+                reader.CheckRange(element.EnduranceSec, 10.0, 3600.0, "endurance_s");
+                element.RearmSec = reader.ReqNumber(data, "rearm_s");
+                reader.CheckRange(element.RearmSec, 0.0, 3600.0, "rearm_s");
+            }
+
             return element;
         }
 

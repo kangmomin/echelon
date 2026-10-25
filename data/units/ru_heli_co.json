@@ -1,0 +1,26 @@
+{
+  "id": "ru_heli_co",
+  "name": "헬기 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "aviation",
+  "hq": [
+    {
+      "element": "ru_mi8amtsh",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_aviation_sec",
+    "ru_air_assault_plt"
+  ],
+  "default_formation": "co_line",
+  "role": "공격헬기 반(Ka-52 2대)과 공중강습 소대(Mi-8 2대·보병 4개 분대), 지휘 헬기 1대.",
+  "pros": [
+    "지형을 무시하고 보병과 화력을 함께 옮긴다"
+  ],
+  "cons": [
+    "방공·기관포에 약하다",
+    "비싸다"
+  ]
+}

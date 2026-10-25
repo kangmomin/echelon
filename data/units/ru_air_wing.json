@@ -1,0 +1,29 @@
+{
+  "id": "ru_air_wing",
+  "name": "고정익 항공대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "fixed_wing",
+  "hq": [
+    {
+      "element": "ru_fo_team",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_fighter_flight",
+    "ru_attack_flight",
+    "ru_airlift_flight"
+  ],
+  "default_formation": "co_line",
+  "role": "전투기·공격기 편대와 수송기, 지상의 항공 통제반. 편대는 지도 밖에서 대기하다 명령을 받으면 출격한다.",
+  "pros": [
+    "명령이 전파 지연 없이 즉시 먹힌다",
+    "전투기로 하늘을, 공격기로 지상을, 수송기로 보급을"
+  ],
+  "cons": [
+    "가장 비싸다",
+    "연료가 떨어지면 돌아가 재무장해야 한다",
+    "지대공 미사일에 격추된다"
+  ]
+}

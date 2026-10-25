@@ -26,7 +26,8 @@ namespace Echelon.Core
         HALT,
         LAY_MINES,
         CLEAR_MINES,
-        FORTIFY
+        FORTIFY,
+        AIRDROP
     }
 
     public enum OrderState
@@ -45,7 +46,7 @@ namespace Echelon.Core
         {
             "MOVE", "FAST_MOVE", "ATTACK_MOVE", "SEIZE", "DEFEND", "WITHDRAW", "RESUPPLY", "MOUNT", "DISMOUNT",
             "SET_FORMATION", "SET_SOP", "CALL_FIRE", "DETACH", "REJOIN", "REORGANIZE", "CANCEL", "FOLLOW", "HALT",
-            "LAY_MINES", "CLEAR_MINES", "FORTIFY"
+            "LAY_MINES", "CLEAR_MINES", "FORTIFY", "AIRDROP"
         };
 
         public static readonly string[] StateNames =
@@ -56,7 +57,7 @@ namespace Echelon.Core
         public static readonly OrderType[] MovementTypes =
         {
             OrderType.MOVE, OrderType.FAST_MOVE, OrderType.ATTACK_MOVE, OrderType.SEIZE, OrderType.DEFEND,
-            OrderType.WITHDRAW, OrderType.LAY_MINES, OrderType.CLEAR_MINES, OrderType.FORTIFY
+            OrderType.WITHDRAW, OrderType.LAY_MINES, OrderType.CLEAR_MINES, OrderType.FORTIFY, OrderType.AIRDROP
         };
 
         public static readonly OrderType[] EngineerTypes =

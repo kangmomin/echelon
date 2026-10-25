@@ -1,0 +1,24 @@
+{
+  "id": "ru_fighter_flight",
+  "name": "전투기 편대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "fixed_wing",
+  "elements": [
+    {
+      "element": "ru_su35s",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "Su-35S 2대. 우클릭하면 출격해 그 상공을 돌며 적 헬기·항공기를 공대공 미사일로 잡는다.",
+  "pros": [
+    "명령이 즉시 먹힌다",
+    "R-77M 6 km"
+  ],
+  "cons": [
+    "연료 3분 — 다 쓰면 돌아가 4분 재무장",
+    "지상 공격 못 함"
+  ]
+}

@@ -63,7 +63,7 @@ namespace Echelon.Core
 
         public void Request(Platoon platoon)
         {
-            if (platoon.IsDestroyed() || platoon.Kind == "supply")
+            if (platoon.IsDestroyed() || platoon.Kind == "supply" || platoon.IsAirWing)
             {
                 return;
             }
@@ -278,6 +278,12 @@ namespace Echelon.Core
 
         private void Send(Platoon section, Platoon platoon)
         {
+            // 보급 중대의 반은 중대 대형에 묶여 있으면 출발하지 못한다. 보급하러 갈 때 중대에서 떨어진다.
+            if (section.FollowsParent())
+            {
+                section.Detached = true;
+            }
+
             _battle.SelfOrder(section, OrderType.MOVE,
                 platoon.Centroid() - FormationSolver.ForwardVector(platoon.Guide.Heading) * 60.0);
         }

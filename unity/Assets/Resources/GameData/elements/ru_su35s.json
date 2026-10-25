@@ -1,0 +1,36 @@
+{
+  "id": "ru_su35s",
+  "name": "Su-35S 전투기",
+  "faction": "RU",
+  "class": "plane",
+  "hp": 100,
+  "armor": {
+    "front": 12,
+    "side": 10,
+    "rear": 10,
+    "top": 10
+  },
+  "size": 1.7,
+  "stealth": 0.08,
+  "optics_m": 9000,
+  "speed_kmh": {
+    "road": 650,
+    "offroad": 650
+  },
+  "weapons": [
+    "r77m",
+    "r73"
+  ],
+  "ammo": {
+    "r77m": 4,
+    "r73": 2
+  },
+  "radio_range_m": 20000,
+  "transport_capacity": 0,
+  "crew": 1,
+  "cost": 85,
+  "supply_full": 6,
+  "altitude_m": 1200,
+  "endurance_s": 180,
+  "rearm_s": 240
+}

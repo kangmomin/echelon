@@ -49,7 +49,7 @@ namespace Echelon.Core
 
                 foreach (Company company in taskForce.Companies)
                 {
-                    if (company.OnMap && !company.IsDestroyed())
+                    if (company.OnMap && !company.IsDestroyed() && company.Kind != "fixed_wing")
                     {
                         CompanyReaction(company, world.Tick);
                     }
@@ -57,7 +57,8 @@ namespace Echelon.Core
 
                 foreach (Platoon platoon in taskForce.AllPlatoons())
                 {
-                    if (platoon.OnMap && !platoon.IsDestroyed())
+                    // 고정익 편대는 SOP 반응(정지·철수)을 하지 않는다. 명령과 연료로만 움직인다.
+                    if (platoon.OnMap && !platoon.IsDestroyed() && !platoon.IsAirWing)
                     {
                         PlatoonReaction(platoon, world.Tick);
                     }
@@ -130,7 +131,8 @@ namespace Echelon.Core
         private void PlatoonReaction(Platoon platoon, long tick)
         {
             bool contact = InContact(platoon, tick);
-            if (platoon.HasSquads() && platoon.HasTransport() && platoon.Mounted &&
+            // 수송헬기는 날고 있으니 접촉했다고 저절로 내려 주지 않는다. 하차는 명령으로만.
+            if (platoon.HasSquads() && platoon.HasTransport() && platoon.Mounted && !platoon.HasAirTransport() &&
                 (platoon.Sop.MountPolicy == "stay_dismounted" ||
                  contact && platoon.Sop.MountPolicy == "dismount_on_contact"))
             {

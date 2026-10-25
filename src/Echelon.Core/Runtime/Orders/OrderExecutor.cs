@@ -17,6 +17,17 @@ namespace Echelon.Core
 
         public void Execute(Unit unit, Order order)
         {
+            if (OrderSystem.IsAirWing(unit) && ExecuteAir(unit, order))
+            {
+                return;
+            }
+
+            if (order.Type == OrderType.AIRDROP)
+            {
+                Refuse(unit, order, "not_airlift");
+                return;
+            }
+
             if (order.Bypass && unit is Platoon && unit.FollowsParent())
             {
                 unit.Detached = true;
@@ -158,6 +169,113 @@ namespace Echelon.Core
             }
         }
 
+        /// <summary>
+        /// 고정익 명령. 중대에 내린 명령은 편대마다 그대로 내리고, 지도 밖 편대에 이동·공격 명령을 내리면 출격한다.
+        /// 철수는 귀환이다. 처리했으면 true, 일반 처리(정지·SOP·대형)로 넘길 명령이면 false.
+        /// </summary>
+        private bool ExecuteAir(Unit unit, Order order)
+        {
+            if (unit is Company company)
+            {
+                order.State = OrderState.DONE;
+                if (order.Issuer == "self")
+                {
+                    return true;
+                }
+
+                foreach (Platoon child in company.Platoons)
+                {
+                    if (!child.IsAirWing || child.IsDestroyed())
+                    {
+                        continue;
+                    }
+
+                    Order copy = Order.Make(order.Type, child.Id, (JObject)order.Params.DeepClone());
+                    copy.Issuer = order.Issuer;
+                    copy.IssuerUnitId = order.IssuerUnitId;
+                    copy.ParentOrderId = order.Id;
+                    _battle.RegisterOrder(copy);
+                    copy.State = OrderState.RECEIVED;
+                    copy.ReceivedTick = _battle.World.Tick;
+                    Execute(child, copy);
+                }
+
+                return true;
+            }
+
+            if (!(unit is Platoon flight))
+            {
+                return false;
+            }
+
+            IOrderAir? air = _battle.Air;
+            switch (order.Type)
+            {
+                case OrderType.MOVE:
+                case OrderType.FAST_MOVE:
+                case OrderType.ATTACK_MOVE:
+                case OrderType.SEIZE:
+                case OrderType.DEFEND:
+                case OrderType.AIRDROP:
+                    if (air == null)
+                    {
+                        Refuse(unit, order, "no_air_ops");
+                        return true;
+                    }
+
+                    if (order.Type == OrderType.AIRDROP && !AirOpsSystem.CarriesSupply(flight))
+                    {
+                        Refuse(unit, order, "no_cargo");
+                        return true;
+                    }
+
+                    SimVec2 target = _battle.Terrain.ClampToMap(order.HasPos() ? order.GetPos() : flight.Guide.Pos);
+                    if (!flight.OnMap)
+                    {
+                        if (!air.Launch(flight, target))
+                        {
+                            Refuse(unit, order, "air_not_ready");
+                            return true;
+                        }
+                    }
+                    else if (air.IsReturning(flight))
+                    {
+                        Refuse(unit, order, "air_returning");
+                        return true;
+                    }
+
+                    order.State = OrderState.EXECUTING;
+                    flight.AirdropTarget = order.Type == OrderType.AIRDROP ? target : SimVec2.Inf;
+                    StartMovement(flight, order);
+                    return true;
+                case OrderType.WITHDRAW:
+                    FinishMission(flight, OrderState.CANCELLED);
+                    air?.ReturnToBase(flight, "order");
+                    order.State = OrderState.DONE;
+                    return true;
+                case OrderType.HALT:
+                case OrderType.SET_SOP:
+                case OrderType.SET_FORMATION:
+                case OrderType.CANCEL:
+                    return false;
+                default:
+                    Refuse(unit, order, "air_unit");
+                    return true;
+            }
+        }
+
+        private void Refuse(Unit unit, Order order, string reason)
+        {
+            order.State = OrderState.CANCELLED;
+            _battle.World.Events.EmitEvent("order_refused", _battle.World.Tick, new Dictionary<string, object>
+            {
+                ["unit"] = unit.Id,
+                ["side"] = unit.Side,
+                ["type"] = (int)order.Type,
+                ["reason"] = reason
+            });
+        }
+
         public void OnArrival(Unit unit)
         {
             Order? order = unit.Mission;
@@ -289,6 +407,12 @@ namespace Echelon.Core
 
             if (anyAir)
             {
+                // 수송헬기 소대가 보병을 내려놓았으면 소대는 보병 걸음으로 길을 찾는다(헬기는 뒤따른다).
+                if (unit is Platoon platoon && platoon.HasSquads() && !platoon.Mounted)
+                {
+                    return Terrain.MobilityFoot;
+                }
+
                 return Terrain.MobilityAir;
             }
 

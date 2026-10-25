@@ -1,0 +1,26 @@
+{
+  "id": "ru_aa_gun_co",
+  "name": "대공포 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "aa",
+  "hq": [
+    {
+      "element": "ru_tunguska",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_shilka_plt",
+    "ru_shilka_plt"
+  ],
+  "default_formation": "co_line",
+  "role": "퉁구스카 1대와 실카 8대(대공포 소대 2개). 기관포 위주 근거리 방공.",
+  "pros": [
+    "기관포는 탄이 많아 오래 막는다",
+    "싸다"
+  ],
+  "cons": [
+    "사거리 2.5~4 km 로 짧다"
+  ]
+}

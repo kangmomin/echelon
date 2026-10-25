@@ -35,6 +35,12 @@ namespace Echelon.Core
         public const int MortarSmokePerTube = 3;
         public const double MortarShellSpeed = 250.0;
         public const double ArtilleryVolleySec = 15.0;
+        // 지도 위 포병 중대(자주포)가 쏘는 포병 임무. 지도 밖 임무를 쓰지 않고, 포대가 살아 있고 탄이 있는 동안
+        // 몇 번이고 쏜다. 사격 지휘가 가까워 처리 시간이 짧다(D-050).
+        public const double OnMapArtilleryFdcSec = 45.0;
+        public const int ArtilleryRoundsPerGun = 3;
+        public const int ArtillerySmokePerGun = 2;
+        public const double ArtilleryShellSpeed = 450.0;
         public static readonly double[] SmokeRadius = { 35.0, 50.0, 0.0 };
         public static readonly double[] SmokeSec = { 120.0, 150.0, 0.0 };
         public const double TargetPointH = 1.5;
@@ -202,9 +208,21 @@ namespace Echelon.Core
                         (smoke ? MortarSmokePerTube : MortarRoundsPerTube);
                     break;
                 case Asset.ARTILLERY:
+                    Platoon? battery = FindBattery(side, target, "artillery", true);
+                    double batteryPath = battery != null ? CommsToTaskForce(battery, taskForce, HopSec[assetIndex]) : -1.0;
+                    if (battery != null && batteryPath >= 0.0)
+                    {
+                        delay += OnMapArtilleryFdcSec - FdcSec[assetIndex] + batteryPath;
+                        mission.ShooterUnitId = battery.Id;
+                        mission.Weapon = IndirectWeapon(battery);
+                        mission.RoundsLeft = battery.AliveElements().Count *
+                            (smoke ? ArtillerySmokePerGun : ArtilleryRoundsPerGun);
+                        break;
+                    }
+
                     if (taskForce.ArtilleryMissions <= 0)
                     {
-                        return Fail("남은 포병 사격 임무가 없습니다.");
+                        return Fail(battery != null ? "포병 중대 통신 두절" : "남은 포병 사격 임무가 없습니다.");
                     }
 
                     mission.Weapon = toe?.ArtilleryWeapon ?? "";
@@ -231,7 +249,7 @@ namespace Echelon.Core
                 return Fail("지휘 용량이 부족합니다.");
             }
 
-            if (asset == Asset.ARTILLERY)
+            if (asset == Asset.ARTILLERY && mission.ShooterUnitId < 0)
             {
                 --taskForce.ArtilleryMissions;
             }
@@ -297,6 +315,10 @@ namespace Echelon.Core
                 }
 
                 delay += HopSec[assetIndex];
+            }
+            else if (asset == Asset.ARTILLERY && FindBattery(side, target, "artillery", true) != null)
+            {
+                delay += OnMapArtilleryFdcSec - FdcSec[assetIndex] + HopSec[assetIndex];
             }
             else if (asset == Asset.ARTILLERY && taskForce.ArtilleryMissions <= 0)
             {
@@ -376,6 +398,12 @@ namespace Echelon.Core
 
         public Platoon? FindMortar(string side, SimVec2 target)
         {
+            return FindBattery(side, target, "mortar", false);
+        }
+
+        /// <summary>사거리 안에서 탄이 남은 가장 가까운 지도 위 사격 소대. skipBusy 면 다른 임무를 쏘는 소대는 건너뛴다.</summary>
+        public Platoon? FindBattery(string side, SimVec2 target, string kind, bool skipBusy)
+        {
             TaskForce? taskForce = _battle.GetTaskForce(side);
             if (taskForce == null)
             {
@@ -386,7 +414,12 @@ namespace Echelon.Core
             double bestDistance = double.PositiveInfinity;
             foreach (Platoon platoon in taskForce.AllPlatoons())
             {
-                if (platoon.Kind != "mortar" || !platoon.OnMap || platoon.IsDestroyed())
+                if (platoon.Kind != kind || !platoon.OnMap || platoon.IsDestroyed())
+                {
+                    continue;
+                }
+
+                if (skipBusy && IsBusy(side, platoon))
                 {
                     continue;
                 }
@@ -421,6 +454,19 @@ namespace Echelon.Core
             }
 
             return best;
+        }
+
+        private bool IsBusy(string side, Platoon platoon)
+        {
+            foreach (Mission other in ActiveMissions(side))
+            {
+                if (other.ShooterUnitId == platoon.Id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public string IndirectWeapon(Platoon platoon)
@@ -540,7 +586,7 @@ namespace Echelon.Core
                         return;
                     }
 
-                    if (mission.Asset == Asset.MORTAR)
+                    if (mission.ShooterUnitId >= 0)
                     {
                         MortarVolley(mission, tick);
                     }
@@ -606,7 +652,7 @@ namespace Echelon.Core
         private bool FireRound(Mission mission, long tick, double sigma, Element? source = null)
         {
             long timeOfFlightTicks = 0;
-            if (mission.Asset == Asset.MORTAR)
+            if (mission.ShooterUnitId >= 0)
             {
                 if (source == null)
                 {
@@ -633,7 +679,8 @@ namespace Echelon.Core
                     }
                 }
 
-                timeOfFlightTicks = SecondsToTicks(source.Pos.DistanceTo(mission.Target) / MortarShellSpeed);
+                double shellSpeed = mission.Asset == Asset.MORTAR ? MortarShellSpeed : ArtilleryShellSpeed;
+                timeOfFlightTicks = SecondsToTicks(source.Pos.DistanceTo(mission.Target) / shellSpeed);
             }
 
             Shell shell = new Shell

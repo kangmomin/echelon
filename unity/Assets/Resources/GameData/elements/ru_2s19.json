@@ -1,0 +1,33 @@
+{
+  "id": "ru_2s19",
+  "name": "2S19M2 므스타-S 자주포",
+  "faction": "RU",
+  "class": "artillery",
+  "hp": 90,
+  "armor": {
+    "front": 60,
+    "side": 30,
+    "rear": 20,
+    "top": 12
+  },
+  "size": 1.3,
+  "stealth": 0.1,
+  "optics_m": 1500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 38
+  },
+  "weapons": [
+    "of45_152mm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "of45_152mm": 50,
+    "pkt_coax": 300
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 5,
+  "cost": 24,
+  "supply_full": 10
+}

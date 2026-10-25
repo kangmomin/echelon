@@ -1,0 +1,26 @@
+{
+  "id": "us_sam_co",
+  "name": "지대공 방공 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "aa",
+  "hq": [
+    {
+      "element": "us_avenger",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "us_ada_section",
+    "us_ada_section",
+    "us_ada_section"
+  ],
+  "default_formation": "co_line",
+  "role": "어벤저 7대(방공반 3개). 스팅어 지대공 미사일로 적 헬기·항공기를 막는다.",
+  "pros": [
+    "스팅어 4.8 km — 항공기에 강하다"
+  ],
+  "cons": [
+    "지상 전투력은 기관총뿐"
+  ]
+}

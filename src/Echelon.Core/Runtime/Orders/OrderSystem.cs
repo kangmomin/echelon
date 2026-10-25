@@ -112,6 +112,11 @@ namespace Echelon.Core
 
         public double CostOf(Order order, Unit unit)
         {
+            if (IsAirWing(unit))
+            {
+                return CostFree;
+            }
+
             switch (order.Type)
             {
                 case OrderType.SET_SOP:
@@ -317,9 +322,20 @@ namespace Echelon.Core
             _active.Add(order);
         }
 
+        // 고정익은 항공 통제망으로 바로 받는다. 전파 지연·실행 준비·통신 두절 없이 다음 틱에 실행된다(D-050).
+        public static bool IsAirWing(Unit unit)
+        {
+            return unit.Kind == "fixed_wing" && unit.Level != UnitLevel.TaskForce;
+        }
+
         private List<OrderHop> PlanHops(Order order, Unit unit)
         {
             List<OrderHop> hops = new List<OrderHop>();
+            if (IsAirWing(unit))
+            {
+                return hops;
+            }
+
             Unit? issuer = order.IssuerUnitId >= 0 ? _battle.GetUnit(order.IssuerUnitId) : unit.TaskForce();
             issuer ??= unit.TaskForce();
             if (issuer == null)

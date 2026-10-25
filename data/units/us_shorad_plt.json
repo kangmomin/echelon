@@ -1,0 +1,23 @@
+{
+  "id": "us_shorad_plt",
+  "name": "기동 방공 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "aa",
+  "elements": [
+    {
+      "element": "us_mshorad",
+      "count": 4
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "M-SHORAD 4대. 30 mm 기관포로 헬기·공격기를 잡는다.",
+  "pros": [
+    "30 mm 기관포 3 km",
+    "스팅어로 멀리 있는 항공기도"
+  ],
+  "cons": [
+    "전차를 상대할 수 없다"
+  ]
+}

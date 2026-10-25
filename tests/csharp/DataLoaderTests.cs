@@ -14,11 +14,11 @@ namespace Echelon.Core.Tests
             DataCatalog catalog = DataTestAssets.Catalog;
             Assert.That(DataTestAssets.Join(catalog.Errors), Is.Empty);
             Assert.That(catalog.IsValid(), Is.True);
-            Assert.That(catalog.Weapons, Has.Count.EqualTo(46));
-            Assert.That(catalog.Elements, Has.Count.EqualTo(46));
-            Assert.That(catalog.UnitTemplates, Has.Count.EqualTo(39));
-            Assert.That(catalog.UnitTemplates.Values.Count(template => template.Echelon == "platoon"), Is.EqualTo(31));
-            Assert.That(catalog.UnitTemplates.Values.Count(template => template.Echelon == "company"), Is.EqualTo(8));
+            Assert.That(catalog.Weapons, Has.Count.EqualTo(55));
+            Assert.That(catalog.Elements, Has.Count.EqualTo(57));
+            Assert.That(catalog.UnitTemplates, Has.Count.EqualTo(63));
+            Assert.That(catalog.UnitTemplates.Values.Count(template => template.Echelon == "platoon"), Is.EqualTo(43));
+            Assert.That(catalog.UnitTemplates.Values.Count(template => template.Echelon == "company"), Is.EqualTo(20));
             Assert.That(catalog.Formations, Has.Count.EqualTo(14));
             Assert.That(catalog.ToeTemplates, Has.Count.EqualTo(2));
             Assert.That(catalog.Maps, Has.Count.EqualTo(1));

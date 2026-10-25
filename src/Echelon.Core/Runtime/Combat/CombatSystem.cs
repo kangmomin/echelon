@@ -32,6 +32,9 @@ namespace Echelon.Core
         public const double LongRangeEndM = 3000.0;
         public const double LongRangeMultiplier = 0.4;
         public const double NonAaVsAir = 0.3;
+        // 고정익은 플레어·채프와 급기동으로 유도 미사일(지대공·공대공)을 절반쯤 따돌린다. 이게 없으면 지도 전체를
+        // 덮는 Tor 하나가 출격하자마자 편대를 떨어뜨린다(D-050).
+        public const double FixedWingEvasion = 0.5;
 
         private static readonly Dictionary<string, double> SkillAccuracy = new Dictionary<string, double>
         {
@@ -212,9 +215,15 @@ namespace Echelon.Core
 
             probability *= SimMath.Clamp(Math.Sqrt(target.Def.Size), 0.6, 1.2);
             probability *= LongRangeFactor(distance);
-            if (target.IsAir() && weapon.WeaponType != "SAM" && shooter.Def.ElementClass != "aa")
+            if (target.IsAir() && weapon.WeaponType != "SAM" && weapon.WeaponType != "AAM" &&
+                shooter.Def.ElementClass != "aa")
             {
                 probability *= NonAaVsAir;
+            }
+
+            if (target.IsFixedWing() && (weapon.WeaponType == "SAM" || weapon.WeaponType == "AAM"))
+            {
+                probability *= FixedWingEvasion;
             }
 
             return SimMath.Clamp(probability, 0.01, 0.98);
@@ -352,6 +361,18 @@ namespace Echelon.Core
             {
                 target.KilledBy = killer.Id;
                 ++killer.Kills;
+            }
+
+            if (target.IsAir())
+            {
+                // 날고 있는 헬기·수송기가 떨어지면 탄 보병은 빠져나오지 못한다.
+                List<Element> riders = new List<Element>(target.Passengers);
+                target.Passengers.Clear();
+                foreach (Element squad in riders)
+                {
+                    squad.MountedIn = null;
+                    Destroy(squad, killer, tick);
+                }
             }
 
             foreach (Element squad in target.Passengers)
@@ -494,6 +515,14 @@ namespace Echelon.Core
             return best * value / (1.0 + distance / 1000.0);
         }
 
+        // 빠르고 높이 나는 고정익은 지대공·공대공 미사일, 방공 차량, 다른 항공기만 잡는다. 전차·장갑차 기관포와
+        // 기관총으로는 쏠 수 없다(헬기는 기존대로 0.3 배로 쏠 수 있다).
+        public static bool CanEngageFixedWing(Element shooter, WeaponDef weapon)
+        {
+            return weapon.WeaponType == "SAM" || weapon.WeaponType == "AAM" || shooter.Def.ElementClass == "aa" ||
+                shooter.IsAir();
+        }
+
         private bool Usable(Element shooter, WeaponDef? weapon, Element target, double distance)
         {
             if (weapon == null || weapon.Indirect)
@@ -502,6 +531,11 @@ namespace Echelon.Core
             }
 
             if (!shooter.Ammo.TryGetValue(weapon.Id, out int ammunition) || ammunition < 1)
+            {
+                return false;
+            }
+
+            if (target.IsFixedWing() && !CanEngageFixedWing(shooter, weapon))
             {
                 return false;
             }

@@ -1,0 +1,25 @@
+{
+  "id": "gau8_30mm",
+  "name": "GAU-8 30 mm 기관포",
+  "type": "AC",
+  "range_m": {
+    "min": 0,
+    "max": 2000
+  },
+  "penetration": 70,
+  "damage": 40,
+  "accuracy": {
+    "base": 0.55,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 300,
+  "suppression": 40,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 3,
+  "burst": 10,
+  "top_attack": true
+}

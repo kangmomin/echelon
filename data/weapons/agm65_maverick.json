@@ -1,0 +1,22 @@
+{
+  "id": "agm65_maverick",
+  "name": "AGM-65 매버릭",
+  "type": "ATGM",
+  "range_m": {
+    "min": 500,
+    "max": 6000
+  },
+  "penetration": 800,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.85,
+    "at_max_range": 0.7
+  },
+  "rof_rpm": 4,
+  "suppression": 40,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle"
+  ],
+  "top_attack": true
+}

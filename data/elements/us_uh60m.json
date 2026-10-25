@@ -1,0 +1,31 @@
+{
+  "id": "us_uh60m",
+  "name": "UH-60M 블랙호크",
+  "faction": "US",
+  "class": "heli",
+  "hp": 90,
+  "armor": {
+    "front": 20,
+    "side": 15,
+    "rear": 12,
+    "top": 12
+  },
+  "size": 1.2,
+  "stealth": 0.06,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 250,
+    "offroad": 250
+  },
+  "weapons": [
+    "m240_coax"
+  ],
+  "ammo": {
+    "m240_coax": 1600
+  },
+  "radio_range_m": 10000,
+  "transport_capacity": 1,
+  "crew": 4,
+  "cost": 30,
+  "supply_full": 4
+}

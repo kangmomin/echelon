@@ -1,0 +1,31 @@
+{
+  "id": "ru_il76md",
+  "name": "Il-76MD 수송기",
+  "faction": "RU",
+  "class": "plane",
+  "hp": 120,
+  "armor": {
+    "front": 10,
+    "side": 8,
+    "rear": 8,
+    "top": 8
+  },
+  "size": 2.8,
+  "stealth": 0.02,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 450,
+    "offroad": 450
+  },
+  "weapons": [],
+  "ammo": {},
+  "radio_range_m": 20000,
+  "transport_capacity": 0,
+  "crew": 5,
+  "cost": 42,
+  "supply_full": 0,
+  "supply_capacity": 500,
+  "altitude_m": 450,
+  "endurance_s": 120,
+  "rearm_s": 300
+}

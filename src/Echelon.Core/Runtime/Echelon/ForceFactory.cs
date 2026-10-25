@@ -248,7 +248,18 @@ namespace Echelon.Core
                         p.DisplayName += " (" + fromLetter + " 중대에서 배속)";
                     }
 
-                    if (platoonSpec.Wave > 0)
+                    if (p.IsAirWing)
+                    {
+                        // 고정익 편대는 늘 지도 밖에서 시작한다. 증원 차수는 처음 출격할 수 있는 시각이다.
+                        SetOffMap(p, entry, heading);
+                        foreach (Element plane in p.Elements)
+                        {
+                            plane.Air = platoonSpec.Wave > 0 ? AirState.REARMING : AirState.READY;
+                            plane.AirReadyTick = ReinforcementSystem.WaveTick(platoonSpec.Wave);
+                            plane.FuelSec = plane.Def.EnduranceSec;
+                        }
+                    }
+                    else if (platoonSpec.Wave > 0)
                     {
                         SetOffMap(p, entry, heading);
                     }

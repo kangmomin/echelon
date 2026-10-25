@@ -88,7 +88,8 @@ namespace Echelon.Core
             double total = 0.0;
             foreach (Element element in taskForce.AllElements())
             {
-                if (element.OnMap)
+                // 고정익은 지도 밖을 오가는 지원 자산이라 전투력 비율에 넣지 않는다(D-050).
+                if (element.OnMap && !element.IsFixedWing())
                 {
                     total += element.Def.Cost * element.Strength();
                 }
@@ -134,7 +135,7 @@ namespace Echelon.Core
 
                 foreach (Element element in taskForce.AllElements())
                 {
-                    if (!element.OnMap || _committedElements.Contains(element.Id))
+                    if (!element.OnMap || element.IsFixedWing() || _committedElements.Contains(element.Id))
                     {
                         continue;
                     }
@@ -156,7 +157,7 @@ namespace Echelon.Core
                 };
                 foreach (Element element in _battle.ElementsNear(point.Def.Pos, point.Def.RadiusM))
                 {
-                    if (element.IsMounted() || !element.IsActive())
+                    if (element.IsMounted() || !element.IsActive() || element.IsFixedWing())
                     {
                         continue;
                     }

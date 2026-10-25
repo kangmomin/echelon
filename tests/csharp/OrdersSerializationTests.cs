@@ -111,7 +111,7 @@ namespace Echelon.Core.Tests
                 bool movement = type == OrderType.MOVE || type == OrderType.FAST_MOVE ||
                     type == OrderType.ATTACK_MOVE || type == OrderType.SEIZE || type == OrderType.DEFEND ||
                     type == OrderType.WITHDRAW || type == OrderType.LAY_MINES || type == OrderType.CLEAR_MINES ||
-                    type == OrderType.FORTIFY;
+                    type == OrderType.FORTIFY || type == OrderType.AIRDROP;
                 bool engineer = type == OrderType.LAY_MINES || type == OrderType.CLEAR_MINES || type == OrderType.FORTIFY;
                 Assert.That(order.IsMovement(), Is.EqualTo(movement), type.ToString());
                 Assert.That(order.IsEngineer(), Is.EqualTo(engineer), type.ToString());

@@ -27,6 +27,7 @@ namespace Echelon.Core
         public IOrderSupply Supply => _battle.Supply;
         public IOrderEngineers? Engineers => _battle.Engineers;
         public IOrderMorale? Morale => _battle.Morale;
+        public IOrderAir? Air => _battle.Air;
         public List<Los.Smoke> Smokes => _battle.Smokes;
 
         IReadOnlyList<Element> IFireSupportBattle.Elements => _battle.Elements;

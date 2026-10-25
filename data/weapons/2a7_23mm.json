@@ -1,0 +1,25 @@
+{
+  "id": "2a7_23mm",
+  "name": "2A7 23 mm 4연장 기관포",
+  "type": "AC",
+  "range_m": {
+    "min": 50,
+    "max": 2500
+  },
+  "penetration": 40,
+  "damage": 25,
+  "accuracy": {
+    "base": 0.6,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 600,
+  "suppression": 15,
+  "fire_on_move": true,
+  "targets": [
+    "air",
+    "vehicle",
+    "infantry"
+  ],
+  "pen_falloff_per_km": 0.2,
+  "burst": 8
+}

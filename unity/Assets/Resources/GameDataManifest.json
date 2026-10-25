@@ -1,6 +1,10 @@
 {
   "files": [
     {
+      "path": "elements/ru_2s19.json",
+      "sha256": "32d8ac9d8d7f35740ed59e2fe616309c64979c6f0b9173bd6b50697fc82ae0ae"
+    },
+    {
       "path": "elements/ru_2s9.json",
       "sha256": "b6fc64d438524950134eb4564d471aace66cc56cec45126bc6d5d6ee2b722435"
     },
@@ -41,12 +45,20 @@
       "sha256": "1455fa2de7815e6e852d007fe620d7ed1589fcddde7f0b509087e8bc58f65725"
     },
     {
+      "path": "elements/ru_il76md.json",
+      "sha256": "3814db49931fca26bf17ed94404303444ccc00d031430d24ac73e7724d80fa66"
+    },
+    {
       "path": "elements/ru_ka52.json",
       "sha256": "386ba09da946bb0b15861bcefe9399a561bd6198037f9b9d47959f428eb43d6d"
     },
     {
       "path": "elements/ru_kamaz.json",
       "sha256": "6abeedb7295092a2b1bea72b6cbd53c7f3e0403e8bf6d9d7afc125b2d7414fe2"
+    },
+    {
+      "path": "elements/ru_mi8amtsh.json",
+      "sha256": "6df50029e77dbb84ef52463cf78e1198fdb5da0ee36226af84526bb20f20f897"
     },
     {
       "path": "elements/ru_msr_squad.json",
@@ -67,6 +79,14 @@
     {
       "path": "elements/ru_sniper_team.json",
       "sha256": "522ec30e76e0906a2bd8a6e99c6e10ba53cb482f91676e3bc52e654d33e67d8b"
+    },
+    {
+      "path": "elements/ru_su25sm3.json",
+      "sha256": "b1c506f96ae3fe5c6fc7dd22c5e0d5a30083fa09a2285c7c3d4f589812d9b271"
+    },
+    {
+      "path": "elements/ru_su35s.json",
+      "sha256": "5f15f143439774419b30c89ef5713ab78c8a97efef040820693b70754303c76a"
     },
     {
       "path": "elements/ru_t72b3.json",
@@ -93,12 +113,28 @@
       "sha256": "6db7a10719ed4fe210b4f4e5d39af047fb1f9d42a89db6f3dd068538f9f8ee41"
     },
     {
+      "path": "elements/ru_zsu234.json",
+      "sha256": "7fc576a06825646057bdda453189b6e6ba455766d64e96c8d2a89e942aef728b"
+    },
+    {
+      "path": "elements/us_a10c.json",
+      "sha256": "635826487918a09511df478167166526d8f6245b78a5f70c6bbfd22b7cc89c3c"
+    },
+    {
       "path": "elements/us_ah64e.json",
       "sha256": "787aa927b522566f3a08f07e0fd4c0aae2c76b3dd116a08afad348af60eb7be9"
     },
     {
       "path": "elements/us_avenger.json",
       "sha256": "104f047696d8ad081a09784856ff595c10cc853feb74bedc537dd12b9c7307bf"
+    },
+    {
+      "path": "elements/us_c130j.json",
+      "sha256": "c8536ef8c06370e563ecd621ebbbcf08aa05dc376bff33bde11b2b081d2c45f4"
+    },
+    {
+      "path": "elements/us_f16c.json",
+      "sha256": "4676f6bdf70856a81591cdf27cda90faba90ea993d35b1a591cae42376db66ca"
     },
     {
       "path": "elements/us_hemtt.json",
@@ -127,6 +163,10 @@
     {
       "path": "elements/us_m1068_cp.json",
       "sha256": "3884af1654143c3f950ed95249ac94d3af102e6f38e6e23985636a3e7e2c2ddf"
+    },
+    {
+      "path": "elements/us_m109a7.json",
+      "sha256": "b4cd08799066587d71750d396f97f05cfafe899927891b770d453a104c8fff64"
     },
     {
       "path": "elements/us_m10_booker.json",
@@ -185,6 +225,10 @@
       "sha256": "df129d5363ab2ba86c0857f0508d22cf6fd7710f04ae476f9d29a08ea976894c"
     },
     {
+      "path": "elements/us_uh60m.json",
+      "sha256": "ef87c60f580a2eb6b5bae540f99a62d2ff416479250898043369c499b876db73"
+    },
+    {
       "path": "forces/ru_btg_default.json",
       "sha256": "697dd4de1e606ee9021b446ed9869d1ec329499d32408cb0cc22e0dac12bf71e"
     },
@@ -206,19 +250,47 @@
     },
     {
       "path": "toe/ru_btg_bmp.json",
-      "sha256": "b37d2d19a7553c1705dada1bc089b8a1363254f75c9c67d40c6b52ae9c19354c"
+      "sha256": "8fc72c49f04ebca50057f832ef6e21ee52706c4407114af9eacaf8f3de12e706"
     },
     {
       "path": "toe/us_armor_bn_tf.json",
-      "sha256": "186abb0c71c974e0ff7ee85e7c9b23e2f593a0578e50ef8407c99092664d6b07"
+      "sha256": "91031c169ca436af773bb213a8b743625b2074b9308bfec09a0b3a86bfad3bd2"
+    },
+    {
+      "path": "units/ru_aa_gun_co.json",
+      "sha256": "b85e6e8647682efca2445f5392eea1a164584a8f4f253c2e41cf018ba67cd552"
     },
     {
       "path": "units/ru_ada_section.json",
       "sha256": "b91aab5a13156bce1cf0cb8fec3364f9042935b9cb8185599175fab098337f99"
     },
     {
+      "path": "units/ru_air_assault_plt.json",
+      "sha256": "5fec193b59fb4487984b97a09a75dac4202df6a5506704b94d8aa7e8d4b3ea45"
+    },
+    {
+      "path": "units/ru_air_wing.json",
+      "sha256": "b936901b385fe4ffb0019ed8ec6259cad4f2fd73545941f488f919e3212215fa"
+    },
+    {
+      "path": "units/ru_airlift_flight.json",
+      "sha256": "01aa4e0460db999317bf050cdc0dd7d7435f16cad312c204a2e3a0190b7a881a"
+    },
+    {
+      "path": "units/ru_artillery_co.json",
+      "sha256": "caaff395e65b4e7a8fd02383b4793533f268c75acbd4df0b9b6f056e1a81e358"
+    },
+    {
+      "path": "units/ru_artillery_plt.json",
+      "sha256": "6fd18935a7eac42aacb561768b7b783d959f7f6f85ce8a3714d898ee1497973b"
+    },
+    {
       "path": "units/ru_at_plt.json",
       "sha256": "2c91b40d077383299c65eda2a66d21fa56ce41cecbf7e8eccdcac7587e0c2b17"
+    },
+    {
+      "path": "units/ru_attack_flight.json",
+      "sha256": "390b813eeb480e42f826698ec6c6f7edac3b88e635e450508526859fae28889c"
     },
     {
       "path": "units/ru_aviation_sec.json",
@@ -237,8 +309,16 @@
       "sha256": "1c4a9e74c9459808fe1d41b134ba8782832490986ba78e488da124cb38e0b45f"
     },
     {
+      "path": "units/ru_fighter_flight.json",
+      "sha256": "7b081c6d28940655a3ad3959720470d924e24d39f94e4aa4f5e8528ac87cdd7c"
+    },
+    {
       "path": "units/ru_fo_team.json",
       "sha256": "1e2c1a33f5bbdc8c68a12d9fb61615d52fb504db5f92a38fa4482cea2ebc8993"
+    },
+    {
+      "path": "units/ru_heli_co.json",
+      "sha256": "b3bf202ecf41058ca622539b5bfc457b270ad1d975af7faf6ae35019cbde6976"
     },
     {
       "path": "units/ru_kornet_sec.json",
@@ -277,8 +357,20 @@
       "sha256": "e299983467283c5404b6227732eab12e1f9467f2f129bb12164820bf16ca3298"
     },
     {
+      "path": "units/ru_sam_co.json",
+      "sha256": "ae9963e9077e9688bcf396a448f999b9d5d7cfb8b94a3198710731d272764419"
+    },
+    {
+      "path": "units/ru_shilka_plt.json",
+      "sha256": "da15142d8b1773087c934c5d920e854d49029cf48fd20cedbf0bf86237cb1663"
+    },
+    {
       "path": "units/ru_sniper_sec.json",
       "sha256": "191066f675bb28450f78aeb7bc7fd8470c2e87f0947f88052951066f04c718b8"
+    },
+    {
+      "path": "units/ru_supply_co.json",
+      "sha256": "4f5c4d0b5cccfaa72b2ed4f69a6be2fda03a41ab8c7885a63851d9619fb8eeba"
     },
     {
       "path": "units/ru_supply_section.json",
@@ -293,12 +385,40 @@
       "sha256": "600442362056ff57694d17295dd6d19d43f32578787aad9cf9fe252fa958f911"
     },
     {
+      "path": "units/us_aa_gun_co.json",
+      "sha256": "1b5560e1640d6f3f9cd99bfba17bfc60aebf20734c3b2e69febc67dad67a08b5"
+    },
+    {
       "path": "units/us_ada_section.json",
       "sha256": "e7d7631359679d376f784d9b0cbc434d4c026a35cac769d09784da03b024d4ff"
     },
     {
+      "path": "units/us_air_assault_plt.json",
+      "sha256": "ac5a4adfc2f84d069c7e8f0bb75bd5c0469e04c8353b4af7e3020d31822900ba"
+    },
+    {
+      "path": "units/us_air_wing.json",
+      "sha256": "44952da6847cea82c3954280a086cc0b4c171f8caee6f4fde8c428e2aec41558"
+    },
+    {
+      "path": "units/us_airlift_flight.json",
+      "sha256": "0f2f99b5593d83ad77a508a7a96070cdecba08c8a537460153e444d10a3d5ccd"
+    },
+    {
+      "path": "units/us_artillery_co.json",
+      "sha256": "d47772ad4390034779301ff4146913e8a3fe5c364921b6f9a4b2500118e9a3a0"
+    },
+    {
+      "path": "units/us_artillery_plt.json",
+      "sha256": "9f0e7f2e0b0c115da824b6c5f15fe9bd7be2bd2e1219d3f8329fd91c2842233b"
+    },
+    {
       "path": "units/us_at_plt.json",
       "sha256": "a1b91db60496446fdd7fa93783216015e51a4a0bda0b97315cd708d6b8e990cb"
+    },
+    {
+      "path": "units/us_attack_flight.json",
+      "sha256": "5750ed8fa452ecac2f8bc0d87b23f1bc44f9de4aa3651b86701258d47feda086"
     },
     {
       "path": "units/us_aviation_sec.json",
@@ -309,8 +429,16 @@
       "sha256": "d915e340244086605bb5b2924a2d648a92130cfc7326898140a0d5f17b6b0ad9"
     },
     {
+      "path": "units/us_fighter_flight.json",
+      "sha256": "b85c6a73576d7aaa2ce734cccb9894c93a354c384ca407614fb8e9f26c98c7b9"
+    },
+    {
       "path": "units/us_fo_team.json",
       "sha256": "49be9376c5f445983bba122dc087b6122697f0d6109cfc5ec5b5ae7ab66f8379"
+    },
+    {
+      "path": "units/us_heli_co.json",
+      "sha256": "63948b64416b128ceea3e58714c80e2e89ac5b1b51f917f5fba60f0b93cd0d61"
     },
     {
       "path": "units/us_jtac_team.json",
@@ -341,8 +469,16 @@
       "sha256": "d8db9058a7fc20ab2e06b0face3725169ee16aecce7b6cd9506163bfb0278248"
     },
     {
+      "path": "units/us_sam_co.json",
+      "sha256": "c6fa59901ec445e35f42add19efb06d777dfe1a0dc15e4215b5d03fa23cb54da"
+    },
+    {
       "path": "units/us_scout_plt.json",
       "sha256": "2e0e959bde76d17c371e94c0ce1ea952bece3abd4915dc91b6bdce0d8a961933"
+    },
+    {
+      "path": "units/us_shorad_plt.json",
+      "sha256": "d777d4db54d9ff6282252d206c0309e00d493724d9d5a47068a294e0d267aaeb"
     },
     {
       "path": "units/us_sniper_sec.json",
@@ -355,6 +491,10 @@
     {
       "path": "units/us_stryker_plt.json",
       "sha256": "06b9075d6eef585a31ea4f324c16ca8d99384bcdce008b39f01c6ff30b00b3a9"
+    },
+    {
+      "path": "units/us_supply_co.json",
+      "sha256": "12728d16684a5e2b6feb833cd2c1ef2c593a9d9bb1365177557027d4e04c39a7"
     },
     {
       "path": "units/us_supply_section.json",
@@ -393,6 +533,10 @@
       "sha256": "8b466ca40528a71c21f1abdd06a350225f74ddb1aee78991ecfb1758f8cf41b4"
     },
     {
+      "path": "weapons/2a7_23mm.json",
+      "sha256": "ab06790ac1983d9dc20a3c11b47fe99330b1b4cced8b48246a167ed34dddc496"
+    },
+    {
       "path": "weapons/9k121_vikhr.json",
       "sha256": "cb2a50b53a6e8f57dd4e21096a352cbbeb17379788fabaa3b37f7dfa91be2a2a"
     },
@@ -429,6 +573,18 @@
       "sha256": "b2d23ab247d953655343d95530c642eca85f3f9e83681a03b646cd41c918ebc2"
     },
     {
+      "path": "weapons/agm65_maverick.json",
+      "sha256": "4747132afe1b462e53b5cf8ab931eb7b35000ca365f3e8b014786307aad35079"
+    },
+    {
+      "path": "weapons/aim120d.json",
+      "sha256": "c5da88ffa5934ba9abc9196e96a5b81f71d252abc910b889851cbeb38e7995c0"
+    },
+    {
+      "path": "weapons/aim9x.json",
+      "sha256": "b7f1ff6d168218727d61fb373229fc5fefee678d8bd88c223fa87f20c701e2bb"
+    },
+    {
       "path": "weapons/ak74_rifles.json",
       "sha256": "550324c23d673e6391037eea020264f3b123f0379ad0d38da720200b171d2372"
     },
@@ -441,8 +597,16 @@
       "sha256": "385360afb63b2584325333a6ca27a7b8395c7a0b9674565c5208181a4ca41069"
     },
     {
+      "path": "weapons/gau8_30mm.json",
+      "sha256": "74dfc858c5003140701d4d21b543f2cefd3ff82d8cc018b080c25be4b2284875"
+    },
+    {
       "path": "weapons/gbu38_jdam.json",
       "sha256": "ae9757a1150c5d490ce29d30f3a2602ecc1624ed0903139d41df3adfd6d90b2d"
+    },
+    {
+      "path": "weapons/gsh302_30mm.json",
+      "sha256": "89d1f4ba6457c2a49728b03edd88bc39a8511c16884fda9a24a9c2a3c4e97447"
     },
     {
       "path": "weapons/hydra70.json",
@@ -455,6 +619,10 @@
     {
       "path": "weapons/kab500_bomb.json",
       "sha256": "d53a51560e3ec056a682a576303ff2d9901a7c2b01bfea5813178a831462dcd6"
+    },
+    {
+      "path": "weapons/kh29t.json",
+      "sha256": "2c01f9acd197f0bb0cf8d111d99ebd28dbf2bfe1ebcce369cdc8150ff1b0a6d3"
     },
     {
       "path": "weapons/m107_rifle.json",
@@ -523,6 +691,14 @@
     {
       "path": "weapons/pkt_coax.json",
       "sha256": "3e70ba1bc5ad05839558da8de22e065176404cdda198f657370d816ca9d2a5db"
+    },
+    {
+      "path": "weapons/r73.json",
+      "sha256": "99851728bcdb00c7ae9a5806da757070dc420f7b68e7382781a3475d98d85ea3"
+    },
+    {
+      "path": "weapons/r77m.json",
+      "sha256": "0bc9fad01f580ded88e71e0c26f55faf363dc34e8459cd9d0a05530cb79d1f95"
     },
     {
       "path": "weapons/rpg29.json",

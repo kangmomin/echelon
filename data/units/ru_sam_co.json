@@ -1,0 +1,27 @@
+{
+  "id": "ru_sam_co",
+  "name": "지대공 방공 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "aa",
+  "hq": [
+    {
+      "element": "ru_tor_m2",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_ada_section",
+    "ru_ada_section",
+    "ru_ada_section"
+  ],
+  "default_formation": "co_line",
+  "role": "Tor-M2 4대(방공반 3개). 15 km 지대공 미사일로 지도 전체 하늘을 덮는다.",
+  "pros": [
+    "Tor 사거리 15 km — 지도 어디든"
+  ],
+  "cons": [
+    "지상 무장 없음",
+    "비싸다"
+  ]
+}

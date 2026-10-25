@@ -46,6 +46,30 @@
         "us_light_inf_co"
       ],
       "required": false
+    },
+    {
+      "id": "sup_1",
+      "allowed": [
+        "us_supply_co",
+        "us_artillery_co",
+        "us_sam_co",
+        "us_aa_gun_co",
+        "us_heli_co",
+        "us_air_wing"
+      ],
+      "required": false
+    },
+    {
+      "id": "sup_2",
+      "allowed": [
+        "us_supply_co",
+        "us_artillery_co",
+        "us_sam_co",
+        "us_aa_gun_co",
+        "us_heli_co",
+        "us_air_wing"
+      ],
+      "required": false
     }
   ],
   "constraints": {
@@ -77,7 +101,7 @@
     }
   ],
   "command_capacity_per_min": 6,
-  "max_companies": 4,
+  "max_companies": 6,
   "support": {
     "artillery_mission": 30,
     "max_artillery": 6,

@@ -1,0 +1,24 @@
+{
+  "id": "ru_attack_flight",
+  "name": "공격기 편대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "fixed_wing",
+  "elements": [
+    {
+      "element": "ru_su25sm3",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "Su-25SM3 2대. 우클릭(Q 공격 이동)한 곳 상공을 돌며 Kh-29 와 로켓·기관포로 지상을 친다.",
+  "pros": [
+    "명령이 즉시 먹힌다",
+    "Kh-29T 6 km, S-8 로켓"
+  ],
+  "cons": [
+    "연료 2분 30초 — 다 쓰면 돌아가 5분 재무장",
+    "방공에 노출"
+  ]
+}

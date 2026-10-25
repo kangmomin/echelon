@@ -1,0 +1,21 @@
+{
+  "id": "r77m",
+  "name": "R-77M",
+  "type": "AAM",
+  "range_m": {
+    "min": 1000,
+    "max": 6000
+  },
+  "penetration": 100,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.72,
+    "at_max_range": 0.5
+  },
+  "rof_rpm": 6,
+  "suppression": 0,
+  "fire_on_move": true,
+  "targets": [
+    "air"
+  ]
+}

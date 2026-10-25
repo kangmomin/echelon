@@ -60,12 +60,17 @@ namespace Echelon.Core
             return true;
         }
 
+        // 보급·포병·방공·헬기·고정익 중대는 거점을 잡는 기동 중대가 아니다(D-050).
+        public bool IsSupport => Kind == "supply" || Kind == "artillery" || Kind == "aa" || Kind == "aviation" ||
+            Kind == "fixed_wing";
+
         public List<Platoon> FormationPlatoons()
         {
             List<Platoon> output = new List<Platoon>();
             foreach (Platoon platoon in Platoons)
             {
-                if (platoon.Parent == this && !platoon.Detached && platoon.OnMap && !platoon.IsDestroyed())
+                if (platoon.Parent == this && !platoon.Detached && platoon.OnMap && !platoon.IsDestroyed() &&
+                    !platoon.IsAirWing)
                 {
                     output.Add(platoon);
                 }

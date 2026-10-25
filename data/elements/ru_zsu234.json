@@ -1,0 +1,31 @@
+{
+  "id": "ru_zsu234",
+  "name": "ZSU-23-4M4 실카 대공포",
+  "faction": "RU",
+  "class": "aa",
+  "hp": 70,
+  "armor": {
+    "front": 20,
+    "side": 15,
+    "rear": 10,
+    "top": 8
+  },
+  "size": 1.1,
+  "stealth": 0.12,
+  "optics_m": 4000,
+  "speed_kmh": {
+    "road": 50,
+    "offroad": 30
+  },
+  "weapons": [
+    "2a7_23mm"
+  ],
+  "ammo": {
+    "2a7_23mm": 2000
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 18,
+  "supply_full": 5
+}

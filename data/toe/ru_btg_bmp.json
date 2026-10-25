@@ -44,6 +44,30 @@
         "ru_msr_co_foot"
       ],
       "required": false
+    },
+    {
+      "id": "sup_1",
+      "allowed": [
+        "ru_supply_co",
+        "ru_artillery_co",
+        "ru_sam_co",
+        "ru_aa_gun_co",
+        "ru_heli_co",
+        "ru_air_wing"
+      ],
+      "required": false
+    },
+    {
+      "id": "sup_2",
+      "allowed": [
+        "ru_supply_co",
+        "ru_artillery_co",
+        "ru_sam_co",
+        "ru_aa_gun_co",
+        "ru_heli_co",
+        "ru_air_wing"
+      ],
+      "required": false
     }
   ],
   "constraints": {
@@ -76,7 +100,7 @@
     }
   ],
   "command_capacity_per_min": 6,
-  "max_companies": 4,
+  "max_companies": 6,
   "support": {
     "artillery_mission": 25,
     "max_artillery": 8,

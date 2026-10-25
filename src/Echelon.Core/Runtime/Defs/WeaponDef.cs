@@ -6,7 +6,7 @@ namespace Echelon.Core
 {
     public sealed class WeaponDef
     {
-        public static readonly string[] Types = { "KE", "HEAT", "ATGM", "HE", "MG", "AC", "SAM" };
+        public static readonly string[] Types = { "KE", "HEAT", "ATGM", "HE", "MG", "AC", "SAM", "AAM" };
         public static readonly string[] AllowedTargets = { "vehicle", "infantry", "air" };
 
         public string Id { get; set; } = "";

@@ -1,0 +1,25 @@
+{
+  "id": "gsh302_30mm",
+  "name": "GSh-30-2 30 mm 기관포",
+  "type": "AC",
+  "range_m": {
+    "min": 0,
+    "max": 1800
+  },
+  "penetration": 60,
+  "damage": 35,
+  "accuracy": {
+    "base": 0.5,
+    "at_max_range": 0.25
+  },
+  "rof_rpm": 300,
+  "suppression": 35,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 3,
+  "burst": 8,
+  "top_attack": true
+}

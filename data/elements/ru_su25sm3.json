@@ -1,0 +1,38 @@
+{
+  "id": "ru_su25sm3",
+  "name": "Su-25SM3 공격기",
+  "faction": "RU",
+  "class": "plane",
+  "hp": 120,
+  "armor": {
+    "front": 28,
+    "side": 22,
+    "rear": 18,
+    "top": 22
+  },
+  "size": 1.7,
+  "stealth": 0.06,
+  "optics_m": 6000,
+  "speed_kmh": {
+    "road": 520,
+    "offroad": 520
+  },
+  "weapons": [
+    "gsh302_30mm",
+    "kh29t",
+    "s8_rockets"
+  ],
+  "ammo": {
+    "gsh302_30mm": 250,
+    "kh29t": 2,
+    "s8_rockets": 40
+  },
+  "radio_range_m": 20000,
+  "transport_capacity": 0,
+  "crew": 1,
+  "cost": 72,
+  "supply_full": 8,
+  "altitude_m": 300,
+  "endurance_s": 150,
+  "rearm_s": 300
+}

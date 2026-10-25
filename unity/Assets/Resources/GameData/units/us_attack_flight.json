@@ -1,0 +1,24 @@
+{
+  "id": "us_attack_flight",
+  "name": "공격기 편대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "fixed_wing",
+  "elements": [
+    {
+      "element": "us_a10c",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "A-10C 2대. 우클릭(Q 공격 이동)한 곳 상공을 돌며 매버릭과 30 mm 기관포로 전차를 친다.",
+  "pros": [
+    "명령이 즉시 먹힌다",
+    "전차 윗면을 뚫는 매버릭 6 km"
+  ],
+  "cons": [
+    "연료 2분 30초 — 다 쓰면 돌아가 5분 재무장",
+    "방공·기관포에 노출"
+  ]
+}

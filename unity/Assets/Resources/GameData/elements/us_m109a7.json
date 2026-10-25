@@ -1,0 +1,33 @@
+{
+  "id": "us_m109a7",
+  "name": "M109A7 팔라딘 자주포",
+  "faction": "US",
+  "class": "artillery",
+  "hp": 90,
+  "armor": {
+    "front": 60,
+    "side": 30,
+    "rear": 20,
+    "top": 12
+  },
+  "size": 1.2,
+  "stealth": 0.1,
+  "optics_m": 1500,
+  "speed_kmh": {
+    "road": 61,
+    "offroad": 38
+  },
+  "weapons": [
+    "m795_155mm",
+    "m2_hmg"
+  ],
+  "ammo": {
+    "m795_155mm": 39,
+    "m2_hmg": 500
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 26,
+  "supply_full": 10
+}

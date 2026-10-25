@@ -16,6 +16,7 @@ namespace Echelon.Core
         IOrderSupply Supply { get; }
         IOrderEngineers? Engineers { get; }
         IOrderMorale? Morale { get; }
+        IOrderAir? Air { get; }
 
         Unit? GetUnit(int unitId);
         TaskForce? GetTaskForce(string side);
@@ -30,6 +31,13 @@ namespace Echelon.Core
     public interface IOrderEngineers
     {
         bool BeginTask(Platoon platoon, Order order);
+    }
+
+    public interface IOrderAir
+    {
+        bool Launch(Platoon flight, SimVec2 toward);
+        void ReturnToBase(Platoon flight, string reason);
+        bool IsReturning(Platoon flight);
     }
 
     public interface IOrderMorale

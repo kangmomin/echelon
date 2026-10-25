@@ -1,0 +1,31 @@
+{
+  "id": "us_c130j",
+  "name": "C-130J 수송기",
+  "faction": "US",
+  "class": "plane",
+  "hp": 120,
+  "armor": {
+    "front": 10,
+    "side": 8,
+    "rear": 8,
+    "top": 8
+  },
+  "size": 2.6,
+  "stealth": 0.02,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 420,
+    "offroad": 420
+  },
+  "weapons": [],
+  "ammo": {},
+  "radio_range_m": 20000,
+  "transport_capacity": 0,
+  "crew": 3,
+  "cost": 40,
+  "supply_full": 0,
+  "supply_capacity": 400,
+  "altitude_m": 450,
+  "endurance_s": 120,
+  "rearm_s": 300
+}

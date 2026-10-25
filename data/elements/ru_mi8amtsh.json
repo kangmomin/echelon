@@ -1,0 +1,33 @@
+{
+  "id": "ru_mi8amtsh",
+  "name": "Mi-8AMTSh 수송헬기",
+  "faction": "RU",
+  "class": "heli",
+  "hp": 95,
+  "armor": {
+    "front": 18,
+    "side": 15,
+    "rear": 12,
+    "top": 12
+  },
+  "size": 1.4,
+  "stealth": 0.05,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 230,
+    "offroad": 230
+  },
+  "weapons": [
+    "pkt_coax",
+    "s8_rockets"
+  ],
+  "ammo": {
+    "pkt_coax": 1000,
+    "s8_rockets": 40
+  },
+  "radio_range_m": 10000,
+  "transport_capacity": 2,
+  "crew": 3,
+  "cost": 32,
+  "supply_full": 6
+}

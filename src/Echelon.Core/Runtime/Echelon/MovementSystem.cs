@@ -395,7 +395,7 @@ namespace Echelon.Core
             else
             {
                 PollPath(p);
-                if (p.Guide.IsMoving() && Battle.Terrain.TypeAt(p.Guide.Pos) == (int)Terrain.Type.ROAD &&
+                if (!p.IsAirWing && p.Guide.IsMoving() && Battle.Terrain.TypeAt(p.Guide.Pos) == (int)Terrain.Type.ROAD &&
                     OnRoadAhead(p.Guide))
                 {
                     speed = RoadMarchSpeed(p, baseSpeed);
@@ -408,7 +408,7 @@ namespace Echelon.Core
 
                 p.GuideSpeedLimit = speed;
                 double moved = AdvanceGuide(p, dt, speed);
-                if (p.Guide.IsMoving() && (OnRoadAhead(p.Guide) || ChokeAhead(p.Guide)))
+                if (!p.IsAirWing && p.Guide.IsMoving() && (OnRoadAhead(p.Guide) || ChokeAhead(p.Guide)))
                 {
                     p.ColumnHoldM = Math.Max(p.ColumnHoldM,
                         (p.Elements.Count + 1) * PlatoonColumnSpacingM + 50.0);
@@ -485,6 +485,12 @@ namespace Echelon.Core
                 e.MoveTarget = Battle.Terrain.NearestPassable(targets[i], e.Mobility(), 10);
                 e.HasMoveTarget = true;
                 e.RestHeading = rest;
+                if (e.IsFixedWing())
+                {
+                    // 고정익은 슬롯 위를 선회할 뿐 슬롯에 서지 않는다. 대형 오차·낙오로 세지 않는다.
+                    continue;
+                }
+
                 double distance = e.Pos.DistanceTo(e.MoveTarget);
                 if (distance > PlatoonWaitM)
                 {
@@ -516,8 +522,55 @@ namespace Echelon.Core
             CheckSettled(p);
         }
 
+        /// <summary>
+        /// 고정익 비행. 멈출 수 없어 늘 최고 속도로 날고, 목표가 선회 반경 안이면 목표를 시계 방향으로 돈다.
+        /// 귀환 중이면 지도 가장자리 이탈점으로 곧장 간다.
+        /// </summary>
+        private void FlyPlane(Element e, double dt)
+        {
+            double speed = e.MaxSpeedMps(Battle.Terrain);
+            double turnRate = e.TurnRate();
+            double radius = turnRate > 0.0 ? speed / turnRate : 300.0;
+            SimVec2 forward = FormationSolver.ForwardVector(e.Heading);
+            SimVec2 center = e.Air == AirState.RETURNING ? e.AirExit
+                : e.HasMoveTarget ? e.MoveTarget
+                : e.Pos + forward * (radius * 3.0);
+            SimVec2 toCenter = center - e.Pos;
+            double distance = toCenter.Length();
+            double desired = e.Heading;
+            if (distance > 0.01)
+            {
+                double bearing = FormationSolver.HeadingFromVector(toCenter);
+                if (e.Air == AirState.RETURNING || distance > radius * 1.5)
+                {
+                    desired = bearing;
+                }
+                else
+                {
+                    double correction = SimMath.Clamp((distance - radius) / radius, -1.0, 1.0) * (Math.PI / 3.0);
+                    desired = bearing - Math.PI / 2.0 + correction;
+                }
+            }
+
+            e.TurnToward(desired, dt);
+            e.Pos = Battle.Terrain.ClampToMap(e.Pos + FormationSolver.ForwardVector(e.Heading) * speed * dt);
+            e.Velocity = (e.Pos - e.PrevPos) / dt;
+            e.StationaryTicks = 0;
+            e.StuckTicks = 0;
+        }
+
         private void MoveElement(Element e, long tick, double dt)
         {
+            if (e.IsFixedWing())
+            {
+                if (e.CanMove())
+                {
+                    FlyPlane(e, dt);
+                }
+
+                return;
+            }
+
             if (!e.HasMoveTarget || !e.CanMove())
             {
                 e.Velocity = SimVec2.Zero;

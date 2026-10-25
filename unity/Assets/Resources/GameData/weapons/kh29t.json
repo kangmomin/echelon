@@ -1,0 +1,22 @@
+{
+  "id": "kh29t",
+  "name": "Kh-29T",
+  "type": "ATGM",
+  "range_m": {
+    "min": 1000,
+    "max": 6000
+  },
+  "penetration": 700,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.8,
+    "at_max_range": 0.65
+  },
+  "rof_rpm": 3,
+  "suppression": 40,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle"
+  ],
+  "top_attack": true
+}

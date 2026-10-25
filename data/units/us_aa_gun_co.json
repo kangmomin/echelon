@@ -1,0 +1,26 @@
+{
+  "id": "us_aa_gun_co",
+  "name": "대공포 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "aa",
+  "hq": [
+    {
+      "element": "us_mshorad",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "us_shorad_plt",
+    "us_shorad_plt"
+  ],
+  "default_formation": "co_line",
+  "role": "M-SHORAD 9대(기동 방공 소대 2개). 30 mm 기관포 위주 근거리 방공.",
+  "pros": [
+    "기관포는 탄이 많아 오래 막는다",
+    "경장갑 차량도 상대"
+  ],
+  "cons": [
+    "사거리 3 km 로 짧다"
+  ]
+}

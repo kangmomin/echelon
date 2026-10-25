@@ -1,0 +1,36 @@
+{
+  "id": "us_a10c",
+  "name": "A-10C 공격기",
+  "faction": "US",
+  "class": "plane",
+  "hp": 130,
+  "armor": {
+    "front": 30,
+    "side": 25,
+    "rear": 20,
+    "top": 25
+  },
+  "size": 1.8,
+  "stealth": 0.06,
+  "optics_m": 6000,
+  "speed_kmh": {
+    "road": 480,
+    "offroad": 480
+  },
+  "weapons": [
+    "gau8_30mm",
+    "agm65_maverick"
+  ],
+  "ammo": {
+    "gau8_30mm": 1100,
+    "agm65_maverick": 4
+  },
+  "radio_range_m": 20000,
+  "transport_capacity": 0,
+  "crew": 1,
+  "cost": 80,
+  "supply_full": 8,
+  "altitude_m": 300,
+  "endurance_s": 150,
+  "rearm_s": 300
+}

@@ -1,0 +1,24 @@
+{
+  "id": "ru_airlift_flight",
+  "name": "수송기",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "fixed_wing",
+  "elements": [
+    {
+      "element": "ru_il76md",
+      "count": 1
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "Il-76MD 1대. 보급 투하(R)를 찍은 곳에 탄약을 낙하산으로 떨어뜨린다(반경 300 m).",
+  "pros": [
+    "명령이 즉시 먹힌다",
+    "트럭이 못 가는 곳에도 보급"
+  ],
+  "cons": [
+    "무장 없음",
+    "투하 뒤 돌아가 5분 재무장"
+  ]
+}

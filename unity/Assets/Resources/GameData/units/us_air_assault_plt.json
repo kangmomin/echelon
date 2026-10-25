@@ -1,0 +1,30 @@
+{
+  "id": "us_air_assault_plt",
+  "name": "공중강습 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "aviation",
+  "elements": [
+    {
+      "element": "us_uh60m",
+      "count": 3
+    }
+  ],
+  "passengers": [
+    {
+      "element": "us_inf_squad",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "role": "UH-60M 3대에 보병 분대 3개. 강을 건너 원하는 곳에 보병을 내린다(U 하차).",
+  "pros": [
+    "지형을 무시하고 보병을 실어 나른다",
+    "V 로 고도 전환"
+  ],
+  "cons": [
+    "격추되면 탄 보병도 잃는다",
+    "헬기 자체 무장은 기관총뿐"
+  ]
+}

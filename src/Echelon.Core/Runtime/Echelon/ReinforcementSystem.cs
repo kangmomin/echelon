@@ -92,7 +92,8 @@ namespace Echelon.Core
                 company.Guide.Reset(position, heading);
                 foreach (Unit child in company.ChildrenUnits())
                 {
-                    if (child is Platoon platoon && platoon.Phase == wave)
+                    // 고정익 편대는 들어오지 않고 지도 밖에서 출격 준비가 된다(AirOpsSystem).
+                    if (child is Platoon platoon && platoon.Phase == wave && !platoon.IsAirWing)
                     {
                         Place(platoon, position, heading);
                     }
@@ -103,7 +104,7 @@ namespace Echelon.Core
 
             foreach (Platoon platoon in taskForce.AllPlatoons())
             {
-                if (platoon.OnMap || platoon.Phase != wave)
+                if (platoon.OnMap || platoon.Phase != wave || platoon.IsAirWing)
                 {
                     continue;
                 }

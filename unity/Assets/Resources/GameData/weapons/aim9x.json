@@ -1,0 +1,21 @@
+{
+  "id": "aim9x",
+  "name": "AIM-9X 사이드와인더",
+  "type": "AAM",
+  "range_m": {
+    "min": 300,
+    "max": 3000
+  },
+  "penetration": 80,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.85,
+    "at_max_range": 0.65
+  },
+  "rof_rpm": 6,
+  "suppression": 0,
+  "fire_on_move": true,
+  "targets": [
+    "air"
+  ]
+}

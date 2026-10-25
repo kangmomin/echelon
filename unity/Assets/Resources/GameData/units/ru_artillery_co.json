@@ -1,0 +1,26 @@
+{
+  "id": "ru_artillery_co",
+  "name": "포병 중대",
+  "faction": "RU",
+  "echelon": "company",
+  "kind": "artillery",
+  "hq": [
+    {
+      "element": "ru_bmp1ksh_cp",
+      "count": 1
+    }
+  ],
+  "platoons": [
+    "ru_artillery_plt",
+    "ru_artillery_plt"
+  ],
+  "default_formation": "co_line",
+  "role": "2S19 자주포 6문(포대 2개). 있으면 포병 사격(T T)을 이 중대가 지도 위에서 쏜다.",
+  "pros": [
+    "포병 임무 수 제한 없음(탄이 있는 한)",
+    "포대 둘이 동시에 다른 표적을 친다"
+  ],
+  "cons": [
+    "멈춰 있어야 쏘고 공격기에 약하다"
+  ]
+}
