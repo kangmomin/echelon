@@ -65,6 +65,7 @@ namespace Echelon.Unity.Editor
             // 이 단계가 바꾼 에셋만 저장한다. SaveAssets() 는 편집기에서 동적 글꼴이 쌓은 글리프·커닝까지 저장해
             // 빌드할 때마다 글꼴 에셋이 커졌다(빌드에는 ClearDynamicDataOnBuild 로 빈 상태가 들어간다).
             AssetDatabase.SaveAssetIfDirty(EnsureShaderLibrary());
+            EnsureInstancingMaterials();
             Debug.Log("[unity-setup] Korean font, terrain shaders and Boot scene ready");
         }
 
@@ -97,6 +98,44 @@ namespace Echelon.Unity.Editor
             }
             EditorUtility.SetDirty(library);
             return library;
+        }
+
+        /// <summary>
+        /// 나무·집·다리와 전투 효과는 코드로 만든 머티리얼로 GPU 인스턴싱해 그린다. 빌드는 인스턴싱을 켠 머티리얼
+        /// 에셋이 없는 셰이더의 인스턴싱 변형을 지우므로(Strip Unused), 셰이더마다 그런 머티리얼을 하나씩
+        /// Resources 에 두어 변형이 남게 한다. 없으면 플레이어에서 이것들이 아예 그려지지 않는다.
+        /// </summary>
+        private static void EnsureInstancingMaterials()
+        {
+            const string folder = "Assets/Resources/Instancing";
+            Directory.CreateDirectory(folder);
+            string[] shaders =
+            {
+                "Assets/Shaders/Terrain/TerrainInstances.shader",
+                "Assets/Shaders/Fx/Resources/FxFire.shader",
+                "Assets/Shaders/Fx/Resources/FxSmoke.shader",
+                "Assets/Shaders/Fx/Resources/FxScorch.shader"
+            };
+            foreach (string shaderPath in shaders)
+            {
+                Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(shaderPath);
+                if (shader == null)
+                    throw new FileNotFoundException("Missing instanced shader", shaderPath);
+                string path = folder + "/" + Path.GetFileNameWithoutExtension(shaderPath) + ".mat";
+                Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (material == null)
+                {
+                    material = new Material(shader) { enableInstancing = true };
+                    AssetDatabase.CreateAsset(material, path);
+                }
+                else if (material.shader != shader || !material.enableInstancing)
+                {
+                    material.shader = shader;
+                    material.enableInstancing = true;
+                    EditorUtility.SetDirty(material);
+                    AssetDatabase.SaveAssetIfDirty(material);
+                }
+            }
         }
 
         private static Shader LoadTerrainShader(string name)

@@ -67,6 +67,8 @@ namespace Echelon.Unity.App
             RenderSettings.fogColor = FogColor;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             RenderSettings.fogDensity = 0.00006f;
+            // 플레이어는 하늘을 바꿔도 주변광 프로브를 다시 계산하지 않는다(편집기만 자동). 그대로 두면 주변광이 0이다.
+            DynamicGI.UpdateEnvironment();
 
             var sunObject = new GameObject("Sun");
             sunObject.transform.SetParent(parent, false);
@@ -92,6 +94,7 @@ namespace Echelon.Unity.App
             RenderSettings.fogColor = _previousFogColor;
             RenderSettings.fogMode = _previousFogMode;
             RenderSettings.fogDensity = _previousFogDensity;
+            DynamicGI.UpdateEnvironment();
             if (_skybox == null)
                 return;
             if (Application.isPlaying)

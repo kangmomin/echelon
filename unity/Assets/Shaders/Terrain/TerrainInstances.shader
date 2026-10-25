@@ -26,6 +26,8 @@ Shader "Echelon/Terrain/Instances"
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
+            // Forward+ 에서 DrawMeshInstanced 는 객체별 조명 데이터(unity_LightData)를 받지 못해 주광이 0이 된다.
+            #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
             #pragma multi_compile_fog
             #pragma multi_compile_instancing
             #include "TerrainCommon.hlsl"
