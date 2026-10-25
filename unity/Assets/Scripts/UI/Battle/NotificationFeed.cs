@@ -179,6 +179,8 @@ namespace Echelon.Unity.UI.Battle
             row.padding = new RectOffset(0, 10, 5, 5);
             row.childForceExpandWidth = false;
             row.childForceExpandHeight = true;
+            // 강제 확장 그룹은 유연 높이 1을 보고해, 그대로 두면 알림 열 높이만큼 카드가 늘어난다.
+            UiKit.SetSize(item.Root).flexibleHeight = 0f;
             RectTransform stripe = UiKit.CreatePanel(item.Root, "Stripe", Color.white);
             item.Stripe = stripe.GetComponent<Image>();
             item.Stripe.raycastTarget = false;
