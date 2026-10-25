@@ -25,19 +25,11 @@ namespace Echelon.Unity.Editor
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             }
             Directory.CreateDirectory("Assets/Resources/Fonts");
-            const string settingsPath = "Assets/Resources/TMP Settings.asset";
-            const string importedSettingsPath = "Assets/TextMesh Pro/Resources/TMP Settings.asset";
-            TMP_Settings importedSettings = AssetDatabase.LoadAssetAtPath<TMP_Settings>(importedSettingsPath);
-            if (importedSettings == null)
-                throw new FileNotFoundException("Missing TMP settings", importedSettingsPath);
+            // TMP 설정은 TMP Essential Resources 의 것 하나만 쓴다(Resources 에 둘이 있으면 어느 쪽이 로드될지 모른다).
+            const string settingsPath = "Assets/TextMesh Pro/Resources/TMP Settings.asset";
             TMP_Settings settings = AssetDatabase.LoadAssetAtPath<TMP_Settings>(settingsPath);
             if (settings == null)
-            {
-                settings = ScriptableObject.CreateInstance<TMP_Settings>();
-                AssetDatabase.CreateAsset(settings, settingsPath);
-            }
-            EditorUtility.CopySerialized(importedSettings, settings);
-            TMP_Settings.LoadDefaultSettings();
+                throw new FileNotFoundException("Missing TMP settings", settingsPath);
             Font font = AssetDatabase.LoadAssetAtPath<Font>(SourceFont);
             if (font == null)
                 throw new FileNotFoundException("Missing Korean source font", SourceFont);
@@ -55,21 +47,28 @@ namespace Echelon.Unity.Editor
                 AssetDatabase.CreateAsset(fontAsset, FontAsset);
                 AssetDatabase.AddObjectToAsset(fontAsset.atlasTextures[0], fontAsset);
                 AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
+                fontAsset.name = "NotoSansKR SDF";
+                AssetDatabase.SaveAssetIfDirty(fontAsset);
             }
-            fontAsset.name = "NotoSansKR SDF";
-            TMP_Settings.defaultFontAsset = fontAsset;
-            EditorUtility.SetDirty(settings);
-            EditorUtility.SetDirty(fontAsset);
+            var serializedSettings = new SerializedObject(settings);
+            SerializedProperty defaultFont = serializedSettings.FindProperty("m_defaultFontAsset");
+            if (defaultFont.objectReferenceValue != fontAsset)
+            {
+                defaultFont.objectReferenceValue = fontAsset;
+                serializedSettings.ApplyModifiedPropertiesWithoutUndo();
+                AssetDatabase.SaveAssetIfDirty(settings);
+            }
             EditorBuildSettings.scenes = new[]
             {
                 new EditorBuildSettingsScene("Assets/Scenes/Boot.unity", true)
             };
-            EnsureShaderLibrary();
-            AssetDatabase.SaveAssets();
+            // 이 단계가 바꾼 에셋만 저장한다. SaveAssets() 는 편집기에서 동적 글꼴이 쌓은 글리프·커닝까지 저장해
+            // 빌드할 때마다 글꼴 에셋이 커졌다(빌드에는 ClearDynamicDataOnBuild 로 빈 상태가 들어간다).
+            AssetDatabase.SaveAssetIfDirty(EnsureShaderLibrary());
             Debug.Log("[unity-setup] Korean font, terrain shaders and Boot scene ready");
         }
 
-        private static void EnsureShaderLibrary()
+        private static TerrainShaderLibrary EnsureShaderLibrary()
         {
             const string path = "Assets/Resources/TerrainShaders.asset";
             TerrainShaderLibrary library = AssetDatabase.LoadAssetAtPath<TerrainShaderLibrary>(path);
@@ -97,6 +96,7 @@ namespace Echelon.Unity.Editor
                     throw new InvalidDataException("A built-in runtime shader could not be found");
             }
             EditorUtility.SetDirty(library);
+            return library;
         }
 
         private static Shader LoadTerrainShader(string name)
