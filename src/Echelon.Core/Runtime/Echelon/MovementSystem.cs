@@ -383,7 +383,12 @@ namespace Echelon.Core
                 p.ColumnMode = c.ColumnMode || p.ColumnHoldM > 0.0;
                 if (!c.Guide.IsMoving())
                 {
-                    p.Posture = c.Posture;
+                    // 보급을 기다리는 소대의 자세를 중대 자세로 덮으면 보급 요청이 사라진다(K 가 중대 소대에 먹히지 않던 문제).
+                    if (p.Posture != "resupplying")
+                    {
+                        p.Posture = c.Posture;
+                    }
+
                     p.DefendFacing = c.DefendFacing;
                 }
             }
