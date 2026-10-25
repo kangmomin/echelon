@@ -135,7 +135,7 @@ async function main() {
     await delay(2500);
     await capture('menu');
     await call('Runtime.evaluate', { expression: 'document.querySelector("#unity-canvas").focus()' });
-    await click(800, 490);
+    await click(360, 540); // 메뉴의 "샌드박스" 버튼
     await waitFor(() => messages.some(text => text.includes('[sim] battle start')), 30000);
     await delay(3000);
     await capture('sandbox');
