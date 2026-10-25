@@ -177,11 +177,11 @@ namespace Echelon.Core.Tests
             company.Platoons = new List<Platoon> { first, second, detached, offMap, destroyed, wrongParent };
 
             Assert.That(company.FormationPlatoons(), Is.EqualTo(new[] { first, second }));
-            Assert.That(company.BaseSpeed(), Is.EqualTo(5.0).Within(1e-9));
+            Assert.That(company.BaseSpeed(), Is.EqualTo(5.0 * SimConst.MovementSpeedScale).Within(1e-9));
             hq.Elements[0].State = ElementState.DESTROYED;
-            Assert.That(company.BaseSpeed(), Is.EqualTo(10.0).Within(1e-9));
+            Assert.That(company.BaseSpeed(), Is.EqualTo(10.0 * SimConst.MovementSpeedScale).Within(1e-9));
             first.OnMap = false;
-            Assert.That(company.BaseSpeed(), Is.EqualTo(20.0).Within(1e-9));
+            Assert.That(company.BaseSpeed(), Is.EqualTo(20.0 * SimConst.MovementSpeedScale).Within(1e-9));
             Assert.That(new Company().BaseSpeed(), Is.Zero);
         }
 
@@ -200,14 +200,14 @@ namespace Echelon.Core.Tests
             Assert.That(platoon.Squads(), Is.EqualTo(new[] { squad }));
             Assert.That(platoon.FormationMembers(), Is.EqualTo(new[] { vehicle }));
             Assert.That(platoon.TrailingVehicles(), Is.Empty);
-            Assert.That(platoon.BaseSpeed(), Is.EqualTo(10.0).Within(1e-9));
+            Assert.That(platoon.BaseSpeed(), Is.EqualTo(10.0 * SimConst.MovementSpeedScale).Within(1e-9));
 
             platoon.Mounted = false;
             squad.MountedIn = null;
             vehicle.Passengers.Clear();
             Assert.That(platoon.FormationMembers(), Is.EqualTo(new[] { squad }));
             Assert.That(platoon.TrailingVehicles(), Is.EqualTo(new[] { vehicle }));
-            Assert.That(platoon.BaseSpeed(), Is.EqualTo(5.0).Within(1e-9));
+            Assert.That(platoon.BaseSpeed(), Is.EqualTo(5.0 * SimConst.MovementSpeedScale).Within(1e-9));
             squad.State = ElementState.DAMAGED;
             squad.DamageKind = "mobility";
             Assert.That(platoon.FormationMembers(), Is.Empty);

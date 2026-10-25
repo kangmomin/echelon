@@ -162,7 +162,7 @@ namespace Echelon.Core
                 kmh *= 0.7;
             }
 
-            return kmh / 3.6;
+            return kmh / 3.6 * SimConst.MovementSpeedScale;
         }
 
         public double BaseSpeedMps()
@@ -173,17 +173,14 @@ namespace Echelon.Core
                 kmh *= 0.5;
             }
 
-            return kmh / 3.6;
+            return kmh / 3.6 * SimConst.MovementSpeedScale;
         }
 
         public double TurnRate()
         {
-            if (IsAir())
-            {
-                return TurnRateAir;
-            }
-
-            return IsInfantry() ? TurnRateFoot : TurnRateVehicle;
+            // 선회도 이동 속도와 같은 배율로 압축한다. 속도만 올리면 회전 반경이 커져 경유점 주위를 맴돈다.
+            double rate = IsAir() ? TurnRateAir : IsInfantry() ? TurnRateFoot : TurnRateVehicle;
+            return rate * SimConst.MovementSpeedScale;
         }
 
         public void TurnToward(double targetHeading, double dt)

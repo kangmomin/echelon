@@ -56,9 +56,9 @@ namespace Echelon.Core.Tests
             Assert.That(vehicle.AltitudeM(), Is.Zero);
             helicopter.State = ElementState.DESTROYED;
             Assert.That(helicopter.AltitudeM(), Is.Zero);
-            Assert.That(infantry.TurnRate(), Is.EqualTo(Math.PI));
-            Assert.That(vehicle.TurnRate(), Is.EqualTo(Math.PI / 3.0));
-            Assert.That(helicopter.TurnRate(), Is.EqualTo(Math.PI * 0.75));
+            Assert.That(infantry.TurnRate(), Is.EqualTo(Math.PI * SimConst.MovementSpeedScale));
+            Assert.That(vehicle.TurnRate(), Is.EqualTo(Math.PI / 3.0 * SimConst.MovementSpeedScale));
+            Assert.That(helicopter.TurnRate(), Is.EqualTo(Math.PI * 0.75 * SimConst.MovementSpeedScale));
 
             infantry.State = ElementState.DAMAGED;
             infantry.DamageKind = "mobility";
@@ -78,12 +78,12 @@ namespace Echelon.Core.Tests
         {
             Element vehicle = NewElement("tank", 36.0);
             Assert.That(vehicle.Strength(), Is.EqualTo(1.0));
-            Assert.That(vehicle.BaseSpeedMps(), Is.EqualTo(10.0).Within(1e-9));
+            Assert.That(vehicle.BaseSpeedMps(), Is.EqualTo(10.0 * SimConst.MovementSpeedScale).Within(1e-9));
             vehicle.State = ElementState.DAMAGED;
             vehicle.DamageKind = "mobility";
             vehicle.Suppression = 100.0;
             Assert.That(vehicle.Strength(), Is.EqualTo(0.6));
-            Assert.That(vehicle.BaseSpeedMps(), Is.EqualTo(5.0).Within(1e-9));
+            Assert.That(vehicle.BaseSpeedMps(), Is.EqualTo(5.0 * SimConst.MovementSpeedScale).Within(1e-9));
             vehicle.State = ElementState.DESTROYED;
             Assert.That(vehicle.Strength(), Is.Zero);
 
@@ -94,7 +94,7 @@ namespace Echelon.Core.Tests
             Assert.That(infantry.Strength(), Is.EqualTo(1.0));
             infantry.Hp = -5.0;
             Assert.That(infantry.Strength(), Is.Zero);
-            Assert.That(infantry.BaseSpeedMps(), Is.EqualTo(5.0).Within(1e-9));
+            Assert.That(infantry.BaseSpeedMps(), Is.EqualTo(5.0 * SimConst.MovementSpeedScale).Within(1e-9));
         }
 
         [Test]
@@ -117,15 +117,15 @@ namespace Echelon.Core.Tests
             vehicle.Def.SpeedRoadKmh = 72.0;
             vehicle.Pos = new SimVec2(15.0, 50.0);
             Assert.That(terrain.TypeAt(vehicle.Pos), Is.EqualTo((int)Terrain.Type.OPEN));
-            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(10.0).Within(1e-9));
+            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(10.0 * SimConst.MovementSpeedScale).Within(1e-9));
             vehicle.Suppression = 50.0;
-            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(7.0).Within(1e-9));
+            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(7.0 * SimConst.MovementSpeedScale).Within(1e-9));
             vehicle.State = ElementState.DAMAGED;
             vehicle.DamageKind = "mobility";
-            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(3.5).Within(1e-9));
+            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(3.5 * SimConst.MovementSpeedScale).Within(1e-9));
             vehicle.Pos = new SimVec2(15.0, 15.0);
             Assert.That(terrain.TypeAt(vehicle.Pos), Is.EqualTo((int)Terrain.Type.ROAD));
-            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(7.0).Within(1e-9));
+            Assert.That(vehicle.MaxSpeedMps(terrain), Is.EqualTo(7.0 * SimConst.MovementSpeedScale).Within(1e-9));
         }
 
         [Test]

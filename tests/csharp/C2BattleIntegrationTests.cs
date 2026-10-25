@@ -22,7 +22,7 @@ namespace Echelon.Core.Tests
         }
 
         [Test]
-        public void CompanyOrderReachesPlatoonsAfterAbout30Seconds()
+        public void CompanyOrderReachesPlatoonsAfterAbout10Seconds()
         {
             ICommandBattle battle = C2Battle();
             Company company = CreateCompany(battle, "us_tank_co", "blue", new SimVec2(2700, 450));
@@ -31,10 +31,11 @@ namespace Echelon.Core.Tests
             Assert.That(order.State, Is.EqualTo(OrderState.PROPAGATING));
             Assert.That(order.Cost, Is.EqualTo(OrderSystem.CostMission));
 
+            // 대대→중대 5초 + 중대→소대 3초 + 실행 준비 2초.
             double moved = SecondsUntilMoving(battle, company.Platoons[0], 60.0);
-            Assert.That(moved, Is.InRange(25.0, 35.0));
+            Assert.That(moved, Is.InRange(8.0, 13.0));
             double receivedDelay = (order.ReceivedTick - order.TickIssued) / (double)SimConst.TickRate;
-            Assert.That(receivedDelay, Is.EqualTo(15.0).Within(0.5));
+            Assert.That(receivedDelay, Is.EqualTo(OrderSystem.BaseTfToCoSec).Within(0.5));
         }
 
         [Test]
@@ -47,8 +48,9 @@ namespace Echelon.Core.Tests
             Order order = Move(battle, platoon, new SimVec2(2300, 800));
             Assert.That(order.Cost, Is.EqualTo(OrderSystem.CostBypass));
 
+            // 대대→소대 직접 7초 + 실행 준비 2초.
             double moved = SecondsUntilMoving(battle, platoon, 60.0);
-            Assert.That(moved, Is.InRange(22.0, 30.0));
+            Assert.That(moved, Is.InRange(7.0, 12.0));
             Assert.That(platoon.Detached, Is.True);
             Assert.That(company.FormationPlatoons(), Does.Not.Contain(platoon));
         }

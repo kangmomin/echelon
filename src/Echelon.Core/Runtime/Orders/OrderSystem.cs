@@ -5,11 +5,15 @@ namespace Echelon.Core
 {
     public sealed class OrderSystem : SimSystem
     {
-        public const double BaseTfToCoSec = 15.0;
-        public const double BaseCoToPltSec = 10.0;
-        public const double BaseTfToPltBypassSec = 20.0;
-        public const double BaseTfToOrganicSec = 15.0;
-        public const double BaseExecutionSec = 5.0;
+        // 명령 전파 기본 지연(초). 처음 값(15·10·20·15·5)의 3분의 1 — 지연은 남기되 답답하지 않게(D-048).
+        public const double BaseTfToCoSec = 5.0;
+        public const double BaseCoToPltSec = 3.0;
+        public const double BaseTfToPltBypassSec = 7.0;
+        public const double BaseTfToOrganicSec = 5.0;
+        public const double BaseExecutionSec = 2.0;
+
+        /// <summary>명령이 중계소를 한 번 거칠 때 더하는 지연. 탐지 보고·화력 요청은 CommsNet.RelayDelaySec 를 쓴다.</summary>
+        public const double RelayDelaySec = 3.0;
         public const int BlockTimeoutTicks = 1200;
         public const int RetryInterval = 10;
         public const int RebriefInterval = 50;
@@ -478,7 +482,7 @@ namespace Echelon.Core
 
             hop.Relays = relays;
             return hop.BaseSeconds * commsFactor * toUnit.SkillDelayFactor() * StateFactor(toUnit) +
-                relays * CommsNet.RelayDelaySec;
+                relays * RelayDelaySec;
         }
 
         private static double StateFactor(Unit unit)

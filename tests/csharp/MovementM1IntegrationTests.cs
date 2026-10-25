@@ -114,7 +114,7 @@ namespace Echelon.Core.Tests
         }
 
         [Test]
-        public void AutoDeployedHeadingPreservesGodotMovementParity()
+        public void AutoDeployedHeadingKeepsGoldenMovement()
         {
             Battle b = TestFixture.Skirmish(new[] { "blue", "red" }, 1);
             _battles.Add(b);
@@ -123,8 +123,8 @@ namespace Echelon.Core.Tests
 
             b.RunTicks(100);
 
-            Assert.That(element.Pos, Is.EqualTo(new SimVec2(2918.82373046875f, 3999.0f)),
-                "Godot seed 1 tick 100");
+            Assert.That(element.Pos, Is.EqualTo(new SimVec2(2919.0224609375f, 3999.0f)),
+                "tests/golden/battle seed 1 tick 100");
         }
 
         [Test]

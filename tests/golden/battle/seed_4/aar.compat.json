@@ -1,17 +1,17 @@
 {
-  "duration_sec": 881.1,
-  "first_contact_sec": 98.2,
+  "duration_sec": 308.1,
+  "first_contact_sec": 56.4,
   "points": [
     {
-      "held_blue_sec": 142.0,
-      "held_red_sec": 542.0,
+      "held_blue_sec": 59.0,
+      "held_red_sec": 128.0,
       "id": "cp_fox",
       "name": "교차로 FOX",
       "owner": "blue"
     },
     {
       "held_blue_sec": 0.0,
-      "held_red_sec": 698.0,
+      "held_red_sec": 196.0,
       "id": "cp_bravo",
       "name": "능선 BRAVO",
       "owner": "red"
@@ -24,7 +24,7 @@
       "owner": ""
     },
     {
-      "held_blue_sec": 802.0,
+      "held_blue_sec": 266.0,
       "held_red_sec": 0.0,
       "id": "cp_delta",
       "name": "교량 DELTA",
@@ -32,63 +32,62 @@
     }
   ],
   "result": {
-    "collapsed": "blue",
+    "collapsed": "red",
     "reason": "collapse",
-    "tick": 8810,
+    "tick": 3080,
     "value_ratio": {
-      "blue": 0.234672304439746,
-      "red": 0.447852582704585
+      "blue": 0.668139534883721,
+      "red": 0.237412587412587
     },
     "vp": {
-      "blue": 45.7333333333332,
-      "red": 20.6666666666668
+      "blue": 35.4166666666666,
+      "red": 5.39999999999999
     },
-    "winner": "red"
+    "winner": "blue"
   },
   "seed": 4,
   "sides": {
     "blue": {
-      "comms_cuts": 16,
-      "damaged": 7,
+      "comms_cuts": 5,
+      "damaged": 6,
       "elements": 54,
-      "fire_missions": 5,
+      "fire_missions": 3,
       "losses": {
-        "fo": 1,
         "ifv": 10,
-        "inf_squad": 8,
-        "recon": 4,
-        "tank": 12,
-        "truck": 1
+        "inf_squad": 6,
+        "recon": 4
       },
-      "losses_total": 36,
+      "losses_total": 20,
       "name": "기갑 대대 전투단 (기본)",
-      "order_delay_max": 20.1,
-      "order_delay_mean": 18.4333333333333,
-      "orders": 12,
+      "order_delay_max": 7.1,
+      "order_delay_mean": 6.38571428571429,
+      "orders": 14,
       "resupplies": 0,
-      "shots": 926,
-      "value_ratio": 0.234672304439746,
-      "vp": 45.7333333333332
+      "shots": 789,
+      "value_ratio": 0.668139534883721,
+      "vp": 35.4166666666666
     },
     "red": {
-      "comms_cuts": 11,
-      "damaged": 13,
+      "comms_cuts": 20,
+      "damaged": 10,
       "elements": 84,
-      "fire_missions": 7,
+      "fire_missions": 3,
       "losses": {
-        "ifv": 11,
-        "inf_squad": 12,
+        "cp": 1,
+        "ifv": 16,
+        "inf_squad": 10,
+        "recon": 2,
         "tank": 13
       },
-      "losses_total": 36,
+      "losses_total": 42,
       "name": "BTG (BMP형, 기본)",
-      "order_delay_max": 30.0,
-      "order_delay_mean": 18.0972972972973,
-      "orders": 37,
+      "order_delay_max": 17.1,
+      "order_delay_mean": 6.91363636363636,
+      "orders": 22,
       "resupplies": 0,
-      "shots": 2084,
-      "value_ratio": 0.447852582704585,
-      "vp": 20.6666666666668
+      "shots": 1085,
+      "value_ratio": 0.237412587412587,
+      "vp": 5.39999999999999
     }
   },
   "timeline": [
@@ -101,403 +100,277 @@
     {
       "side": "blue",
       "text": "청군: 교량 DELTA 점령",
-      "tick": 800,
+      "tick": 430,
       "type": "point_captured"
     },
     {
-      "side": "red",
-      "text": "적군: B/1 지휘관 손실",
-      "tick": 1040,
+      "side": "blue",
+      "text": "청군: B/1 지휘관 손실",
+      "tick": 600,
       "type": "commander_lost"
     },
     {
       "side": "blue",
       "text": "청군: B/1 지휘관 손실",
-      "tick": 1320,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/1 지휘관 손실",
-      "tick": 1520,
+      "tick": 800,
       "type": "commander_lost"
     },
     {
       "side": "blue",
       "text": "청군: B/1 패주",
-      "tick": 1830,
+      "tick": 800,
       "type": "routed"
+    },
+    {
+      "side": "blue",
+      "text": "청군: B/1 지휘관 손실",
+      "tick": 1000,
+      "type": "commander_lost"
+    },
+    {
+      "side": "blue",
+      "text": "청군: B 지휘관 손실",
+      "tick": 1090,
+      "type": "commander_lost"
+    },
+    {
+      "side": "blue",
+      "text": "청군: B/HQ 지휘관 손실",
+      "tick": 1090,
+      "type": "commander_lost"
     },
     {
       "side": "red",
       "text": "적군: 능선 BRAVO 점령",
-      "tick": 1840,
+      "tick": 1130,
       "type": "point_captured"
     },
     {
       "side": "red",
       "text": "적군: 교차로 FOX 점령",
-      "tick": 1980,
+      "tick": 1220,
       "type": "point_captured"
-    },
-    {
-      "side": "red",
-      "text": "적군: A/1 지휘관 손실",
-      "tick": 2060,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/1 지휘관 손실",
-      "tick": 2140,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B 지휘관 손실",
-      "tick": 2190,
-      "type": "commander_lost"
     },
     {
       "side": "blue",
       "text": "청군: B/2 지휘관 손실",
-      "tick": 2250,
+      "tick": 1290,
+      "type": "commander_lost"
+    },
+    {
+      "side": "blue",
+      "text": "청군: B/2 패주",
+      "tick": 1320,
+      "type": "routed"
+    },
+    {
+      "side": "blue",
+      "text": "청군: B/1 전투력 저하로 철수",
+      "tick": 1410,
+      "type": "auto_withdraw"
+    },
+    {
+      "side": "blue",
+      "text": "청군: B/2 지휘관 손실",
+      "tick": 1490,
       "type": "commander_lost"
     },
     {
       "side": "red",
       "text": "적군: A/1 지휘관 손실",
-      "tick": 2260,
+      "tick": 1520,
       "type": "commander_lost"
     },
     {
       "side": "red",
       "text": "적군: A/1 패주",
-      "tick": 2260,
+      "tick": 1520,
       "type": "routed"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/2 패주",
-      "tick": 2280,
-      "type": "routed"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/1 지휘관 손실",
-      "tick": 2340,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/1 전투력 저하로 철수",
-      "tick": 2440,
-      "type": "auto_withdraw"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/2 지휘관 손실",
-      "tick": 2450,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: A/1 지휘관 손실",
-      "tick": 2460,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/2 지휘관 손실",
-      "tick": 2650,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/1 지휘관 손실",
-      "tick": 2960,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: 보급반 지휘관 손실",
-      "tick": 3010,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: 정찰 소대 지휘관 손실",
-      "tick": 3030,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B 전투력 저하로 철수",
-      "tick": 3030,
-      "type": "auto_withdraw"
-    },
-    {
-      "side": "blue",
-      "text": "청군: 정찰 소대 전투력 저하로 철수",
-      "tick": 3030,
-      "type": "auto_withdraw"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/1 지휘관 손실",
-      "tick": 3070,
-      "type": "commander_lost"
     },
     {
       "side": "blue",
       "text": "청군: B/1 패주",
-      "tick": 3070,
+      "tick": 1540,
       "type": "routed"
     },
     {
       "side": "red",
-      "text": "적군: A 지휘관 손실",
-      "tick": 3110,
+      "text": "적군: A/1 지휘관 손실",
+      "tick": 1720,
       "type": "commander_lost"
     },
     {
       "side": "red",
       "text": "적군: A/2 패주",
-      "tick": 3180,
+      "tick": 1830,
       "type": "routed"
     },
     {
       "side": "red",
       "text": "적군: A/2 지휘관 손실",
-      "tick": 3230,
+      "tick": 1910,
       "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: A/3 지휘관 손실",
-      "tick": 3510,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: A 전투력 저하로 철수",
-      "tick": 3510,
-      "type": "auto_withdraw"
-    },
-    {
-      "side": "red",
-      "text": "적군: A/3 패주",
-      "tick": 3530,
-      "type": "routed"
     },
     {
       "side": "blue",
-      "text": "청군: A/1 지휘관 손실",
-      "tick": 3790,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: A/2 전투력 저하로 철수",
-      "tick": 3790,
+      "text": "청군: 정찰 소대 전투력 저하로 철수",
+      "tick": 1950,
       "type": "auto_withdraw"
     },
     {
       "side": "blue",
       "text": "청군: B 지휘관 손실",
-      "tick": 3870,
+      "tick": 1990,
       "type": "commander_lost"
     },
     {
       "side": "blue",
-      "text": "청군: B/1 패주",
-      "tick": 3870,
-      "type": "routed"
-    },
-    {
-      "side": "red",
-      "text": "적군: D 지휘관 손실",
-      "tick": 3960,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A/1 지휘관 손실",
-      "tick": 3990,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/2 지휘관 손실",
-      "tick": 4250,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A 지휘관 손실",
-      "tick": 4310,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A/1 패주",
-      "tick": 4310,
-      "type": "routed"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/3 지휘관 손실",
-      "tick": 4440,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/4 지휘관 손실",
-      "tick": 4440,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: D 전투력 저하로 철수",
-      "tick": 4440,
-      "type": "auto_withdraw"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A/3 지휘관 손실",
-      "tick": 4460,
-      "type": "commander_lost"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/4 패주",
-      "tick": 4470,
-      "type": "routed"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A/2 지휘관 손실",
-      "tick": 4490,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A 전투력 저하로 철수",
-      "tick": 4510,
-      "type": "auto_withdraw"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/3 패주",
-      "tick": 4550,
-      "type": "routed"
-    },
-    {
-      "side": "red",
-      "text": "적군: D/3 지휘관 손실",
-      "tick": 4650,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A/3 지휘관 손실",
-      "tick": 4720,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A/3 패주",
-      "tick": 4720,
+      "text": "청군: B/2 패주",
+      "tick": 1990,
       "type": "routed"
     },
     {
       "side": "red",
       "text": "적군: A 지휘관 손실",
-      "tick": 4750,
+      "tick": 2000,
       "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A 지휘관 손실",
-      "tick": 5670,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B 지휘관 손실",
-      "tick": 5940,
-      "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: B/3 증원 도착",
-      "tick": 6000,
-      "type": "reinforcement_arrived"
     },
     {
       "side": "red",
-      "text": "적군: C 증원 도착",
-      "tick": 6000,
-      "type": "reinforcement_arrived"
+      "text": "적군: D/1 지휘관 손실",
+      "tick": 2040,
+      "type": "commander_lost"
     },
     {
-      "side": "blue",
-      "text": "청군: B/3 패주",
-      "tick": 6000,
+      "side": "red",
+      "text": "적군: A/3 지휘관 손실",
+      "tick": 2090,
+      "type": "commander_lost"
+    },
+    {
+      "side": "red",
+      "text": "적군: A 전투력 저하로 철수",
+      "tick": 2090,
+      "type": "auto_withdraw"
+    },
+    {
+      "side": "red",
+      "text": "적군: A/3 패주",
+      "tick": 2140,
       "type": "routed"
     },
     {
+      "side": "red",
+      "text": "적군: D 지휘관 손실",
+      "tick": 2280,
+      "type": "commander_lost"
+    },
+    {
+      "side": "red",
+      "text": "적군: 정찰 소대 지휘관 손실",
+      "tick": 2290,
+      "type": "commander_lost"
+    },
+    {
+      "side": "red",
+      "text": "적군: 정찰 소대 전투력 저하로 철수",
+      "tick": 2290,
+      "type": "auto_withdraw"
+    },
+    {
+      "side": "red",
+      "text": "적군: D/4 지휘관 손실",
+      "tick": 2300,
+      "type": "commander_lost"
+    },
+    {
       "side": "blue",
-      "text": "청군: A/2 패주",
-      "tick": 7240,
+      "text": "청군: B 전투력 저하로 철수",
+      "tick": 2330,
+      "type": "auto_withdraw"
+    },
+    {
+      "side": "red",
+      "text": "적군: D 전투력 저하로 철수",
+      "tick": 2400,
+      "type": "auto_withdraw"
+    },
+    {
+      "side": "red",
+      "text": "적군: D/2 지휘관 손실",
+      "tick": 2440,
+      "type": "commander_lost"
+    },
+    {
+      "side": "red",
+      "text": "적군: A/2 전투력 저하로 철수",
+      "tick": 2440,
+      "type": "auto_withdraw"
+    },
+    {
+      "side": "red",
+      "text": "적군: D/2 패주",
+      "tick": 2440,
       "type": "routed"
+    },
+    {
+      "side": "red",
+      "text": "적군: D/4 패주",
+      "tick": 2480,
+      "type": "routed"
+    },
+    {
+      "side": "red",
+      "text": "적군: D/4 지휘관 손실",
+      "tick": 2500,
+      "type": "commander_lost"
     },
     {
       "side": "blue",
       "text": "청군: 교차로 FOX 점령",
-      "tick": 7400,
+      "tick": 2500,
       "type": "point_captured"
     },
     {
       "side": "blue",
       "text": "청군: 임무 목표 달성 — 교차로 FOX (+30)",
-      "tick": 7400,
+      "tick": 2500,
       "type": "objective_done"
     },
     {
       "side": "blue",
-      "text": "청군: A 지휘관 손실",
-      "tick": 7470,
-      "type": "commander_lost"
+      "text": "청군: B/2 전투력 저하로 철수",
+      "tick": 2600,
+      "type": "auto_withdraw"
     },
     {
-      "side": "blue",
-      "text": "청군: A/2 지휘관 손실",
-      "tick": 7470,
+      "side": "red",
+      "text": "적군: B/2 지휘관 손실",
+      "tick": 2620,
       "type": "commander_lost"
-    },
-    {
-      "side": "blue",
-      "text": "청군: A/3 패주",
-      "tick": 7470,
-      "type": "routed"
     },
     {
       "side": "red",
       "text": "적군: B/2 패주",
-      "tick": 7720,
+      "tick": 2620,
       "type": "routed"
     },
     {
-      "side": "blue",
-      "text": "청군: A/2 전투력 저하로 철수",
-      "tick": 7850,
-      "type": "auto_withdraw"
+      "side": "red",
+      "text": "적군: TF 지휘관 손실",
+      "tick": 2670,
+      "type": "commander_lost"
+    },
+    {
+      "side": "red",
+      "text": "적군: B/3 지휘관 손실",
+      "tick": 3080,
+      "type": "commander_lost"
     },
     {
       "side": "",
       "text": "전투 종료",
-      "tick": 8810,
+      "tick": 3080,
       "type": "battle_ended"
     }
   ]

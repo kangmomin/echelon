@@ -47,7 +47,7 @@ namespace Echelon.Unity.Tests.UI
             {
                 "제대(梯隊)",
                 "Ctrl+1~9 / 1~9",
-                "대대 → 중대 약 15초",
+                "대대 → 중대 약 5초",
                 "T-80BVM",
                 "반경 90 m 진지",
                 "도로 ×1.4",
@@ -55,7 +55,7 @@ namespace Echelon.Unity.Tests.UI
                 "분당 20 단위",
                 "T+20분(20% 할인)",
                 "25% 이하",
-                "25~30초"
+                "약 10초 뒤에 움직인다"
             };
 
             for (var i = 0; i < markers.Length; i++)

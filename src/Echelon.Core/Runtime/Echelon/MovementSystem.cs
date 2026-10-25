@@ -21,6 +21,9 @@ namespace Echelon.Core
         public const int SettleTimeoutTicks = 1200;
         public const int LineCheckInterval = 20;
         public const int StuckTicksBeforePath = 10;
+        public const double SlideProgressMin = 0.25;
+        public const double WaypointReachM = 8.0;
+        public const double WaypointReachTightM = 2.0;
         public const double FollowRepathM = 80.0;
         public const int BriefingTimeoutTicks = 300;
         public const int FollowRepathInterval = 10;
@@ -540,9 +543,23 @@ namespace Echelon.Core
                 }
                 else
                 {
-                    while (e.LocalPathIndex < e.LocalPath.Count &&
-                           e.Pos.DistanceTo(e.LocalPath[e.LocalPathIndex]) < 8.0)
+                    while (e.LocalPathIndex < e.LocalPath.Count)
                     {
+                        double reach = e.Pos.DistanceTo(e.LocalPath[e.LocalPathIndex]);
+                        if (reach >= WaypointReachM)
+                        {
+                            break;
+                        }
+
+                        // 모퉁이 경유점은 다음 경유점이 곧장 보일 때만 일찍 넘긴다. 그렇지 않으면 장애물 모서리를
+                        // 잘라 들어가 다리·숲 가장자리에 걸린다(빠른 차량일수록 심하다).
+                        bool hasNext = e.LocalPathIndex + 1 < e.LocalPath.Count;
+                        if (hasNext && reach >= WaypointReachTightM &&
+                            !terrain.LinePassable(e.Pos, e.LocalPath[e.LocalPathIndex + 1], mobility))
+                        {
+                            break;
+                        }
+
                         ++e.LocalPathIndex;
                     }
 
@@ -620,7 +637,18 @@ namespace Echelon.Core
 
             if (moved)
             {
-                e.StuckTicks = 0;
+                // 장애물 가장자리를 따라 조금씩만 미끄러지면 움직이긴 해도 갇힌 것이다. 진척이 의도의 1/4 미만이면
+                // 막힘으로 세어 경로를 다시 찾게 한다(그러지 않으면 강둑을 따라 영원히 미끄러진다).
+                double intended = deltaStep.Length();
+                if (intended > 1e-6 && (e.Pos - e.PrevPos).Length() < intended * SlideProgressMin)
+                {
+                    ++e.StuckTicks;
+                }
+                else
+                {
+                    e.StuckTicks = 0;
+                }
+
                 e.StationaryTicks = 0;
             }
             else
