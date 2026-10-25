@@ -15,6 +15,7 @@ namespace Echelon.Unity.App
         private static readonly Color FlatAmbient = new Color(0.62f, 0.66f, 0.66f);
         private static readonly Color FogColor = new Color(0.66f, 0.72f, 0.78f);
         private static readonly Color SunColor = new Color(1f, 0.95f, 0.86f);
+        private const float AmbientIntensity = 0.75f;
 
         private readonly Material _previousSkybox;
         private readonly AmbientMode _previousAmbientMode;
@@ -27,6 +28,7 @@ namespace Echelon.Unity.App
         private readonly Color _previousFogColor;
         private readonly FogMode _previousFogMode;
         private readonly float _previousFogDensity;
+        private readonly SphericalHarmonicsL2 _previousAmbientProbe;
         private Material _skybox;
         private VolumeProfile _postProcess;
 
@@ -43,6 +45,7 @@ namespace Echelon.Unity.App
             _previousFogColor = RenderSettings.fogColor;
             _previousFogMode = RenderSettings.fogMode;
             _previousFogDensity = RenderSettings.fogDensity;
+            _previousAmbientProbe = RenderSettings.ambientProbe;
         }
 
         public static Color BackgroundColor => SkyTint;
@@ -67,13 +70,15 @@ namespace Echelon.Unity.App
                 RenderSettings.ambientMode = AmbientMode.Flat;
                 RenderSettings.ambientLight = FlatAmbient;
             }
-            RenderSettings.ambientIntensity = 0.75f;
+            RenderSettings.ambientIntensity = AmbientIntensity;
             RenderSettings.fog = true;
             RenderSettings.fogColor = FogColor;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
             RenderSettings.fogDensity = 0.00006f;
             // 플레이어는 하늘을 바꿔도 주변광 프로브를 다시 계산하지 않는다(편집기만 자동). 그대로 두면 주변광이 0이다.
-            DynamicGI.UpdateEnvironment();
+            // DynamicGI.UpdateEnvironment 는 GPU 되읽기와 반사 큐브맵 재생성을 해 웹에서 그리기 오류를 냈다(D-050).
+            // 주변광 색으로 프로브를 CPU 에서 바로 채운다.
+            RenderSettings.ambientProbe = AmbientProbe();
 
             var sunObject = new GameObject("Sun");
             sunObject.transform.SetParent(parent, false);
@@ -119,6 +124,13 @@ namespace Echelon.Unity.App
             return profile;
         }
 
+        private static SphericalHarmonicsL2 AmbientProbe()
+        {
+            var probe = new SphericalHarmonicsL2();
+            probe.AddAmbientLight(FlatAmbient.linear * AmbientIntensity);
+            return probe;
+        }
+
         public void Restore()
         {
             RenderSettings.skybox = _previousSkybox;
@@ -132,7 +144,7 @@ namespace Echelon.Unity.App
             RenderSettings.fogColor = _previousFogColor;
             RenderSettings.fogMode = _previousFogMode;
             RenderSettings.fogDensity = _previousFogDensity;
-            DynamicGI.UpdateEnvironment();
+            RenderSettings.ambientProbe = _previousAmbientProbe;
             DestroyOwned(_skybox);
             _skybox = null;
             DestroyOwned(_postProcess);
