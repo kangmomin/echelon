@@ -12,7 +12,9 @@ namespace Echelon.Unity.UI.Builder
         {
             RectTransform root = UiKit.CreateRect(parent, "ForceNameInput");
             Image background = root.gameObject.AddComponent<Image>();
-            background.color = UiTheme.ButtonNormal;
+            UiKit.SetRounded(background);
+            background.color = UiTheme.PanelSunken;
+            UiKit.AddBorder(root);
             TMP_InputField input = root.gameObject.AddComponent<TMP_InputField>();
             input.targetGraphic = background;
             input.contentType = TMP_InputField.ContentType.Standard;
@@ -29,7 +31,7 @@ namespace Echelon.Unity.UI.Builder
             TextMeshProUGUI text = UiKit.CreateLabel(viewport, string.Empty, 14, UiTheme.Text);
             text.name = "Text";
             text.richText = false;
-            text.enableWordWrapping = false;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
             text.alignment = TextAlignmentOptions.Left;
             UiKit.Stretch(text.rectTransform);
             input.textViewport = viewport;
@@ -50,13 +52,14 @@ namespace Echelon.Unity.UI.Builder
         {
             RectTransform root = UiKit.CreateRect(parent, "IncludedToggle");
             Image background = root.gameObject.AddComponent<Image>();
+            UiKit.SetRounded(background);
             background.color = UiTheme.ButtonNormal;
             Toggle toggle = root.gameObject.AddComponent<Toggle>();
             toggle.targetGraphic = background;
             RectTransform checkmark = UiKit.CreatePanel(root, "Checkmark", UiTheme.Accent);
             UiKit.Stretch(checkmark);
-            checkmark.offsetMin = new Vector2(4f, 4f);
-            checkmark.offsetMax = new Vector2(-4f, -4f);
+            checkmark.offsetMin = new Vector2(5f, 5f);
+            checkmark.offsetMax = new Vector2(-5f, -5f);
             checkmark.GetComponent<Image>().raycastTarget = false;
             toggle.graphic = checkmark.GetComponent<Image>();
             toggle.isOn = value;

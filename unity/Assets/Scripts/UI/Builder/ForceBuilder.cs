@@ -303,7 +303,8 @@ namespace Echelon.Unity.UI.Builder
 
         private void BuildSidePanel(Transform parent)
         {
-            UiKit.CreateLabel(parent, "전투단 편성", 22, UiTheme.Accent);
+            TextMeshProUGUI heading = UiKit.CreateLabel(parent, "전투단 편성", UiTheme.FontTitle, UiTheme.Text);
+            heading.fontStyle = FontStyles.Bold;
             ScenarioDef scenario = CurrentScenario();
             UiKit.CreateLabel(parent, "시나리오: " + scenario.DisplayName, 13, UiTheme.TextDim);
 
@@ -362,8 +363,8 @@ namespace Echelon.Unity.UI.Builder
             ToastText.gameObject.AddComponent<LayoutElement>().minHeight = 30f;
 
             HorizontalLayoutGroup navigation = CreateRow(parent, "NavigationRow");
-            BackButton = UiKit.CreateButton(navigation.transform, "← 메뉴", RequestBack, 100f);
-            StartButton = UiKit.CreateButton(navigation.transform, "배치로 →", () => { RequestStart(); }, 180f);
+            BackButton = UiKit.CreateButton(navigation.transform, "← 메뉴", RequestBack, 100f, UiButtonStyle.Ghost);
+            StartButton = UiKit.CreateButton(navigation.transform, "배치로 →", () => { RequestStart(); }, 180f, UiButtonStyle.Primary);
             StartButton.GetComponent<LayoutElement>().flexibleWidth = 1f;
         }
 
@@ -418,8 +419,8 @@ namespace Echelon.Unity.UI.Builder
 
         private void BuildCompanyBlock(TOETemplate toe, TOETemplate.CompanySlot slot)
         {
-            RectTransform box = UiKit.CreatePanel(_list, "Company_" + slot.Id);
-            UiKit.AddVerticalLayout(box, 6, 8);
+            RectTransform box = UiKit.CreateCard(_list, "Company_" + slot.Id, UiTheme.PanelRaised);
+            UiKit.AddVerticalLayout(box, 6, 10);
             box.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
             CompanySpec company = Current.GetCompany(slot.Id);
             int companyIndex = company != null ? Current.Companies.IndexOf(company) : -1;
@@ -575,7 +576,7 @@ namespace Echelon.Unity.UI.Builder
             _waveDropdowns.Add(waveDropdown);
             CreateFixedLabel(row.transform, rowCost + "점", 14, 58f, UiTheme.TextDim);
             if (removable)
-                UiKit.CreateButton(row.transform, "빼기", () => Controller.RemoveAttachment(platoon), 58f);
+                UiKit.CreateButton(row.transform, "빼기", () => Controller.RemoveAttachment(platoon), 58f, UiButtonStyle.Danger);
             return row;
         }
 

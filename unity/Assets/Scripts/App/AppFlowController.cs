@@ -50,6 +50,8 @@ namespace Echelon.Unity.App
             if (_options.IsAutomated)
                 AppAutomation.Attach(gameObject, _options, () => Battle);
             UiKit.DefaultFont = Resources.Load<TMP_FontAsset>("Fonts/NotoSansKR SDF");
+            // 말줄임표와 HUD 기호를 먼저 동적 아틀라스에 올린다(처음 그릴 때 찾지 못하면 TMP 가 잘라내기로 바꾼다).
+            UiKit.DefaultFont?.TryAddCharacters("…·—▼▶◀Ⅱ●○◐×");
             Catalog = DataLoader.LoadCatalog(new UnityCatalogSource());
             foreach (string error in Catalog.Errors)
                 Debug.LogError("[data] " + error);
@@ -86,6 +88,8 @@ namespace Echelon.Unity.App
                     ShowMenu();
                     break;
             }
+            if (_options.OpenGuide)
+                ShowGuide();
         }
 
         private void OnDestroy()
@@ -264,6 +268,8 @@ namespace Echelon.Unity.App
                     battle.PlayerSide, (FireSupportSystem.Asset)_options.FireAsset, _options.FirePosition, _options.FireSmoke);
                 Debug.Log("[fire] " + (result.TryGetValue("error", out object error) ? error : "요청됨"));
             }
+            if (_options.SelectCompany >= 0)
+                Battle.Commands.SelectCompany(_options.SelectCompany, false);
             if (_options.RunSeconds >= 0.0f)
             {
                 int ticks = Mathf.CeilToInt(_options.RunSeconds * SimConst.TickRate);

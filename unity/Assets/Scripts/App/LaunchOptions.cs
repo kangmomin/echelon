@@ -35,6 +35,8 @@ namespace Echelon.Unity.App
         public int FireAsset;
         public SimVec2 FirePosition;
         public bool FireSmoke;
+        public int SelectCompany = -1;
+        public bool OpenGuide;
 
         /// <summary>자동 검증 실행이면 오류 로그가 나오는 즉시 실패 코드로 끝낸다.</summary>
         public bool IsAutomated => SmokeTicks >= 0 || ScreenshotPath != "";
@@ -70,6 +72,10 @@ namespace Echelon.Unity.App
                     options.NoFog = true;
                 else if (arg.StartsWith("--aar-out="))
                     options.AarOut = value;
+                else if (arg == "--guide")
+                    options.OpenGuide = true;
+                else if (arg.StartsWith("--select="))
+                    options.SelectCompany = Int(value);
                 else if (arg.StartsWith("--run-sec="))
                     options.RunSeconds = Float(value);
                 else if (arg.StartsWith("--camera=") && parts.Length >= 3)

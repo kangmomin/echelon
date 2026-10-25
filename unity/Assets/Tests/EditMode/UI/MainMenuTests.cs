@@ -65,11 +65,15 @@ namespace Echelon.Unity.Tests.UI
         [Test]
         public void MenuButtons_PreserveKoreanLabels()
         {
-            Assert.That(ButtonText(_menu.TutorialButton), Is.EqualTo("튜토리얼  (처음이라면, 약 10분)"));
-            Assert.That(ButtonText(_menu.SkirmishButton), Is.EqualTo("스커미시  (편성 → 배치 → 전투)"));
-            Assert.That(ButtonText(_menu.SandboxButton), Is.EqualTo("샌드박스  (편성 없이 바로 전투)"));
+            Assert.That(ButtonText(_menu.TutorialButton), Is.EqualTo("튜토리얼"));
+            Assert.That(ButtonText(_menu.SkirmishButton), Is.EqualTo("스커미시"));
+            Assert.That(ButtonText(_menu.SandboxButton), Is.EqualTo("샌드박스"));
             Assert.That(ButtonText(_menu.GuideButton), Is.EqualTo("가이드"));
             Assert.That(ButtonText(_menu.QuitButton), Is.EqualTo("종료"));
+            StringAssert.Contains("약 10분", MainMenu.Description(_menu.TutorialButton));
+            StringAssert.Contains("편성 → 배치 → 전투", MainMenu.Description(_menu.SkirmishButton));
+            StringAssert.Contains("편성 없이 바로 전투", MainMenu.Description(_menu.SandboxButton));
+            Assert.That(MainMenu.Description(_menu.QuitButton), Is.Empty);
         }
 
         [Test]

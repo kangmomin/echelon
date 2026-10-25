@@ -23,6 +23,8 @@ namespace Echelon.Unity.App
 
         public static AppAutomation Attach(GameObject host, LaunchOptions options, Func<BattleController> battle)
         {
+            // 창이 포커스를 잃어도 멈추지 않아야 자동 검증이 끝난다.
+            Application.runInBackground = true;
             var automation = host.AddComponent<AppAutomation>();
             automation._options = options;
             automation._battle = battle;

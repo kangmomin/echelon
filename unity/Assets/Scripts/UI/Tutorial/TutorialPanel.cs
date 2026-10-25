@@ -1,4 +1,5 @@
 using System;
+using Echelon.Unity.UI.Battle;
 using Echelon.Unity.UI.Common;
 using TMPro;
 using UnityEngine;
@@ -46,41 +47,40 @@ namespace Echelon.Unity.UI.Tutorial
             IsBuilt = true;
 
             UiKit.Stretch((RectTransform)transform);
-            _panel = UiKit.CreatePanel(transform, "Tutorial");
-            _panel.anchorMin = new Vector2(0.5f, 1f);
-            _panel.anchorMax = new Vector2(0.5f, 1f);
-            _panel.pivot = new Vector2(0.5f, 1f);
-            _panel.anchoredPosition = new Vector2(0f, -46f);
-            _panel.sizeDelta = new Vector2(660f, 0f);
-            UiKit.AddVerticalLayout(_panel, 6, 12);
+            _panel = UiKit.CreatePanel(transform, "Tutorial", UiTheme.PanelRaised);
+            UiKit.AddBorder(_panel, UiTheme.WithAlpha(UiTheme.Accent, 0.55f));
+            UiKit.Anchor(_panel, new Vector2(0.5f, 1f), new Vector2(0f, BattleHudLayout.BelowTopBar), new Vector2(660f, 0f));
+            UiKit.AddVerticalLayout(_panel, 6, UiTheme.SpaceL);
             var fitter = _panel.gameObject.AddComponent<ContentSizeFitter>();
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             var header = UiKit.CreateHorizontalLayout(_panel, "Header", 6);
+            header.childForceExpandWidth = false;
             var headerLayout = header.gameObject.AddComponent<LayoutElement>();
             headerLayout.minHeight = 36f;
             headerLayout.preferredHeight = 36f;
             headerLayout.flexibleWidth = 1f;
 
-            CountLabel = UiKit.CreateLabel(header.transform, string.Empty, 12, UiTheme.TextDim);
+            CountLabel = UiKit.CreateHeading(header.transform, string.Empty);
             CountLabel.name = "Count";
-            var countLayout = CountLabel.gameObject.AddComponent<LayoutElement>();
-            countLayout.minWidth = 112f;
-            countLayout.preferredWidth = 112f;
+            CountLabel.alignment = TextAlignmentOptions.MidlineLeft;
+            UiKit.SetSize(CountLabel, 104f);
 
-            TitleLabel = UiKit.CreateLabel(header.transform, string.Empty, 18, UiTheme.Accent);
+            TitleLabel = UiKit.CreateLabel(header.transform, string.Empty, UiTheme.FontTitle - 2f, UiTheme.Accent);
+            TitleLabel.fontStyle = FontStyles.Bold;
+            TitleLabel.alignment = TextAlignmentOptions.MidlineLeft;
             TitleLabel.name = "Title";
             var titleLayout = TitleLabel.gameObject.AddComponent<LayoutElement>();
             titleLayout.minWidth = 0f;
             titleLayout.flexibleWidth = 1f;
 
-            SkipButton = UiKit.CreateButton(header.transform, "Skip", _controller.Skip, 80f);
+            SkipButton = UiKit.CreateButton(header.transform, "건너뛰기", _controller.Skip, 84f, UiButtonStyle.Ghost);
             SkipButton.name = "Skip";
-            QuitButton = UiKit.CreateButton(header.transform, "Quit", _controller.Quit, 80f);
+            QuitButton = UiKit.CreateButton(header.transform, "그만하기", _controller.Quit, 84f, UiButtonStyle.Danger);
             QuitButton.name = "Quit";
 
-            BodyLabel = UiKit.CreateLabel(_panel, string.Empty, 14, UiTheme.Text);
+            BodyLabel = UiKit.CreateLabel(_panel, string.Empty, UiTheme.FontBody, UiTheme.Text);
             BodyLabel.name = "Body";
             BodyLabel.lineSpacing = 8f;
             var bodyLayout = BodyLabel.gameObject.AddComponent<LayoutElement>();
@@ -96,7 +96,7 @@ namespace Echelon.Unity.UI.Tutorial
             footerLayout.minHeight = 36f;
             footerLayout.preferredHeight = 36f;
             footerLayout.flexibleWidth = 1f;
-            NextButton = UiKit.CreateButton(footer, "Next", _controller.Next, 120f);
+            NextButton = UiKit.CreateButton(footer, "다음", _controller.Next, 120f, UiButtonStyle.Primary);
             NextButton.name = "Next";
 
             _controller.StepEntered += Render;
@@ -118,10 +118,10 @@ namespace Echelon.Unity.UI.Tutorial
             if (!IsBuilt)
                 return;
             transform.SetAsLastSibling();
-            CountLabel.text = "Tutorial " + (_controller.CurrentStepIndex + 1) + " / " + TutorialContent.StepCount;
+            CountLabel.text = "튜토리얼 " + (_controller.CurrentStepIndex + 1) + " / " + TutorialContent.StepCount;
             TitleLabel.text = step.Title;
             BodyLabel.text = step.Body;
-            NextButton.GetComponentInChildren<TextMeshProUGUI>().text = step.IsFinal ? "Menu" : "Next";
+            UiKit.ButtonLabel(NextButton).text = step.IsFinal ? "메뉴로" : "다음";
             NextButton.gameObject.SetActive(step.AllowsNext);
         }
 

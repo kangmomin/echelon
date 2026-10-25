@@ -241,7 +241,7 @@ namespace Echelon.Unity.UI.Tutorial
                     _cameraDistanceStart = _state.CameraDistance;
                     break;
                 case TutorialStepId.MovementOrder:
-                    AddMarker(TutorialWaypoint, MoveMarkerColor, "Move target");
+                    AddMarker(TutorialWaypoint, MoveMarkerColor, "이동 목표");
                     break;
                 case TutorialStepId.CommandDelay:
                     _listenPlatoonOrders = true;
@@ -255,7 +255,7 @@ namespace Echelon.Unity.UI.Tutorial
                             TutorialEnemy,
                             Mathf.PI));
                     }
-                    AddMarker(TutorialEnemy, EnemyMarkerColor, "Enemy BMP-3 platoon");
+                    AddMarker(TutorialEnemy, EnemyMarkerColor, "적 BMP-3 소대");
                     break;
                 case TutorialStepId.Completion:
                     ClearMarkers();

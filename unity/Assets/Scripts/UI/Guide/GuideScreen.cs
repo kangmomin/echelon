@@ -49,34 +49,25 @@ namespace Echelon.Unity.UI.Guide
             canvasGroup.blocksRaycasts = true;
             canvasGroup.interactable = true;
 
-            var dim = UiKit.CreatePanel(transform, "ModalDim", new Color(0f, 0f, 0f, 0.55f));
-            UiKit.Stretch(dim);
-            var center = UiKit.CreateRect(transform, "Center");
-            UiKit.Stretch(center);
-
-            _panel = UiKit.CreatePanel(center, "GuidePanel");
-            _panel.anchorMin = new Vector2(0.5f, 0.5f);
-            _panel.anchorMax = new Vector2(0.5f, 0.5f);
-            _panel.pivot = new Vector2(0.5f, 0.5f);
-            _panel.anchoredPosition = Vector2.zero;
-            var panelLayout = UiKit.AddVerticalLayout(_panel, 10, 18);
+            _panel = UiKit.CreateModal(transform, "Modal", new Vector2(1040f, 680f));
+            var panelLayout = UiKit.AddVerticalLayout(_panel, UiTheme.SpaceM, UiTheme.SpaceXl);
             panelLayout.childForceExpandHeight = false;
 
-            var header = UiKit.CreateHorizontalLayout(_panel, "Header");
-            var headerLayout = header.gameObject.AddComponent<LayoutElement>();
-            headerLayout.minHeight = 38f;
-            headerLayout.preferredHeight = 38f;
-            headerLayout.flexibleWidth = 1f;
-            var title = UiKit.CreateLabel(header.transform, "가이드", 24, UiTheme.Accent);
+            var header = UiKit.CreateHorizontalLayout(_panel, "Header", UiTheme.SpaceS);
+            header.childForceExpandWidth = false;
+            UiKit.SetSize(header, -1f, 36f, 1f);
+            var title = UiKit.CreateLabel(header.transform, "가이드", UiTheme.FontTitle + 4f, UiTheme.Text);
             title.name = "Title";
-            title.alignment = TextAlignmentOptions.Left;
-            var titleLayout = title.gameObject.AddComponent<LayoutElement>();
-            titleLayout.flexibleWidth = 1f;
-            CloseButton = UiKit.CreateButton(header.transform, "닫기  (Esc)", Close, 120f);
+            title.fontStyle = FontStyles.Bold;
+            title.alignment = TextAlignmentOptions.MidlineLeft;
+            UiKit.SetSize(title, 0f, -1f, 1f);
+            CloseButton = UiKit.CreateCommandButton(header.transform, "닫기", "Esc", Close, UiButtonStyle.Ghost);
+            UiKit.SetSize(CloseButton, 104f, UiTheme.ControlHeight);
             UiKit.CreateSeparator(_panel);
 
             var body = UiKit.CreateHorizontalLayout(_panel, "Body", 16);
             body.childForceExpandHeight = true;
+            body.childForceExpandWidth = false;
             var bodyLayout = body.gameObject.AddComponent<LayoutElement>();
             bodyLayout.flexibleWidth = 1f;
             bodyLayout.flexibleHeight = 1f;
@@ -186,13 +177,12 @@ namespace Echelon.Unity.UI.Guide
                     () => ShowSection(sectionIndex),
                     180f);
                 button.name = "Section_" + i;
-                var label = button.GetComponentInChildren<TextMeshProUGUI>();
-                label.alignment = TextAlignmentOptions.Left;
-                label.rectTransform.offsetMin = new Vector2(8f, 0f);
+                var label = UiKit.ButtonLabel(button);
+                label.alignment = TextAlignmentOptions.MidlineLeft;
+                label.fontSize = UiTheme.FontBody;
+                label.rectTransform.offsetMin = new Vector2(10f, 0f);
                 label.rectTransform.offsetMax = new Vector2(-6f, 0f);
-                var layout = button.GetComponent<LayoutElement>();
-                layout.minHeight = 34f;
-                layout.preferredHeight = 34f;
+                UiKit.SetSize(button, 180f, 34f);
                 _sectionButtons.Add(button);
             }
 
@@ -222,19 +212,14 @@ namespace Echelon.Unity.UI.Guide
 
         private void CreateTable(IReadOnlyList<GuideRow> rows)
         {
-            var table = UiKit.CreatePanel(
-                BodyScroll.content,
-                "Table",
-                new Color(0f, 0f, 0f, 0.12f));
+            var table = UiKit.CreateCard(BodyScroll.content, "Table", UiTheme.PanelSunken);
             UiKit.AddVerticalLayout(table, 4, 4);
             var tableLayout = table.gameObject.AddComponent<LayoutElement>();
             tableLayout.flexibleWidth = 1f;
 
             for (var i = 0; i < rows.Count; i++)
             {
-                var rowColor = i % 2 == 0
-                    ? new Color(1f, 1f, 1f, 0.025f)
-                    : new Color(1f, 1f, 1f, 0.045f);
+                var rowColor = i % 2 == 0 ? Color.clear : UiTheme.WithAlpha(UiTheme.PanelRaised, 0.7f);
                 var row = UiKit.CreatePanel(table, "Row_" + i, rowColor);
                 var rowLayoutGroup = UiKit.AddHorizontalLayout(row, 12, 8);
                 rowLayoutGroup.childForceExpandHeight = true;
@@ -243,6 +228,7 @@ namespace Echelon.Unity.UI.Guide
 
                 var key = CreateBodyLabel(row, rows[i].Key);
                 key.name = "Key";
+                key.color = UiTheme.Accent;
                 var keyLayout = key.gameObject.AddComponent<LayoutElement>();
                 keyLayout.minWidth = 190f;
                 keyLayout.preferredWidth = 190f;
@@ -258,7 +244,7 @@ namespace Echelon.Unity.UI.Guide
 
         private TextMeshProUGUI CreateBodyLabel(Transform parent, string text)
         {
-            var label = UiKit.CreateLabel(parent, text, 15, UiTheme.Text);
+            var label = UiKit.CreateLabel(parent, text, UiTheme.FontBody + 1f, UiTheme.Text);
             label.name = "RichText";
             label.alignment = TextAlignmentOptions.TopLeft;
             label.lineSpacing = 12f;
@@ -287,8 +273,8 @@ namespace Echelon.Unity.UI.Guide
             if (available.y <= 0f)
                 available.y = 900f;
             _panel.sizeDelta = new Vector2(
-                Mathf.Min(980f, Mathf.Max(0f, available.x - 40f)),
-                Mathf.Min(640f, Mathf.Max(0f, available.y - 40f)));
+                Mathf.Min(1040f, Mathf.Max(0f, available.x - 40f)),
+                Mathf.Min(680f, Mathf.Max(0f, available.y - 40f)));
         }
 
         private void ClearBody()

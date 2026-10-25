@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Echelon.Unity.UI.Common;
 using UnityEngine;
 
 namespace Echelon.Unity.UI.Aar
@@ -20,12 +21,12 @@ namespace Echelon.Unity.UI.Aar
 
     public static class AarViewModel
     {
-        private static readonly Color Friendly = new Color(0.55f, 0.75f, 1f);
-        private static readonly Color Enemy = new Color(1f, 0.55f, 0.5f);
-        private static readonly Color TextDim = new Color(0.65f, 0.67f, 0.72f);
-        private static readonly Color Accent = new Color(0.95f, 0.80f, 0.35f);
-        private static readonly Color Ok = new Color(0.45f, 1f, 0.50f);
-        private static readonly Color Error = new Color(1f, 0.42f, 0.38f);
+        private static Color Friendly => UiTheme.Friendly;
+        private static Color Enemy => UiTheme.Hostile;
+        private static Color TextDim => UiTheme.TextDim;
+        private static Color Accent => UiTheme.Accent;
+        private static Color Ok => UiTheme.Ok;
+        private static Color Error => UiTheme.Error;
 
         public static AarViewData Build(AarData data, string playerSide)
         {
