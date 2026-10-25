@@ -237,6 +237,28 @@ namespace Echelon.Tests.EditMode.Models
                 Assert.Greater(mesh.GetTriangles(i).Length, 0);
                 Assert.AreEqual(0, mesh.GetTriangles(i).Length % 3);
             }
+            AssertFrontFacesFollowNormals(mesh);
+        }
+
+        // Unity 의 앞면은 시계 방향이라 앞면 쪽 기하 법선이 Cross(b - a, c - a) 다. 이것이 정점 법선과 반대면
+        // 바깥 면이 컬링되고 안쪽 면(아래를 보는 바닥 등)만 보여 차량이 검게 그려진다.
+        private static void AssertFrontFacesFollowNormals(Mesh mesh)
+        {
+            Vector3[] vertices = mesh.vertices;
+            Vector3[] normals = mesh.normals;
+            for (int s = 0; s < mesh.subMeshCount; s++)
+            {
+                int[] triangles = mesh.GetTriangles(s);
+                for (int t = 0; t < triangles.Length; t += 3)
+                {
+                    Vector3 a = vertices[triangles[t]];
+                    Vector3 face = Vector3.Cross(vertices[triangles[t + 1]] - a, vertices[triangles[t + 2]] - a);
+                    if (face.sqrMagnitude < 1e-12f)
+                        continue;
+                    Vector3 normal = normals[triangles[t]] + normals[triangles[t + 1]] + normals[triangles[t + 2]];
+                    Assert.Greater(Vector3.Dot(face, normal), 0.0f, mesh.name + " submesh " + s + " triangle " + t / 3);
+                }
+            }
         }
 
         private static void AssertVector(Vector3 expected, Vector3 actual)

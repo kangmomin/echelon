@@ -30,8 +30,9 @@ namespace Echelon.Presentation.Models
                 outward += normals[i];
             }
 
+            // Unity 의 앞면은 시계 방향이고 그 기하 법선이 Cross(p1 - p0, p2 - p0) 다. 법선과 반대일 때만 뒤집는다.
             Vector3 cross = Vector3.Cross(points[1] - points[0], points[2] - points[0]);
-            bool reverse = Vector3.Dot(cross, outward) > 0.0f;
+            bool reverse = Vector3.Dot(cross, outward) < 0.0f;
             for (int i = 1; i < points.Length - 1; i++)
             {
                 Triangles.Add(start);
