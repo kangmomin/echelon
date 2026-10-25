@@ -279,7 +279,12 @@ namespace Echelon.Unity.App
                 case Key.Q: _commands.SetOrderMode(BattleCommandType.AttackMove); return true;
                 case Key.Y: _commands.SetOrderMode(BattleCommandType.Seize); return true;
                 case Key.J: _commands.SetOrderMode(BattleCommandType.Defend); return true;
-                case Key.B: _commands.SetOrderMode(BattleCommandType.Withdraw); return true;
+                case Key.B:
+                    if (_commands.SelectionIsAirWing())
+                        _commands.ReturnToBase();
+                    else
+                        _commands.SetOrderMode(BattleCommandType.Withdraw);
+                    return true;
                 case Key.N: _commands.SetOrderMode(BattleCommandType.LayMines); return true;
                 case Key.I: _commands.SetOrderMode(BattleCommandType.ClearMines); return true;
                 case Key.O: _commands.SetOrderMode(BattleCommandType.Fortify); return true;
@@ -297,7 +302,12 @@ namespace Echelon.Unity.App
                 case Key.F2: _commands.SelectCompany(1); return true;
                 case Key.F3: _commands.SelectCompany(2); return true;
                 case Key.F4: _commands.SelectCompany(3); return true;
-                case Key.R: _commands.NotifyNotImplemented("후진"); return true;
+                case Key.R:
+                    if (_commands.SelectionCarriesCargo())
+                        _commands.SetOrderMode(BattleCommandType.Airdrop);
+                    else
+                        _commands.NotifyNotImplemented("후진");
+                    return true;
                 case Key.Z: _commands.NotifyNotImplemented("질주"); return true;
                 case Key.X: _commands.NotifyNotImplemented("연막탄 발사"); return true;
                 case Key.C: _commands.NotifyNotImplemented("기만체"); return true;

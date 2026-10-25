@@ -25,7 +25,8 @@ namespace Echelon.Unity.UI.Battle
         Halt = 17,
         LayMines = 18,
         ClearMines = 19,
-        Fortify = 20
+        Fortify = 20,
+        Airdrop = 21
     }
 
     public enum BattleUnitLevel
@@ -158,6 +159,8 @@ namespace Echelon.Unity.UI.Battle
         public int PositionsBuilt { get; set; }
         public int PositionsCapacity { get; set; } = 3;
         public string Altitude { get; set; } = BattleSop.LowAltitude;
+        public string AirStatus { get; set; } = string.Empty;
+        public bool CarriesCargo { get; set; }
 
         public string TreeName => Level == BattleUnitLevel.Platoon && !string.IsNullOrEmpty(ShortName)
             ? ShortName
@@ -199,6 +202,7 @@ namespace Echelon.Unity.UI.Battle
     {
         public int ArtilleryMissions { get; set; }
         public int CasSorties { get; set; }
+        public int ArtilleryBatteries { get; set; }
         public List<BattleFireMissionView> ActiveMissions { get; set; } = new List<BattleFireMissionView>();
     }
 

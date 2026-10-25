@@ -75,6 +75,7 @@ namespace Echelon.Unity.App
                 case BattleCommandType.LayMines: return OrderType.LAY_MINES;
                 case BattleCommandType.ClearMines: return OrderType.CLEAR_MINES;
                 case BattleCommandType.Fortify: return OrderType.FORTIFY;
+                case BattleCommandType.Airdrop: return OrderType.AIRDROP;
                 default: throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
@@ -85,7 +86,7 @@ namespace Echelon.Unity.App
                 || type == BattleCommandType.AttackMove || type == BattleCommandType.Seize
                 || type == BattleCommandType.Defend || type == BattleCommandType.Withdraw
                 || type == BattleCommandType.LayMines || type == BattleCommandType.ClearMines
-                || type == BattleCommandType.Fortify;
+                || type == BattleCommandType.Fortify || type == BattleCommandType.Airdrop;
         }
 
         // ── 선택 ────────────────────────────────────────────────
@@ -428,6 +429,41 @@ namespace Echelon.Unity.App
             IssueToUnits(helicopters.ToArray(), OrderType.SET_SOP,
                 SopParameters(altitude: high ? BattleSop.HighAltitude : BattleSop.LowAltitude));
             Notify("헬기 고도: " + (high ? "고공(멀리 보지만 잘 보임)" : "저공(지형 뒤에 숨음)"));
+        }
+
+        /// <summary>선택한 제대가 모두 고정익 편대·항공대면 true. B 를 누르면 지점 없이 곧장 귀환시킨다.</summary>
+        public bool SelectionIsAirWing()
+        {
+            if (_selection.Count == 0)
+                return false;
+            foreach (Unit unit in _selection)
+            {
+                if (unit.Kind != "fixed_wing")
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>선택 안에 보급품을 실은 수송기 편대가 있으면 true(R 보급 투하).</summary>
+        public bool SelectionCarriesCargo()
+        {
+            foreach (Unit unit in _selection)
+            {
+                var flights = new List<Unit> { unit };
+                flights.AddRange(unit.ChildrenUnits());
+                foreach (Unit child in flights)
+                {
+                    if (child is Platoon platoon && platoon.IsAirWing && AirOpsSystem.CarriesSupply(platoon))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public void ReturnToBase()
+        {
+            IssueImmediateOrders(BattleCommandType.Withdraw);
+            SetOrderMode(BattleCommandType.Move);
         }
 
         public void NotifyNotImplemented(string command)

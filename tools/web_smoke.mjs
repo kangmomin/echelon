@@ -131,7 +131,7 @@ async function main() {
         width: 1600, height: 900, deviceScaleFactor: 1, mobile: false,
     });
     await call('Page.navigate', { url });
-    await waitFor(() => messages.some(text => text.includes('[data] elements 46')));
+    await waitFor(() => messages.some(text => text.includes('[data] elements 57')));
     await delay(2500);
     await capture('menu');
     await call('Runtime.evaluate', { expression: 'document.querySelector("#unity-canvas").focus()' });

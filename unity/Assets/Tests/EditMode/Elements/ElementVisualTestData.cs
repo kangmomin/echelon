@@ -52,7 +52,18 @@ namespace Echelon.Unity.Presentation.Elements.Tests
             "ru_bmp1ksh_cp|cp",
             "ru_bmp2m|ifv",
             "ru_at_squad|inf_squad",
-            "ru_2s9|mortar"
+            "ru_2s9|mortar",
+            "us_m109a7|artillery",
+            "ru_2s19|artillery",
+            "ru_zsu234|aa",
+            "us_f16c|plane",
+            "ru_su35s|plane",
+            "us_a10c|plane",
+            "ru_su25sm3|plane",
+            "us_c130j|plane",
+            "ru_il76md|plane",
+            "us_uh60m|heli",
+            "ru_mi8amtsh|heli"
         };
 
         internal static ElementVisualState State(
@@ -87,6 +98,8 @@ namespace Echelon.Unity.Presentation.Elements.Tests
                 state.PreviousPosition = state.Position;
                 if (state.IsHelicopter)
                     state.Altitude = 25.0f;
+                if (state.IsPlane)
+                    state.Altitude = 120.0f;
                 states.Add(state);
             }
             return states;

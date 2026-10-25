@@ -20,7 +20,9 @@ namespace Echelon.Unity.Presentation.Symbols
         Aviation,
         Headquarters,
         CommandPost,
-        ElectronicWarfare
+        ElectronicWarfare,
+        Artillery,
+        FixedWing
     }
 
     public static class SymbolGlyphRenderer
@@ -45,6 +47,8 @@ namespace Echelon.Unity.Presentation.Symbols
                 case "hq": return SymbolGlyphKind.Headquarters;
                 case "cp": return SymbolGlyphKind.CommandPost;
                 case "ew": return SymbolGlyphKind.ElectronicWarfare;
+                case "artillery": return SymbolGlyphKind.Artillery;
+                case "fixed_wing": return SymbolGlyphKind.FixedWing;
                 default: return SymbolGlyphKind.Unknown;
             }
         }
@@ -146,6 +150,15 @@ namespace Echelon.Unity.Presentation.Symbols
                 case SymbolGlyphKind.Aviation:
                     batch.AddTriangle(center, new Vector2(cx - 9f, cy + 5f), new Vector2(cx - 9f, cy - 5f), color);
                     batch.AddTriangle(center, new Vector2(cx + 9f, cy + 5f), new Vector2(cx + 9f, cy - 5f), color);
+                    break;
+                case SymbolGlyphKind.Artillery:
+                    // 야전 포병: 가운데 찬 원.
+                    batch.AddCircle(center, 3.2f, color, 14);
+                    break;
+                case SymbolGlyphKind.FixedWing:
+                    // 고정익: 가로로 누운 8 자(∞).
+                    batch.AddEllipseOutline(new Vector2(cx - 4.5f, cy), 4.5f, 3.2f, color, 1.4f);
+                    batch.AddEllipseOutline(new Vector2(cx + 4.5f, cy), 4.5f, 3.2f, color, 1.4f);
                     break;
             }
             return true;

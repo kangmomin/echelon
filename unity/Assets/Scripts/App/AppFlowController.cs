@@ -76,7 +76,7 @@ namespace Echelon.Unity.App
                     ShowBuilder();
                     break;
                 case "skirmish":
-                    StartSkirmish(Catalog.DefaultForce("US"));
+                    StartSkirmish(WithSupportCompanies(Catalog.DefaultForce("US")));
                     break;
                 case "sandbox":
                     StartSandbox();
@@ -239,6 +239,17 @@ namespace Echelon.Unity.App
             _screen = null;
         }
 
+        // 자동 캡처용: --support=us_air_wing,us_artillery_co 로 기본 편성의 지원 슬롯을 채운다.
+        private ForceSpec WithSupportCompanies(ForceSpec spec)
+        {
+            if (spec == null || _options.SupportCompanies.Length == 0)
+                return spec;
+            ForceSpec copy = spec.DuplicateSpec();
+            for (int i = 0; i < _options.SupportCompanies.Length && i < 2; i++)
+                copy.Companies.Add(ForceSpec.MakeCompany(Catalog, Deployment.SupportSlotPrefix + (i + 1), _options.SupportCompanies[i]));
+            return copy;
+        }
+
         private void ApplyDebugOptions(Core.Battle battle)
         {
             if (_options.NoFog)
@@ -267,6 +278,19 @@ namespace Echelon.Unity.App
                 Dictionary<string, object> result = battle.Fires.Request(
                     battle.PlayerSide, (FireSupportSystem.Asset)_options.FireAsset, _options.FirePosition, _options.FireSmoke);
                 Debug.Log("[fire] " + (result.TryGetValue("error", out object error) ? error : "요청됨"));
+            }
+            if (_options.AirLaunch)
+            {
+                // 자동 캡처용: 아군 고정익 편대를 모두 출격시킨다(공격기는 공격 이동).
+                foreach (Platoon flight in battle.TaskForces[battle.PlayerSide].AllPlatoons())
+                {
+                    if (!flight.IsAirWing)
+                        continue;
+                    bool attack = flight.TemplateId.Contains("attack");
+                    Order order = Order.Make(attack ? OrderType.ATTACK_MOVE : OrderType.MOVE, flight.Id);
+                    order.SetPos(BattleViewAdapter.ToSim(_options.AirTarget));
+                    battle.IssueOrder(order);
+                }
             }
             if (_options.SelectCompany >= 0)
                 Battle.Commands.SelectCompany(_options.SelectCompany, false);

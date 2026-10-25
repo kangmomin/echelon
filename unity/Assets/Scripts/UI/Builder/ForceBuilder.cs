@@ -426,7 +426,8 @@ namespace Echelon.Unity.UI.Builder
             int companyIndex = company != null ? Current.Companies.IndexOf(company) : -1;
             HorizontalLayoutGroup header = CreateRow(box, "CompanyHeader");
             string letter = companyIndex >= 0 ? CompanyLetter(companyIndex) : "-";
-            string title = letter + " 중대  [" + slot.Id + (slot.Required ? string.Empty : ", 선택") + "]";
+            string slotName = Deployment.IsSupportSlot(slot.Id) ? "지원" : slot.Id;
+            string title = letter + " 중대  [" + slotName + (slot.Required ? string.Empty : ", 선택") + "]";
             TextMeshProUGUI titleLabel = UiKit.CreateLabel(header.transform, title, 15, UiTheme.Text);
             titleLabel.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
 

@@ -20,6 +20,17 @@ namespace Echelon.Unity.App
 {
     public static class BattleViewAdapter
     {
+        // 고정익을 실제 고도(300~1200 m)로 그리면 카메라 위로 빠진다. 화면에서는 60 m + 고도의 8% 로 눌러 그린다.
+        public static float VisualAltitude(Element element)
+        {
+            return VisualAltitude(element, element.AltitudeM());
+        }
+
+        public static float VisualAltitude(Element element, double altitude)
+        {
+            return element.IsFixedWing() ? (float)(60.0 + altitude * 0.08) : (float)altitude;
+        }
+
         public static TerrainMeshData CreateTerrainData(Battle battle)
         {
             RequireBattle(battle);
@@ -93,7 +104,7 @@ namespace Echelon.Unity.App
                     IsMounted = element.IsMounted(),
                     OnMap = element.OnMap,
                     TargetId = element.TargetId,
-                    Altitude = (float)element.AltitudeM(),
+                    Altitude = VisualAltitude(element),
                     TerrainHeight = GroundHeight(battle, position),
                     TerrainNormal = TerrainNormal(battle, position),
                     LastFiredTick = TickToInt(element.LastFiredTick),
@@ -276,6 +287,11 @@ namespace Echelon.Unity.App
             {
                 state.ArtilleryMissions = taskForce.ArtilleryMissions;
                 state.CasSorties = taskForce.CasSorties;
+                foreach (Platoon platoon in taskForce.AllPlatoons())
+                {
+                    if (platoon.Kind == "artillery" && platoon.OnMap && !platoon.IsDestroyed())
+                        ++state.ArtilleryBatteries;
+                }
             }
             foreach (FireSupportSystem.Mission mission in battle.Fires.ActiveMissions(battle.PlayerSide))
             {
@@ -334,8 +350,65 @@ namespace Echelon.Unity.App
                 view.MinesLeft = platoon.MinesLeft;
                 view.PositionsBuilt = platoon.PositionsBuilt;
                 view.PositionsCapacity = EngineerSystem.PositionsPerPlatoon;
+                if (platoon.IsAirWing)
+                {
+                    view.AirStatus = AirStatusText(platoon, tick);
+                    view.CarriesCargo = AirOpsSystem.CarriesSupply(platoon);
+                }
+            }
+            else if (unit.Kind == "fixed_wing")
+            {
+                foreach (Unit child in unit.ChildrenUnits())
+                {
+                    if (child is Platoon flight && flight.IsAirWing && AirOpsSystem.CarriesSupply(flight))
+                        view.CarriesCargo = true;
+                }
             }
             return view;
+        }
+
+        /// <summary>고정익 편대 상태: 비행(남은 연료) · 귀환 중 · 출격 가능 · 출격 준비(남은 시간).</summary>
+        public static string AirStatusText(Platoon flight, long tick)
+        {
+            double fuel = double.MaxValue;
+            long readyAt = long.MaxValue;
+            bool airborne = false;
+            bool returning = false;
+            bool ready = false;
+            foreach (Element plane in flight.Elements)
+            {
+                if (!plane.IsAlive())
+                    continue;
+                switch (plane.Air)
+                {
+                    case AirState.AIRBORNE:
+                        if (plane.OnMap)
+                        {
+                            airborne = true;
+                            fuel = Math.Min(fuel, plane.FuelSec);
+                        }
+                        break;
+                    case AirState.RETURNING:
+                        returning = true;
+                        break;
+                    case AirState.READY:
+                        ready = true;
+                        break;
+                    case AirState.REARMING:
+                        readyAt = Math.Min(readyAt, plane.AirReadyTick);
+                        break;
+                }
+            }
+            if (airborne)
+                return string.Format(CultureInfo.InvariantCulture, "비행 · 연료 {0:0}초", fuel);
+            if (returning)
+                return "귀환 중";
+            if (ready)
+                return "출격 가능";
+            if (readyAt != long.MaxValue)
+                return string.Format(CultureInfo.InvariantCulture, "출격 준비 {0:0}초",
+                    Math.Max(0.0, (readyAt - tick) / (double)SimConst.TickRate));
+            return string.Empty;
         }
 
         public static OrbatNodeData CreateOrbat(Battle battle)
@@ -373,8 +446,8 @@ namespace Echelon.Unity.App
                     fx.TargetVisible = target != null && IsVisible(battle, target, fogEnabled);
                     fx.SourceIsInfantry = source != null && source.IsInfantry();
                     fx.TargetIsInfantry = target != null && target.IsInfantry();
-                    fx.SourceAltitude = source != null ? (float)source.AltitudeM() : 0f;
-                    fx.TargetAltitude = target != null ? (float)target.AltitudeM() : 0f;
+                    fx.SourceAltitude = source != null ? VisualAltitude(source) : 0f;
+                    fx.TargetAltitude = target != null ? VisualAltitude(target) : 0f;
                     fx.SourceSide = source != null ? source.Side : string.Empty;
                     return fx;
                 }
@@ -384,7 +457,9 @@ namespace Echelon.Unity.App
                     fx.SourceId = destroyed != null ? destroyed.Id : -1;
                     fx.DestroyedIsHelicopter = destroyed != null && destroyed.IsAir();
                     fx.DestroyedHasPlatoon = destroyed != null && destroyed.Platoon != null;
-                    fx.DestroyedAltitude = destroyed != null && destroyed.IsAir()
+                    fx.DestroyedAltitude = destroyed != null && destroyed.IsFixedWing()
+                        ? VisualAltitude(destroyed, destroyed.Def.AltitudeM)
+                        : destroyed != null && destroyed.IsAir()
                         ? destroyed.Platoon != null && destroyed.Platoon.Sop.Altitude == "high"
                             ? (float)Element.AltitudeHighM
                             : (float)Element.AltitudeLowM
@@ -656,6 +731,7 @@ namespace Echelon.Unity.App
                 FollowsParent = unit.FollowsParent(),
                 Position = position,
                 GuidePosition = hostile && fogEnabled ? position : ToVector(unit.Guide.Pos),
+                Altitude = contact == SymbolContactState.Current ? UnitAltitude(unit) : 0f,
                 Strength = hostile ? 1f : (float)unit.Strength(),
                 Comms = (SymbolCommsState)(int)unit.CommsState,
                 Contact = contact
@@ -712,8 +788,28 @@ namespace Echelon.Unity.App
                 IsLeader = ReferenceEquals(element, leader),
                 Position = position,
                 Forward = new Vector2(Mathf.Sin(heading), Mathf.Cos(heading)),
+                Altitude = contact == SymbolContactState.Current && element.IsAlive() ? VisualAltitude(element) : 0f,
                 Contact = contact
             };
+        }
+
+        /// <summary>소대가 모두 날고 있으면 부호를 띄울 화면 고도(평균), 아니면 0.</summary>
+        private static float UnitAltitude(Unit unit)
+        {
+            if (!(unit is Platoon platoon))
+                return 0f;
+            float sum = 0f;
+            int count = 0;
+            foreach (Element element in platoon.Elements)
+            {
+                if (!element.IsActive() || element.IsMounted())
+                    continue;
+                if (!element.IsAir())
+                    return 0f;
+                sum += VisualAltitude(element);
+                ++count;
+            }
+            return count > 0 ? sum / count : 0f;
         }
 
         private static bool TryEnemyUnitPosition(

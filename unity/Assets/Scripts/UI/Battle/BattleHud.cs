@@ -538,6 +538,8 @@ namespace Echelon.Unity.UI.Battle
             Button altitude = UiKit.CreateCommandButton(_specialRow, "고도 전환", "V", RequestAltitudeToggle);
             altitude.name = "Command_Altitude";
             UiKit.SetSize(altitude, 0f, RowHeight, 1f);
+            AddOrderButton(_specialRow, BattleCommandType.Airdrop, "보급 투하", "R");
+            CommandButton(_specialRow, "Command_ReturnToBase", "귀환", "B", new BattleCommandIntent(BattleCommandType.Withdraw));
         }
 
         private RectTransform CommandRow(string name, string title)
@@ -636,16 +638,22 @@ namespace Echelon.Unity.UI.Battle
         {
             bool engineer = false;
             bool aviation = false;
+            bool airWing = false;
+            bool cargo = false;
             foreach (BattleUnitView unit in _selection)
             {
                 engineer |= unit.Kind == "engineer";
                 aviation |= unit.Kind == "aviation";
+                airWing |= unit.Kind == "fixed_wing";
+                cargo |= unit.CarriesCargo;
             }
             _orderButtons[BattleCommandType.LayMines].gameObject.SetActive(engineer);
             _orderButtons[BattleCommandType.ClearMines].gameObject.SetActive(engineer);
             _orderButtons[BattleCommandType.Fortify].gameObject.SetActive(engineer);
             _specialRow.Find("Command_Altitude").gameObject.SetActive(aviation);
-            _specialRow.gameObject.SetActive(engineer || aviation);
+            _orderButtons[BattleCommandType.Airdrop].gameObject.SetActive(cargo);
+            _specialRow.Find("Command_ReturnToBase").gameObject.SetActive(airWing);
+            _specialRow.gameObject.SetActive(engineer || aviation || airWing);
         }
 
         // ── 화력 지원 ───────────────────────────────────────────

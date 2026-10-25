@@ -7,9 +7,9 @@ namespace Echelon.Unity.Tests.Platform
 {
     public sealed class UnityCatalogSourceTests
     {
-        [TestCase(CatalogCategories.Weapons, 46)]
-        [TestCase(CatalogCategories.Elements, 46)]
-        [TestCase(CatalogCategories.Units, 39)]
+        [TestCase(CatalogCategories.Weapons, 55)]
+        [TestCase(CatalogCategories.Elements, 57)]
+        [TestCase(CatalogCategories.Units, 63)]
         [TestCase(CatalogCategories.Maps, 1)]
         [TestCase(CatalogCategories.Toe, 2)]
         [TestCase(CatalogCategories.Scenarios, 1)]

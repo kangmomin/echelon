@@ -57,6 +57,16 @@ namespace Echelon.Unity.Presentation.Elements
             get { return string.Equals(ElementClass, "heli", StringComparison.OrdinalIgnoreCase); }
         }
 
+        public bool IsPlane
+        {
+            get { return string.Equals(ElementClass, "plane", StringComparison.OrdinalIgnoreCase); }
+        }
+
+        public bool IsAircraft
+        {
+            get { return IsHelicopter || IsPlane; }
+        }
+
         public bool IsVehicle
         {
             get { return !IsInfantry; }

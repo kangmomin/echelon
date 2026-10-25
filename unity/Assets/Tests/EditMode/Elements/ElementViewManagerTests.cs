@@ -141,11 +141,11 @@ namespace Echelon.Unity.Presentation.Elements.Tests
             try
             {
                 List<ElementVisualState> states = ElementVisualTestData.AllEquipment();
-                Assert.AreEqual(46, states.Count);
+                Assert.AreEqual(57, states.Count);
                 manager.UpdateElements(states, 0.0f, 0.0f, 1.0f, 0);
 
-                Assert.AreEqual(46, manager.ActiveCount);
-                Assert.AreEqual(46, manager.CreatedViewCount);
+                Assert.AreEqual(57, manager.ActiveCount);
+                Assert.AreEqual(57, manager.CreatedViewCount);
                 Assert.AreEqual(0, manager.PooledCount);
                 for (int i = 0; i < states.Count; i++)
                 {

@@ -37,6 +37,9 @@ namespace Echelon.Unity.App
         public bool FireSmoke;
         public int SelectCompany = -1;
         public bool OpenGuide;
+        public string[] SupportCompanies = Array.Empty<string>();
+        public bool AirLaunch;
+        public Vector2 AirTarget;
 
         /// <summary>자동 검증 실행이면 오류 로그가 나오는 즉시 실패 코드로 끝낸다.</summary>
         public bool IsAutomated => SmokeTicks >= 0 || ScreenshotPath != "";
@@ -74,6 +77,13 @@ namespace Echelon.Unity.App
                     options.AarOut = value;
                 else if (arg == "--guide")
                     options.OpenGuide = true;
+                else if (arg.StartsWith("--support="))
+                    options.SupportCompanies = parts;
+                else if (arg.StartsWith("--air=") && parts.Length >= 2)
+                {
+                    options.AirLaunch = true;
+                    options.AirTarget = new Vector2(Float(parts[0]), Float(parts[1]));
+                }
                 else if (arg.StartsWith("--select="))
                     options.SelectCompany = Int(value);
                 else if (arg.StartsWith("--run-sec="))

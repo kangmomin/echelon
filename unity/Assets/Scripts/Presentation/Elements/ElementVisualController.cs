@@ -9,6 +9,10 @@ namespace Echelon.Unity.Presentation.Elements
     {
         private const float AliveAltitudeRate = 12.0f;
         private const float WreckAltitudeRate = 30.0f;
+        private const float PlaneAltitudeRate = 200.0f;
+        private const float PlaneBankPerTurnDegrees = 1.2f;
+        private const float PlaneMaxBankDegrees = 55.0f;
+        private const float PlaneBankRateDegrees = 90.0f;
         private const float RotorRadiansPerSecond = 28.0f;
         private const float PausedRotorRadiansPerSecond = 4.0f;
 
@@ -21,6 +25,7 @@ namespace Echelon.Unity.Presentation.Elements
         private float recoil;
         private int lastFiredTick = ElementVisualState.NoTick;
         private float rotorAngle;
+        private float bank;
         private Vector2 tiltPosition;
         private bool hasTiltPosition;
         private bool needsRootName = true;
@@ -88,7 +93,7 @@ namespace Echelon.Unity.Presentation.Elements
                 State.PreviousHeading, State.Heading, interpolationAlpha);
             float ground = groundHeight != null ? groundHeight(position) : State.TerrainHeight;
             float height = ground;
-            if (State.IsHelicopter)
+            if (State.IsAircraft)
             {
                 UpdateAir(realDelta, gameDelta);
                 height += altitude;
@@ -98,7 +103,7 @@ namespace Echelon.Unity.Presentation.Elements
             Root.transform.rotation = Quaternion.AngleAxis(
                 ElementVisualMath.HeadingToYaw(heading) * Mathf.Rad2Deg, Vector3.up);
 
-            if (State.IsVehicle && !State.IsHelicopter)
+            if (State.IsVehicle && !State.IsAircraft)
                 UpdateTilt(position, heading, groundHeight);
             UpdateAppearance();
             if (Model.Turret != null)
@@ -134,6 +139,7 @@ namespace Echelon.Unity.Presentation.Elements
             recoil = 0.0f;
             lastFiredTick = ElementVisualState.NoTick;
             rotorAngle = 0.0f;
+            bank = 0.0f;
             tiltPosition = Vector2.zero;
             hasTiltPosition = false;
         }
@@ -144,14 +150,22 @@ namespace Echelon.Unity.Presentation.Elements
             if (altitude < 0.0f)
                 altitude = wantedAltitude;
             float delta = Mathf.Max(gameDelta, realDelta * 0.2f);
-            altitude = ElementVisualMath.MoveTowards(
-                altitude,
-                wantedAltitude,
-                delta * (State.IsAlive ? AliveAltitudeRate : WreckAltitudeRate));
+            float climbRate = !State.IsAlive ? WreckAltitudeRate : State.IsPlane ? PlaneAltitudeRate : AliveAltitudeRate;
+            altitude = ElementVisualMath.MoveTowards(altitude, wantedAltitude, delta * climbRate);
 
             if (!State.IsAlive)
             {
                 Model.Tilt.localRotation = Quaternion.Euler(0.25f * Mathf.Rad2Deg, 0.0f, 0.45f * Mathf.Rad2Deg);
+                return;
+            }
+
+            if (State.IsPlane)
+            {
+                // 고정익은 선회 방향으로 기운다. 틱당 방위 변화로 선회율을 구한다(틱 0.1초).
+                float turnPerSecond = Mathf.DeltaAngle(State.PreviousHeading * Mathf.Rad2Deg, State.Heading * Mathf.Rad2Deg) * 10.0f;
+                float wantedBank = Mathf.Clamp(turnPerSecond * PlaneBankPerTurnDegrees, -PlaneMaxBankDegrees, PlaneMaxBankDegrees);
+                bank = ElementVisualMath.MoveTowards(bank, wantedBank, Mathf.Max(gameDelta, realDelta * 0.2f) * PlaneBankRateDegrees);
+                Model.Tilt.localRotation = Quaternion.Euler(0.0f, 0.0f, bank);
                 return;
             }
 

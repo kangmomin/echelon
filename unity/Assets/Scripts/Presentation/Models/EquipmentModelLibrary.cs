@@ -136,6 +136,25 @@ namespace Echelon.Presentation.Models
                 definition.Kind = EquipmentModelKind.Ka52;
                 turretPivot = Ka52(hull, turret, definition, id);
             }
+            else if (id == "us_uh60m" || id == "ru_mi8amtsh")
+            {
+                definition.Kind = id == "us_uh60m" ? EquipmentModelKind.Uh60 : EquipmentModelKind.Mi8;
+                TransportHeli(hull, definition, id, id == "ru_mi8amtsh");
+            }
+            else if (elementClass == "plane")
+            {
+                definition.Kind = Aircraft(hull, id);
+            }
+            else if (id == "us_m109a7" || id == "ru_2s19")
+            {
+                definition.Kind = id == "us_m109a7" ? EquipmentModelKind.M109 : EquipmentModelKind.Msta;
+                turretPivot = Howitzer(hull, turret, id == "ru_2s19");
+            }
+            else if (id == "ru_zsu234")
+            {
+                definition.Kind = EquipmentModelKind.Shilka;
+                turretPivot = Shilka(hull, turret);
+            }
             else if (id == "us_m1126" || id == "us_m1296" || id == "us_m1134" || id == "us_mshorad")
             {
                 definition.Kind = StrykerKind(id);

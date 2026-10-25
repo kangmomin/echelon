@@ -21,26 +21,28 @@ namespace Echelon.Unity.UI.UnitInfo
             ["tank"] = "기갑", ["mech"] = "기계화" + "보" + "병", ["inf"] = "보" + "병" + "(도보)", ["recon"] = "정찰",
             ["mortar"] = "박격포", ["supply"] = "보급", ["hq"] = "본부", ["cp"] = "지휘소",
             ["fo"] = "관측", ["aa"] = "방공", ["ew"] = "전자전", ["engineer"] = "공병",
-            ["wheeled"] = "차륜형 " + "보" + "병", ["at"] = "대전차", ["sniper"] = "저격", ["aviation"] = "공격헬기"
+            ["wheeled"] = "차륜형 " + "보" + "병", ["at"] = "대전차", ["sniper"] = "저격", ["aviation"] = "헬기",
+            ["artillery"] = "포병", ["fixed_wing"] = "고정익 항공"
         };
 
         private static readonly Dictionary<string, string> ClassNames = new Dictionary<string, string>
         {
             ["tank"] = "전차", ["ifv"] = "보" + "병" + "전투차", ["apc"] = "장갑차", ["recon"] = "정찰차",
             ["mortar"] = "자주박격포", ["aa"] = "방공", ["cp"] = "지휘차", ["truck"] = "트럭",
-            ["inf_squad"] = "보" + "병", ["fo"] = "관측", ["ew"] = "전자전", ["heli"] = "공격헬기",
-            ["eng"] = "공병 장비", ["at"] = "대전차 차량"
+            ["inf_squad"] = "보" + "병", ["fo"] = "관측", ["ew"] = "전자전", ["heli"] = "헬기",
+            ["eng"] = "공병 장비", ["at"] = "대전차 차량", ["artillery"] = "자주포", ["plane"] = "고정익"
         };
 
         private static readonly Dictionary<string, string> WeaponTypeNames = new Dictionary<string, string>
         {
             ["KE"] = "철갑탄", ["HEAT"] = "성형작약", ["ATGM"] = "대전차 미사일", ["HE"] = "고폭",
-            ["MG"] = "기관총·소총", ["AC"] = "기관포", ["SAM"] = "지대공 미사일"
+            ["MG"] = "기관총·소총", ["AC"] = "기관포", ["SAM"] = "지대공 미사일",
+            ["AAM"] = "공대공 미사일"
         };
 
         private static readonly Dictionary<string, string> TargetNames = new Dictionary<string, string>
         {
-            ["vehicle"] = "차량", ["infantry"] = "보" + "병", ["air"] = "헬기"
+            ["vehicle"] = "차량", ["infantry"] = "보" + "병", ["air"] = "항공기"
         };
 
         public static string PlatoonCard(
@@ -118,15 +120,18 @@ namespace Echelon.Unity.UI.UnitInfo
                 text.AppendLine();
             }
 
-            if (template.Platoons.Count != 0)
+            if (platoonOrder.Count != 0)
             {
-                UnitTemplate first = catalog.GetUnitTemplate(template.Platoons[0]);
-                if (first != null)
+                // 소대가 여러 종류인 중대(헬기·고정익 등)는 종류마다 주 장비를 보인다.
+                text.AppendLine().AppendLine("<b>주 장비</b>");
+                foreach (string platoonId in platoonOrder)
                 {
-                    string loadout = LoadoutOrDefault(first, string.Empty);
-                    text.AppendLine().AppendLine("<b>주 장비</b>");
-                    AppendElements(text, catalog, first.ElementsFor(loadout), string.Empty);
-                    List<string> passengers = first.PassengersFor(loadout);
+                    UnitTemplate platoon = catalog.GetUnitTemplate(platoonId);
+                    string loadout = LoadoutOrDefault(platoon, string.Empty);
+                    if (platoonOrder.Count > 1)
+                        text.Append("<color=").Append(Dim).Append(">").Append(platoon.DisplayName).AppendLine("</color>");
+                    AppendElements(text, catalog, platoon.ElementsFor(loadout), string.Empty);
+                    List<string> passengers = platoon.PassengersFor(loadout);
                     if (passengers.Count != 0)
                         AppendElements(text, catalog, passengers, "탑승 ");
                 }
@@ -276,7 +281,7 @@ namespace Echelon.Unity.UI.UnitInfo
                     if (weapon.CanTarget("air"))
                     {
                         double value = 0.4;
-                        if (weapon.WeaponType == "SAM")
+                        if (weapon.WeaponType == "SAM" || weapon.WeaponType == "AAM")
                             value = 1.0;
                         else if (element.ElementClass == "aa")
                             value = 0.8;
@@ -295,7 +300,9 @@ namespace Echelon.Unity.UI.UnitInfo
                              element.GetArmor("side") / 350.0 * 0.3;
                 }
 
-                if (element.ElementClass == "heli")
+                if (element.ElementClass == "plane")
+                    mobility = Math.Min(mobility, 5.0);
+                else if (element.ElementClass == "heli")
                     mobility = Math.Min(mobility, 2.5);
                 else if (element.ElementClass == "inf_squad" && passengerSet.Contains(id))
                     continue;
@@ -472,6 +479,10 @@ namespace Echelon.Unity.UI.UnitInfo
                     if (element.ElementClass == "heli")
                         text.Append("<color=").Append(Good)
                             .AppendLine(">지형 무시 비행 · 저공 25 m / 고공 90 m(V) · 대공 무기만 맞힐 수 있음</color>");
+                    if (element.ElementClass == "plane")
+                        text.Append("<color=").Append(Good).Append(">지도 밖에서 출격 · 명령 즉시 · 연료 ")
+                            .Append(Round(element.EnduranceSec)).Append("초 · 재무장 ").Append(Round(element.RearmSec))
+                            .AppendLine("초 · 지대공·방공·항공기만 맞힐 수 있음</color>");
                 }
 
                 foreach (string weaponId in element.Weapons)

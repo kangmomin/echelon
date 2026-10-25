@@ -143,7 +143,29 @@ namespace Echelon.Unity.UI.Battle
                     return Result(unitName + ": 패주!", Bad, out notification);
                 case "rally":
                     return Result(unitName + ": 재집결", Info, out notification);
+                case "air_launched":
+                    return Result(unitName + ": 출격", Good, out notification);
+                case "air_returning":
+                    if (data.Reason == "fuel")
+                        return Result(unitName + ": 연료 부족 — 귀환", Warning, out notification);
+                    if (data.Reason == "airdrop")
+                        return Result(unitName + ": 보급 투하를 마치고 귀환", Info, out notification);
+                    return Result(unitName + ": 귀환", Info, out notification);
+                case "air_ready":
+                    return Result(unitName + ": 재무장 완료 — 출격 가능", Good, out notification);
+                case "airdrop":
+                    return Result(unitName + ": 보급품 투하", Good, out notification);
                 case "order_refused":
+                    if (data.Reason == "air_not_ready")
+                        return Result(unitName + ": 재무장 중이라 아직 출격할 수 없습니다", Warning, out notification);
+                    if (data.Reason == "air_returning")
+                        return Result(unitName + ": 귀환 중이라 새 명령을 받을 수 없습니다", Warning, out notification);
+                    if (data.Reason == "no_cargo")
+                        return Result(unitName + ": 실은 보급품이 없습니다", Warning, out notification);
+                    if (data.Reason == "not_airlift")
+                        return Result(unitName + ": 보급 투하는 수송기만 할 수 있습니다", Warning, out notification);
+                    if (data.Reason == "air_unit" || data.Reason == "no_air_ops")
+                        return Result(unitName + ": 항공기는 이 명령을 할 수 없습니다", Warning, out notification);
                     if (data.Reason == "not_engineer")
                         return Result(unitName + ": 공병만 할 수 있는 작업입니다", Warning, out notification);
                     if (data.Reason == "no_capacity")

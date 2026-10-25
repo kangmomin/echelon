@@ -44,6 +44,7 @@ namespace Echelon.Unity.Presentation.Symbols
         public bool IsLeader;
         public Vector2 Position;
         public Vector2 Forward = Vector2.up;
+        public float Altitude;
         public SymbolContactState Contact = SymbolContactState.Current;
     }
 
@@ -80,6 +81,7 @@ namespace Echelon.Unity.Presentation.Symbols
         public bool FollowsParent;
         public Vector2 Position;
         public Vector2 GuidePosition;
+        public float Altitude;
         public float Strength = 1f;
         public SymbolCommsState Comms = SymbolCommsState.Good;
         public SymbolContactState Contact = SymbolContactState.Current;

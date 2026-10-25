@@ -54,6 +54,17 @@ namespace Echelon.Tests.EditMode.Models
         [TestCase("ru_bmp2m", "ifv", EquipmentModelKind.Bmp2, true, 0)]
         [TestCase("ru_at_squad", "inf_squad", EquipmentModelKind.InfantryAt, false, 0)]
         [TestCase("ru_2s9", "mortar", EquipmentModelKind.Nona, true, 0)]
+        [TestCase("us_m109a7", "artillery", EquipmentModelKind.M109, true, 0)]
+        [TestCase("ru_2s19", "artillery", EquipmentModelKind.Msta, true, 0)]
+        [TestCase("ru_zsu234", "aa", EquipmentModelKind.Shilka, true, 0)]
+        [TestCase("us_f16c", "plane", EquipmentModelKind.F16, false, 0)]
+        [TestCase("ru_su35s", "plane", EquipmentModelKind.Su35, false, 0)]
+        [TestCase("us_a10c", "plane", EquipmentModelKind.A10, false, 0)]
+        [TestCase("ru_su25sm3", "plane", EquipmentModelKind.Su25, false, 0)]
+        [TestCase("us_c130j", "plane", EquipmentModelKind.C130, false, 0)]
+        [TestCase("ru_il76md", "plane", EquipmentModelKind.Il76, false, 0)]
+        [TestCase("us_uh60m", "heli", EquipmentModelKind.Uh60, false, 1)]
+        [TestCase("ru_mi8amtsh", "heli", EquipmentModelKind.Mi8, false, 1)]
         public void DataElement_HasNonemptyGeometryAndExpectedParts(
             string elementId,
             string elementClass,

@@ -154,6 +154,8 @@ namespace Echelon.Unity.UI.Battle
             }
             if (unit.Kind == "aviation")
                 tags.Add((unit.Altitude == BattleSop.HighAltitude ? "고공" : "저공", UiTheme.Friendly));
+            if (!string.IsNullOrEmpty(unit.AirStatus))
+                tags.Add((unit.AirStatus, UiTheme.Friendly));
             return tags;
         }
 
@@ -163,11 +165,18 @@ namespace Echelon.Unity.UI.Battle
                 return string.Empty;
             var lines = new List<string>
             {
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    "남은 포병 임무 {0}   항공 출격 {1}",
-                    state.ArtilleryMissions,
-                    state.CasSorties)
+                state.ArtilleryBatteries > 0
+                    ? string.Format(
+                        CultureInfo.InvariantCulture,
+                        "포병 중대 포대 {0}개 · 지도 밖 임무 {1}   항공 출격 {2}",
+                        state.ArtilleryBatteries,
+                        state.ArtilleryMissions,
+                        state.CasSorties)
+                    : string.Format(
+                        CultureInfo.InvariantCulture,
+                        "남은 포병 임무 {0}   항공 출격 {1}",
+                        state.ArtilleryMissions,
+                        state.CasSorties)
             };
             if (state.ActiveMissions == null)
                 return lines[0];
@@ -200,6 +209,8 @@ namespace Echelon.Unity.UI.Battle
         {
             if (unit == null)
                 return string.Empty;
+            if (!string.IsNullOrEmpty(unit.AirStatus) && !unit.Destroyed)
+                return unit.AirStatus;
             if (!unit.OnMap)
                 return "증원 대기";
             if (unit.Destroyed && unit.Level != BattleUnitLevel.TaskForce)
@@ -244,6 +255,7 @@ namespace Echelon.Unity.UI.Battle
                 case BattleCommandType.LayMines: return "지뢰 매설";
                 case BattleCommandType.ClearMines: return "지뢰 제거";
                 case BattleCommandType.Fortify: return "진지 구축";
+                case BattleCommandType.Airdrop: return "보급 투하";
                 default: return "?";
             }
         }

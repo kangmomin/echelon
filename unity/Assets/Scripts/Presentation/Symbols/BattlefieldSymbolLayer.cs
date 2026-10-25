@@ -409,7 +409,7 @@ namespace Echelon.Unity.Presentation.Symbols
             {
                 SymbolElementSnapshot element = unit.Elements[i];
                 if (!SymbolAggregation.ShouldDrawElement(unit, element, _snapshot.PlayerSide, _snapshot.FogEnabled)
-                    || !TryProject(element.Position, out Vector2 position, out Vector2 screenPosition))
+                    || !TryProject(element.Position, element.Altitude, out Vector2 position, out Vector2 screenPosition))
                     continue;
                 Color color = element.IsAlive
                     ? SymbolStyle.SideColor(unit.Side, _snapshot.PlayerSide)
@@ -447,7 +447,7 @@ namespace Echelon.Unity.Presentation.Symbols
 
         private void DrawUnitFrame(SymbolMeshBatch batch, SymbolUnitSnapshot unit)
         {
-            if (!TryProject(unit.Position, out Vector2 position, out Vector2 screenPosition))
+            if (!TryProject(unit.Position, unit.Altitude, out Vector2 position, out Vector2 screenPosition))
                 return;
             bool selected = SymbolAggregation.IsSelected(unit, _snapshot.SelectedUnitIds);
             bool hostile = SymbolStyle.IsHostile(unit.Side, _snapshot.PlayerSide);
@@ -658,12 +658,18 @@ namespace Echelon.Unity.Presentation.Symbols
 
         private bool TryProject(Vector2 simPosition, out Vector2 localPosition, out Vector2 screenPosition)
         {
+            return TryProject(simPosition, 0f, out localPosition, out screenPosition);
+        }
+
+        // 항공기 부호는 지면이 아니라 기체 높이에 띄운다(altitude 는 화면용 고도).
+        private bool TryProject(Vector2 simPosition, float altitude, out Vector2 localPosition, out Vector2 screenPosition)
+        {
             localPosition = Vector2.zero;
             screenPosition = Vector2.zero;
             if (targetCamera == null)
                 return false;
             float height = _groundHeight == null ? 0f : _groundHeight(ClampToMap(simPosition, 0f));
-            Vector3 world = new Vector3(simPosition.x, height + ProjectionHeightOffset, simPosition.y);
+            Vector3 world = new Vector3(simPosition.x, height + altitude + ProjectionHeightOffset, simPosition.y);
             Vector3 screen = targetCamera.WorldToScreenPoint(world);
             if (screen.z <= 0f || float.IsNaN(screen.x) || float.IsInfinity(screen.x)
                 || float.IsNaN(screen.y) || float.IsInfinity(screen.y))

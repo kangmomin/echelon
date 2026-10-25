@@ -53,7 +53,18 @@ namespace Echelon.Presentation.Models
         Ur77,
         Tunguska,
         Apache,
-        Ka52
+        Ka52,
+        M109,
+        Msta,
+        Shilka,
+        F16,
+        Su35,
+        A10,
+        Su25,
+        C130,
+        Il76,
+        Uh60,
+        Mi8
     }
 
     public sealed class EquipmentModelHandle

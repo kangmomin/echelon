@@ -126,7 +126,7 @@ namespace Echelon.Unity.Tests.Builder
             Assert.That(_builder.BudgetLabel.text, Does.Contain(_builder.Report.Total.ToString()));
             Assert.That(_builder.SetCompany("co_4", "ru_tank_co"), Is.True);
             Assert.That(_builder.Current.GetCompany("co_4"), Is.Not.Null);
-            Assert.That(_builder.CompanyDropdowns.Count, Is.EqualTo(4));
+            Assert.That(_builder.CompanyDropdowns.Count, Is.EqualTo(6));
         }
 
         [Test]
