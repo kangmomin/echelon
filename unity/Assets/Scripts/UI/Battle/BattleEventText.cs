@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using Echelon.Unity.UI.Common;
 using UnityEngine;
 
 namespace Echelon.Unity.UI.Battle
@@ -30,10 +31,10 @@ namespace Echelon.Unity.UI.Battle
 
     public static class BattleEventText
     {
-        public static readonly Color Info = new Color(0.92f, 0.95f, 1f);
-        public static readonly Color Good = new Color(0.55f, 1f, 0.6f);
-        public static readonly Color Warning = new Color(1f, 0.82f, 0.3f);
-        public static readonly Color Bad = new Color(1f, 0.45f, 0.4f);
+        public static readonly Color Info = UiTheme.Text;
+        public static readonly Color Good = UiTheme.Ok;
+        public static readonly Color Warning = UiTheme.Warning;
+        public static readonly Color Bad = UiTheme.Error;
 
         public static BattleNotification? Describe(BattleEventData data, string playerSide)
         {

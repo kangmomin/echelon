@@ -330,7 +330,7 @@ namespace Echelon.Unity.UI.Common
             if (label != null)
             {
                 label.color = text;
-                label.fontStyle = style == UiButtonStyle.Primary ? FontStyles.Bold : FontStyles.Normal;
+                SetBold(label, style == UiButtonStyle.Primary);
             }
         }
 
@@ -348,6 +348,19 @@ namespace Echelon.Unity.UI.Common
             TextMeshProUGUI label = ButtonLabel(button);
             if (label != null)
                 label.color = UiTheme.Accent;
+        }
+
+        /// <summary>
+        /// 굵게 표시. 이 TMP 버전은 굵은 서체가 따로 없으면 말줄임표(…)를 찾지 못해 경고와 함께 잘라내기로 바꾸므로,
+        /// 굵은 글자는 처음부터 잘라내기로 둔다(보이는 결과는 같다).
+        /// </summary>
+        public static void SetBold(TextMeshProUGUI label, bool bold)
+        {
+            label.fontStyle = bold ? FontStyles.Bold : FontStyles.Normal;
+            if (bold && label.overflowMode == TextOverflowModes.Ellipsis)
+                label.overflowMode = TextOverflowModes.Truncate;
+            else if (!bold && label.overflowMode == TextOverflowModes.Truncate)
+                label.overflowMode = TextOverflowModes.Ellipsis;
         }
 
         public static TextMeshProUGUI ButtonLabel(Button button)
@@ -371,6 +384,9 @@ namespace Echelon.Unity.UI.Common
             fitter.childAlignment = TextAnchor.MiddleCenter;
             fitter.childControlWidth = true;
             fitter.childControlHeight = true;
+            // 강제 확장을 끄지 않으면 그룹이 유연 폭 1을 보고해 이웃 요소만큼 늘어난다.
+            fitter.childForceExpandWidth = false;
+            fitter.childForceExpandHeight = false;
             TextMeshProUGUI label = CreateLabel(rect, text, UiTheme.FontCaption, color);
             label.name = "Text";
             label.alignment = TextAlignmentOptions.Center;
@@ -413,7 +429,7 @@ namespace Echelon.Unity.UI.Common
             var scrimImage = scrim.gameObject.AddComponent<Image>();
             scrimImage.color = UiTheme.Scrim;
             scrimImage.raycastTarget = true;
-            RectTransform panel = CreateCard(scrim, "Panel");
+            RectTransform panel = CreateCard(scrim, "Panel", UiTheme.PanelOpaque);
             panel.anchorMin = new Vector2(0.5f, 0.5f);
             panel.anchorMax = new Vector2(0.5f, 0.5f);
             panel.pivot = new Vector2(0.5f, 0.5f);
@@ -474,7 +490,7 @@ namespace Echelon.Unity.UI.Common
             caption.rectTransform.offsetMin = new Vector2(10f, 0f);
             caption.rectTransform.offsetMax = new Vector2(-24f, 0f);
 
-            var arrow = CreateLabel(rect, "▾", UiTheme.FontSmall, UiTheme.TextDim);
+            var arrow = CreateLabel(rect, "▼", 8f, UiTheme.TextDim);
             arrow.name = "Arrow";
             arrow.alignment = TextAlignmentOptions.Center;
             arrow.rectTransform.anchorMin = new Vector2(1f, 0f);

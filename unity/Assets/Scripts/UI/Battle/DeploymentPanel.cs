@@ -11,7 +11,7 @@ namespace Echelon.Unity.UI.Battle
     public sealed class DeploymentPanel : MonoBehaviour
     {
         public const string Instructions =
-            "배치 단계 — 부대를 고르고 우클릭(드래그로 방향)으로 배치 구역 안에 옮긴다.";
+            "부대를 고르고 우클릭(드래그: 방향)으로 배치 구역 안에 옮긴다.";
 
         public event Action StartRequested;
         public event Action<IReadOnlyList<DeploymentPlacementIntent>> PlacementRequested;
@@ -39,28 +39,24 @@ namespace Echelon.Unity.UI.Battle
                 return;
             IsBuilt = true;
             RectTransform rect = (RectTransform)transform;
-            rect.anchorMin = new Vector2(0.5f, 1f);
-            rect.anchorMax = new Vector2(0.5f, 1f);
-            rect.pivot = new Vector2(0.5f, 1f);
-            rect.anchoredPosition = new Vector2(0f, -96f);
-            rect.sizeDelta = new Vector2(700f, 58f);
+            BattleHudLayout.PlaceDeploymentBanner(rect);
             Image background = gameObject.AddComponent<Image>();
-            background.color = UiTheme.Panel;
+            UiKit.SetRounded(background);
+            background.color = UiTheme.PanelRaised;
             background.raycastTarget = true;
-            HorizontalLayoutGroup layout = UiKit.AddHorizontalLayout(rect, 12, 10);
+            UiKit.AddBorder(rect, UiTheme.WithAlpha(UiTheme.Accent, 0.5f));
+            HorizontalLayoutGroup layout = UiKit.AddHorizontalLayout(rect, UiTheme.SpaceM, 10);
             layout.childAlignment = TextAnchor.MiddleCenter;
-            InstructionLabel = UiKit.CreateLabel(transform, Instructions, 13, UiTheme.Text);
+            layout.childForceExpandWidth = false;
+            TextMeshProUGUI badge = UiKit.CreateBadge(transform, "배치 단계", UiTheme.Accent);
+            badge.fontStyle = FontStyles.Bold;
+            InstructionLabel = UiKit.CreateLabel(transform, Instructions, UiTheme.FontSmall, UiTheme.Text);
             InstructionLabel.name = "Instructions";
-            InstructionLabel.alignment = TextAlignmentOptions.Left;
-            LayoutElement labelLayout = InstructionLabel.gameObject.AddComponent<LayoutElement>();
-            labelLayout.minWidth = 0f;
-            labelLayout.flexibleWidth = 1f;
-            StartButton = UiKit.CreateButton(transform, "전투 시작", RequestStart, 120f);
+            InstructionLabel.alignment = TextAlignmentOptions.MidlineLeft;
+            UiKit.SetSize(InstructionLabel, 0f, -1f, 1f);
+            StartButton = UiKit.CreateButton(transform, "전투 시작", RequestStart, 120f, UiButtonStyle.Primary);
             StartButton.name = "StartBattle";
-            LayoutElement startLayout = StartButton.GetComponent<LayoutElement>();
-            startLayout.minWidth = 120f;
-            startLayout.preferredWidth = 120f;
-            startLayout.flexibleWidth = 0f;
+            UiKit.SetSize(StartButton, 120f, UiTheme.ControlHeight, 0f);
             UiKit.EnsureEventSystem();
             gameObject.SetActive(false);
         }

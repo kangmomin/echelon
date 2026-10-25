@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Echelon.Unity.UI.Battle;
 using NUnit.Framework;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Echelon.Unity.Tests.BattleUi
@@ -25,13 +26,18 @@ namespace Echelon.Unity.Tests.BattleUi
                 CommandCapacityQueue = 2
             };
 
-            Assert.That(
-                BattleUiText.TopBar(state),
-                Is.EqualTo("02:05   2.0x   승점 12 : 7   남은 07:54   전력 75% : 50%   " +
-                           "일시정지   지휘 용량 1.5 / 4  (대기 2)"));
+            Assert.That(BattleUiText.Clock((int)state.SimulationSeconds), Is.EqualTo("02:05"));
+            Assert.That(BattleUiText.Speed(state.Speed), Is.EqualTo("2×"));
+            Assert.That(BattleUiText.Remaining(state), Is.EqualTo("07:54"));
+            Assert.That(BattleUiText.Percent(state.PlayerForceRatio), Is.EqualTo("75%"));
+            Assert.That(BattleUiText.Phase(state), Is.EqualTo("일시정지"));
+            Assert.That(BattleUiText.Capacity(state), Is.EqualTo("1.5 / 4  (대기 2)"));
             state.Deploying = true;
-            StringAssert.Contains("배치 단계", BattleUiText.TopBar(state));
-            StringAssert.DoesNotContain("일시정지", BattleUiText.TopBar(state));
+            Assert.That(BattleUiText.Phase(state), Is.EqualTo("배치 단계"));
+
+            BattleHud hud = BattleHud.Create(CanvasRect);
+            hud.Render(state);
+            Assert.That(hud.PauseButton.interactable, Is.False);
         }
 
         [Test]
@@ -61,16 +67,13 @@ namespace Echelon.Unity.Tests.BattleUi
                 PositionsCapacity = 3
             };
 
-            string text = BattleUiText.Selection(new[] { unit });
-            StringAssert.Contains("전투력 62%   사기 81   통신 두절", text);
-            StringAssert.Contains("대형 쐐기   이동 방식 교대 약진   사격 중지", text);
-            StringAssert.Contains("자세 지뢰 매설 중   임무 지뢰 매설", text);
-            StringAssert.Contains("분리됨", text);
-            StringAssert.Contains("지휘 공백", text);
-            StringAssert.Contains("대형 전환 중", text);
-            StringAssert.Contains("\uBCF4\uBCD1 탑승", text);
-            StringAssert.Contains("탄약 44%", text);
-            StringAssert.Contains("지뢰 지대 2개 남음, 진지 1/3", text);
+            Assert.That(BattleUiText.UnitSetup(unit), Is.EqualTo("쐐기 · 교대 약진 · 사격 중지"));
+            Assert.That(BattleUiText.UnitActivity(unit), Is.EqualTo("지뢰 매설 중 · 임무 지뢰 매설"));
+            var tags = BattleUiText.UnitTags(unit).ConvertAll(tag => tag.Text);
+            CollectionAssert.AreEqual(
+                new[] { "통신 두절", "분리됨", "지휘 공백", "대형 전환 중", "보병 탑승", "지뢰 2 · 진지 1/3" },
+                tags);
+            Assert.That(BattleUiText.SelectionTitle(new[] { unit, unit }), Is.EqualTo("공병 1소대  외 1"));
         }
 
         [Test]
@@ -138,15 +141,16 @@ namespace Echelon.Unity.Tests.BattleUi
         }
 
         [Test]
-        public void FireHotkeyCycleAndMissionTextMatchGodotSemantics()
+        public void FireModeDisplayAndMissionText()
         {
             BattleHud hud = BattleHud.Create(CanvasRect);
-            hud.CycleFireMode(false);
-            Assert.That(hud.FireAsset, Is.EqualTo(BattleFireAsset.Mortar));
-            hud.CycleFireMode(false);
+            hud.SetFireMode(BattleFireAsset.Artillery, true);
             Assert.That(hud.FireAsset, Is.EqualTo(BattleFireAsset.Artillery));
-            hud.CycleFireMode(false);
+            Assert.That(hud.FireSmoke, Is.True);
+            Assert.That(FindLabel(hud, "FireHint").gameObject.activeSelf, Is.True);
+            hud.SetFireMode(null, false);
             Assert.That(hud.FireAsset, Is.Null);
+            Assert.That(FindLabel(hud, "FireHint").gameObject.activeSelf, Is.False);
 
             hud.SetFireSupport(new BattleFireSupportState
             {
@@ -172,6 +176,17 @@ namespace Echelon.Unity.Tests.BattleUi
             StringAssert.Contains("남은 포병 임무 3   항공 출격 2", hud.FireLabel.text);
             StringAssert.Contains("포병 연막 — 처리 중 42초", hud.FireLabel.text);
             StringAssert.Contains("박격포 — 효력사 (남은 5발)", hud.FireLabel.text);
+        }
+
+        private static TMPro.TextMeshProUGUI FindLabel(Component root, string name)
+        {
+            foreach (TMPro.TextMeshProUGUI label in root.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
+            {
+                if (label.name == name)
+                    return label;
+            }
+            Assert.Fail("Label not found: " + name);
+            return null;
         }
     }
 }

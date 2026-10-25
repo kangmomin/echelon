@@ -74,10 +74,11 @@ namespace Echelon.Unity.UI.Battle
         }
     }
 
+    /// <summary>오른쪽 알림 목록. 알림마다 왼쪽 색 띠가 있는 작은 카드이고, 10초 뒤 흐려지며 사라진다.</summary>
     [DisallowMultipleComponent]
     public sealed class NotificationFeed : MonoBehaviour
     {
-        private readonly List<TextMeshProUGUI> _labels = new List<TextMeshProUGUI>();
+        private readonly List<FeedItem> _items = new List<FeedItem>();
 
         public bool IsBuilt { get; private set; }
         public NotificationFeedState State { get; } = new NotificationFeedState();
@@ -100,23 +101,16 @@ namespace Echelon.Unity.UI.Battle
             if (IsBuilt)
                 return;
             IsBuilt = true;
-            RectTransform rect = (RectTransform)transform;
-            rect.anchorMin = new Vector2(1f, 1f);
-            rect.anchorMax = new Vector2(1f, 1f);
-            rect.pivot = new Vector2(1f, 1f);
-            rect.anchoredPosition = new Vector2(-8f, -96f);
-            rect.sizeDelta = new Vector2(372f, 400f);
-            VerticalLayoutGroup layout = UiKit.AddVerticalLayout(rect, 4);
+            BattleHudLayout.PlaceNotifications((RectTransform)transform);
+            VerticalLayoutGroup layout = UiKit.AddVerticalLayout((RectTransform)transform, 4);
             layout.childAlignment = TextAnchor.UpperRight;
-            layout.childForceExpandWidth = true;
-            layout.childForceExpandHeight = false;
         }
 
         public NotificationEntry Push(string text, Color? color = null)
         {
-            NotificationEntry entry = State.Push(text, color ?? new Color(0.95f, 0.95f, 0.95f));
+            NotificationEntry entry = State.Push(text, color ?? UiTheme.Text);
             if (IsBuilt)
-                Rebuild();
+                Sync();
             return entry;
         }
 
@@ -129,19 +123,19 @@ namespace Echelon.Unity.UI.Battle
         {
             State.Advance(deltaSeconds);
             if (IsBuilt)
-                SyncLabels();
+                Sync();
         }
 
         public void Clear()
         {
             State.Clear();
             if (IsBuilt)
-                Rebuild();
+                Sync();
         }
 
         public TextMeshProUGUI GetLabel(int index)
         {
-            return index >= 0 && index < _labels.Count ? _labels[index] : null;
+            return index >= 0 && index < State.Entries.Count ? _items[index].Label : null;
         }
 
         private void Awake()
@@ -154,48 +148,53 @@ namespace Echelon.Unity.UI.Battle
             Advance(Time.unscaledDeltaTime);
         }
 
-        private void Rebuild()
+        private void Sync()
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-                DestroyChild(transform.GetChild(i).gameObject);
-            _labels.Clear();
-            foreach (NotificationEntry entry in State.Entries)
+            IReadOnlyList<NotificationEntry> entries = State.Entries;
+            while (_items.Count < entries.Count)
+                _items.Add(CreateItem());
+            for (int i = 0; i < _items.Count; i++)
             {
-                TextMeshProUGUI label = UiKit.CreateLabel(transform, entry.Text, 14, entry.Color);
-                label.name = "Notification_" + entry.Id;
-                label.alignment = TextAlignmentOptions.TopRight;
-                label.outlineColor = new Color(0f, 0f, 0f, 0.9f);
-                label.outlineWidth = 0.2f;
-                LayoutElement layout = label.gameObject.AddComponent<LayoutElement>();
-                layout.minWidth = 360f;
-                layout.preferredWidth = 360f;
-                layout.flexibleWidth = 1f;
-                _labels.Add(label);
-            }
-            SyncLabels();
-        }
-
-        private void SyncLabels()
-        {
-            if (_labels.Count != State.Entries.Count)
-            {
-                Rebuild();
-                return;
-            }
-            for (int i = 0; i < _labels.Count; i++)
-            {
-                NotificationEntry entry = State.Entries[i];
-                _labels[i].color = new Color(entry.Color.r, entry.Color.g, entry.Color.b, entry.Color.a * entry.Alpha);
+                FeedItem item = _items[i];
+                bool shown = i < entries.Count;
+                item.Root.gameObject.SetActive(shown);
+                if (!shown)
+                    continue;
+                NotificationEntry entry = entries[i];
+                item.Label.text = entry.Text;
+                float alpha = entry.Alpha;
+                item.Label.color = UiTheme.WithAlpha(entry.Color, entry.Color.a * alpha);
+                item.Stripe.color = UiTheme.WithAlpha(entry.Color, alpha);
+                item.Background.color = UiTheme.WithAlpha(UiTheme.Panel, 0.86f * alpha);
             }
         }
 
-        private static void DestroyChild(GameObject child)
+        private FeedItem CreateItem()
         {
-            child.SetActive(false);
-            if (Application.isPlaying)
-                Destroy(child);
-            else
-                DestroyImmediate(child);
+            var item = new FeedItem();
+            item.Root = UiKit.CreatePanel(transform, "Notification", UiTheme.Panel);
+            item.Background = item.Root.GetComponent<Image>();
+            item.Background.raycastTarget = false;
+            HorizontalLayoutGroup row = UiKit.AddHorizontalLayout(item.Root, 8);
+            row.padding = new RectOffset(0, 10, 5, 5);
+            row.childForceExpandWidth = false;
+            row.childForceExpandHeight = true;
+            RectTransform stripe = UiKit.CreatePanel(item.Root, "Stripe", Color.white);
+            item.Stripe = stripe.GetComponent<Image>();
+            item.Stripe.raycastTarget = false;
+            UiKit.SetSize(stripe, 3f);
+            item.Label = UiKit.CreateLabel(item.Root, string.Empty, UiTheme.FontSmall, UiTheme.Text);
+            item.Label.name = "Text";
+            UiKit.SetSize(item.Label, 0f, -1f, 1f);
+            return item;
+        }
+
+        private sealed class FeedItem
+        {
+            public RectTransform Root;
+            public Image Background;
+            public Image Stripe;
+            public TextMeshProUGUI Label;
         }
     }
 }

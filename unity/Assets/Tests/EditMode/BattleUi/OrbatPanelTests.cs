@@ -17,8 +17,10 @@ namespace Echelon.Unity.Tests.BattleUi
             Assert.That(panel.GetCommsLabel(1).text, Is.Empty);
             Assert.That(panel.GetStrengthLabel(2).text, Is.EqualTo("75%"));
             Assert.That(panel.GetCommsLabel(2).text, Is.EqualTo("◐"));
-            StringAssert.Contains("A중대  · 방어", panel.GetRowButton(2).GetComponentInChildren<TMPro.TextMeshProUGUI>().text);
-            StringAssert.Contains("1소대  · 증원 대기", panel.GetRowButton(4).GetComponentInChildren<TMPro.TextMeshProUGUI>().text);
+            Assert.That(panel.GetRowButton(2).GetComponentInChildren<TMPro.TextMeshProUGUI>().text, Is.EqualTo("A중대"));
+            Assert.That(panel.GetStatusLabel(2).text, Is.EqualTo("방어"));
+            Assert.That(panel.GetRowButton(4).GetComponentInChildren<TMPro.TextMeshProUGUI>().text, Is.EqualTo("1소대"));
+            Assert.That(panel.GetStatusLabel(4).text, Is.EqualTo("증원 대기"));
         }
 
         [Test]

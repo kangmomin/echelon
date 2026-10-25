@@ -13,7 +13,10 @@ namespace Echelon.Unity.UI.Common
         public static Color Panel { get; } = Hex(0x151B20, 0.96f);
         public static Color PanelRaised { get; } = Hex(0x1C242B);
         public static Color PanelSunken { get; } = Hex(0x0F1418, 0.9f);
-        public static Color Scrim { get; } = new Color(0.02f, 0.03f, 0.04f, 0.66f);
+        // 프로젝트가 Linear 색 공간이라 UI 알파 혼합도 선형 공간에서 일어난다: 같은 알파라도 눈에는 더 투명하게
+        // 보인다(알파 0.66 → 체감 약 40%). 막과 모달은 그만큼 진하게 잡는다.
+        public static Color Scrim { get; } = new Color(0.02f, 0.03f, 0.04f, 0.85f);
+        public static Color PanelOpaque { get; } = Hex(0x151B20);
         public static Color Border { get; } = Hex(0x2A3640);
         public static Color BorderStrong { get; } = Hex(0x3C4B57);
         public static Color Separator { get; } = Hex(0x2A3640);

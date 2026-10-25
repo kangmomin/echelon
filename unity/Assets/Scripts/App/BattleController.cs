@@ -326,28 +326,20 @@ namespace Echelon.Unity.App
             Orbat.Bind(() => BattleViewAdapter.CreateOrbat(Battle));
             Notifications = NotificationFeed.Create(UiRoot);
 
+            RectTransform minimapFrame = UiKit.CreateCard(UiRoot, "MinimapFrame");
+            BattleHudLayout.PlaceMinimap(minimapFrame);
             var minimapObject = new GameObject("Minimap", typeof(RectTransform), typeof(MinimapView));
-            minimapObject.transform.SetParent(UiRoot, false);
+            minimapObject.transform.SetParent(minimapFrame, false);
             Minimap = minimapObject.GetComponent<MinimapView>();
             RectTransform minimapRect = (RectTransform)minimapObject.transform;
-            minimapRect.anchorMin = new Vector2(1f, 0f);
-            minimapRect.anchorMax = new Vector2(1f, 0f);
-            minimapRect.pivot = new Vector2(1f, 0f);
-            minimapRect.anchoredPosition = new Vector2(-8f, 246f);
-            minimapRect.sizeDelta = new Vector2(220f, 220f);
+            UiKit.Stretch(minimapRect);
+            minimapRect.offsetMin = new Vector2(4f, 4f);
+            minimapRect.offsetMax = new Vector2(-4f, -4f);
             Minimap.SetTerrain(
                 BattleViewAdapter.ToVector(Battle.Terrain.SizeM),
                 position => BattleViewAdapter.SampleMinimapTerrain(Battle, position));
 
             DeploymentPanel = Echelon.Unity.UI.Battle.DeploymentPanel.Create(UiRoot);
-
-            var guideButton = UiKit.CreateButton(UiRoot, "가이드  /", ToggleGuide, 100f);
-            guideButton.name = "GuideButton";
-            RectTransform guideRect = guideButton.GetComponent<RectTransform>();
-            guideRect.anchorMin = new Vector2(0f, 1f);
-            guideRect.anchorMax = new Vector2(0f, 1f);
-            guideRect.pivot = new Vector2(0f, 1f);
-            guideRect.anchoredPosition = new Vector2(8f, -8f);
 
             DebugOverlay = BattleDebugOverlay.Create(UiRoot);
             DebugOverlay.enabled = false;
