@@ -270,10 +270,8 @@ namespace Echelon.Unity.UI.Battle
             nameLabel.overflowMode = TextOverflowModes.Ellipsis;
             bool dim = !unit.OnMap || (unit.Destroyed && unit.Level != BattleUnitLevel.TaskForce);
             nameLabel.color = dim ? new Color(0.55f, 0.55f, 0.55f) : new Color(0.95f, 0.95f, 0.95f);
-            ColorBlock nameColors = row.NameButton.colors;
-            nameColors.normalColor = Color.clear;
-            row.NameButton.colors = nameColors;
-            row.NameButton.GetComponent<Image>().color = Color.clear;
+            UiKit.SetButtonStyle(row.NameButton, UiButtonStyle.Ghost);
+            nameLabel.color = dim ? new Color(0.55f, 0.55f, 0.55f) : new Color(0.95f, 0.95f, 0.95f);
             OrbatDoubleClick doubleClick = row.NameButton.gameObject.AddComponent<OrbatDoubleClick>();
             doubleClick.Owner = this;
             doubleClick.UnitId = unitId;

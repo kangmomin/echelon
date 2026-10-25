@@ -271,18 +271,7 @@ namespace Echelon.Unity.UI.Guide
         private void UpdateSectionSelection()
         {
             for (var i = 0; i < _sectionButtons.Count; i++)
-            {
-                var selected = i == CurrentSectionIndex;
-                var button = _sectionButtons[i];
-                var colors = button.colors;
-                colors.normalColor = selected ? UiTheme.ButtonSelected : UiTheme.ButtonNormal;
-                colors.selectedColor = selected ? UiTheme.ButtonSelected : UiTheme.ButtonHighlighted;
-                button.colors = colors;
-                var image = button.GetComponent<Image>();
-                image.color = colors.normalColor;
-                var label = button.GetComponentInChildren<TextMeshProUGUI>();
-                label.color = selected ? UiTheme.Accent : UiTheme.Text;
-            }
+                UiKit.SetSelected(_sectionButtons[i], i == CurrentSectionIndex, UiButtonStyle.Ghost);
         }
 
         private void UpdatePanelSize()

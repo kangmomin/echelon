@@ -30,6 +30,7 @@ namespace Echelon.Unity.UI.Battle
         public event Action AltitudeToggleRequested;
         public event Action PauseToggleRequested;
         public event Action<int> SpeedChangeRequested;
+        public event Action GuideRequested;
 
         public bool IsBuilt { get; private set; }
         public BattleCommandType OrderMode { get; private set; } = BattleCommandType.Move;
@@ -503,16 +504,7 @@ namespace Echelon.Unity.UI.Battle
 
         private static void SetSelectedVisual(Button button, bool selected)
         {
-            ColorBlock colors = button.colors;
-            colors.normalColor = selected ? UiTheme.ButtonSelected : UiTheme.ButtonNormal;
-            colors.selectedColor = selected ? UiTheme.ButtonSelected : UiTheme.ButtonHighlighted;
-            button.colors = colors;
-            Image image = button.GetComponent<Image>();
-            if (image != null)
-                image.color = colors.normalColor;
-            TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>();
-            if (label != null)
-                label.color = selected ? UiTheme.Accent : UiTheme.Text;
+            UiKit.SetSelected(button, selected);
         }
 
         private static string FireKey(BattleFireAsset asset, bool smoke)
