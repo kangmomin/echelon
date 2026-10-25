@@ -13,8 +13,6 @@ var faction: StringName = &"US"
 var known_enemies: Dictionary[int, Dictionary] = {}
 ## 승점.
 var vp: float = 0.0
-## 초기 전력(붕괴 판정 기준) — 포인트 합.
-var initial_value: float = 0.0
 var command_capacity_per_min: float = 6.0
 ## 대대 지휘소를 잃었다(지휘 용량 영구 50%).
 var cp_lost: bool = false

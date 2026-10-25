@@ -21,6 +21,9 @@ func test_feature_rasterization() -> void:
 	assert_eq(terrain.type_at(Vector2(2400, 1200)), Terrain.Type.ROAD, "DELTA 다리(도로가 하천을 덮음)")
 	assert_eq(terrain.type_at(Vector2(1300, 2550)), Terrain.Type.FOREST, "FOX 서쪽 숲")
 	assert_eq(terrain.type_at(Vector2(3100, 1650)), Terrain.Type.URBAN, "CHARLIE 마을")
+	assert_eq(terrain.type_at(Vector2(1960, 1960)), Terrain.Type.URBAN, "FOX 마을도 중앙으로 이동")
+	assert_eq(terrain.type_at(Vector2(2000, 2000)), Terrain.Type.ROAD, "FOX 교차로는 거점과 일치")
+	assert_ne(terrain.type_at(Vector2(1825, 2410)), Terrain.Type.URBAN, "기존 FOX 마을 자리를 비움")
 	assert_eq(terrain.type_at(Vector2(3000, 3500)), Terrain.Type.OPEN)
 
 

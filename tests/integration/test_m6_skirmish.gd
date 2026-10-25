@@ -93,6 +93,76 @@ func test_collapse_ends_battle_immediately() -> void:
 	b.dispose()
 
 
+func _full_value(elements: Array[Element], on_map_only: bool = false) -> float:
+	var total: float = 0.0
+	for e: Element in elements:
+		if not on_map_only or e.on_map:
+			total += e.def.cost
+	return total
+
+
+func test_off_map_reinforcements_do_not_weaken_field_force() -> void:
+	var b: Battle = _skirmish([] as Array[StringName], 6)
+	b.run_ticks(5)
+	var blue: TaskForce = b.task_forces[&"blue"]
+	var all: Array[Element] = blue.all_elements()
+	var waiting: Array[Element] = []
+	for e: Element in all:
+		if not e.on_map:
+			waiting.append(e)
+	assert_gt(waiting.size(), 0)
+	var deployed_value: float = _full_value(all, true)
+	assert_almost_eq(b.scoring.committed_value[&"blue"], deployed_value, 0.01,
+		"초기 기준값은 초기 투입 부대만 포함")
+	var before: float = b.scoring.value_ratio(&"blue")
+	for e: Element in waiting:
+		TestFixture.kill(e)
+	b.run_seconds(2.0)
+	assert_true(b.result.is_empty(), "지도 밖 증원 손실은 붕괴를 일으키지 않음")
+	assert_almost_eq(b.scoring.force_value(&"blue"), deployed_value, 0.01)
+	assert_almost_eq(b.scoring.value_ratio(&"blue"), before, 0.0001)
+	b.dispose()
+
+
+func test_reinforcement_arrival_expands_committed_baseline_once() -> void:
+	var b: Battle = _skirmish([] as Array[StringName], 7)
+	b.run_ticks(5)
+	var blue: TaskForce = b.task_forces[&"blue"]
+	var pending_ids: Dictionary[int, bool] = {}
+	for e: Element in blue.all_elements():
+		if not e.on_map:
+			pending_ids[e.id] = true
+	var base_before: float = b.scoring.committed_value[&"blue"]
+	b.reinforcements._bring_in(&"blue", 1, b.tick())
+	var arrived: Array[Element] = []
+	for e: Element in blue.all_elements():
+		if e.on_map and pending_ids.has(e.id):
+			arrived.append(e)
+	assert_gt(arrived.size(), 0)
+	var expected_base: float = base_before + _full_value(arrived)
+	b.run_seconds(2.0)
+	assert_almost_eq(b.scoring.committed_value[&"blue"], expected_base, 0.01,
+		"도착한 증원의 정상 가치를 기준값에 추가")
+	assert_almost_eq(b.scoring.value_ratio(&"blue"), 1.0, 0.001,
+		"정상 증원이 도착했을 뿐이면 전투력 100%")
+	var damaged: Element = null
+	for e: Element in arrived:
+		if not e.is_infantry():
+			damaged = e
+			break
+	assert_not_null(damaged)
+	damaged.state = Element.State.DAMAGED
+	b.run_seconds(2.0)
+	var expected_ratio: float = (expected_base - damaged.def.cost * 0.4) / expected_base
+	assert_almost_eq(b.scoring.value_ratio(&"blue"), expected_ratio, 0.001,
+		"손상 증원은 기준값을 부풀리지 않음")
+	assert_lt(b.scoring.value_ratio(&"blue"), 1.0)
+	b.run_seconds(2.0)
+	assert_almost_eq(b.scoring.committed_value[&"blue"], expected_base, 0.01,
+		"같은 엘리먼트는 기준값에 한 번만 반영")
+	b.dispose()
+
+
 func test_time_limit_decides_by_vp() -> void:
 	var b: Battle = TestFixture.battle_on(TestFixture.flat_map(), 2)
 	var old: float = b.scenario.time_limit_min

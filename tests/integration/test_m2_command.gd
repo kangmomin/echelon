@@ -2,8 +2,19 @@ extends GutTest
 ## M2 검증: 중대 명령이 소대로 번역되어 지연을 두고 전파되고, 통신·지휘 용량·승계가 명령에 영향을 준다. PLAN 14장 M2.
 
 
-func _c2_battle() -> Battle:
-	return TestFixture.battle(3, false)
+var _battles: Array[Battle] = []
+
+
+func _c2_battle(seed_value: int = 3) -> Battle:
+	var b: Battle = TestFixture.battle(seed_value, false)
+	_battles.append(b)
+	return b
+
+
+func after_each() -> void:
+	for b: Battle in _battles:
+		b.dispose()
+	_battles.clear()
 
 
 ## 완료 기준: 중대 1개(소대 3)에 확보 명령 → 25~30초 뒤 소대들이 움직인다.
@@ -139,7 +150,7 @@ func test_delay_estimate_matches_actual() -> void:
 func test_c2_battle_is_deterministic() -> void:
 	var hashes: Array[int] = []
 	for run: int in 2:
-		var b: Battle = TestFixture.battle(9, false)
+		var b: Battle = _c2_battle(9)
 		var c: Company = TestFixture.company(b, &"us_tank_co", &"blue", Vector2(2700, 450))
 		TestFixture.kill(c.commander)
 		TestFixture.move(b, c, Vector2(2600, 900))

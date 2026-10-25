@@ -8,7 +8,7 @@
   ],
   "seed": 20261023,
   "time_limit_min": 40,
-  "collapse_threshold": 0.4,
+  "collapse_threshold": 0.25,
   "sides": {
     "blue": {
       "faction": "US",
@@ -66,8 +66,8 @@
       "id": "cp_fox",
       "name": "교차로 FOX",
       "pos": [
-        1820,
-        2410
+        2000,
+        2000
       ],
       "radius_m": 300,
       "vp_per_min": 1

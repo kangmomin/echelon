@@ -3,7 +3,7 @@ extends SimSystem
 ## 거점·임무 목표·승점·승패 판정. PLAN 11.1.
 ## - 거점: 반경 안에 한쪽 엘리먼트만 있으면 그쪽 점령(양쪽 다 있으면 소유 유지 = 경합). 점령 거점마다 분당 vp_per_min.
 ## - 임무 목표: seize = 제한 시각 전에 점령하면 1회 승점. hold = 누적 점령 시간이 minutes 에 이르면 1회 승점.
-## - 전투력 붕괴: TF 가치(엘리먼트 cost, 손상 60%, 증원 대기 포함)가 처음의 collapse_threshold 이하 → 즉시 패배.
+## - 전투력 붕괴: 전장에 투입된 TF 가치(엘리먼트 cost, 손상 60%)가 투입 기준값의 collapse_threshold 이하 → 즉시 패배.
 ## - 시간 종료: time_limit_min. 승점 많은 쪽 승리, 같으면 무승부.
 
 const INTERVAL: int = 10
@@ -21,7 +21,9 @@ var battle: Battle
 var points: Array[PointState] = []
 var objectives_done: Dictionary[StringName, bool] = {}
 var vp: Dictionary[StringName, float] = {&"blue": 0.0, &"red": 0.0}
-var initial_value: Dictionary[StringName, float] = {}
+## 전장에 투입된 엘리먼트의 정상 가치 합.
+var committed_value: Dictionary[StringName, float] = {}
+var _committed_elements: Dictionary[int, bool] = {}
 
 
 func _init(p_battle: Battle) -> void:
@@ -50,36 +52,47 @@ func get_point(point_id: StringName) -> PointState:
 	return null
 
 
-## 엘리먼트 가치 합(cost × 상태). 증원 대기(지도 밖)도 포함한다.
+## 전장에 있는 엘리먼트의 가치 합(cost × 상태). 증원 대기(지도 밖)는 제외한다.
 func force_value(side: StringName) -> float:
 	var tf: TaskForce = battle.task_forces.get(side)
 	if tf == null:
 		return 0.0
 	var total: float = 0.0
 	for e: Element in tf.all_elements():
-		total += e.def.cost * e.strength()
+		if e.on_map:
+			total += e.def.cost * e.strength()
 	return total
 
 
 func value_ratio(side: StringName) -> float:
-	var init: float = initial_value.get(side, 0.0)
-	if init <= 0.0:
+	var base: float = committed_value.get(side, 0.0)
+	if base <= 0.0:
 		return 1.0
-	return force_value(side) / init
+	return force_value(side) / base
 
 
 func step(world: SimWorld) -> void:
 	if battle.result.size() > 0:
 		return
-	if initial_value.is_empty():
-		for side: StringName in Battle.SIDES:
-			initial_value[side] = force_value(side)
+	_update_committed_value()
 	if world.tick % INTERVAL != 0:
 		return
 	var sec: float = INTERVAL * SimConst.TICK_DT
 	_update_points(world.tick, sec)
 	_update_objectives(world.tick)
 	_check_end(world)
+
+
+func _update_committed_value() -> void:
+	for side: StringName in Battle.SIDES:
+		var tf: TaskForce = battle.task_forces.get(side)
+		if tf == null:
+			continue
+		for e: Element in tf.all_elements():
+			if not e.on_map or _committed_elements.has(e.id):
+				continue
+			_committed_elements[e.id] = true
+			committed_value[side] = committed_value.get(side, 0.0) + e.def.cost
 
 
 func _update_points(tick: int, sec: float) -> void:

@@ -37,6 +37,9 @@ func test_loaded_scenario_structure() -> void:
 	assert_eq(s.sides.size(), 2)
 	assert_eq(s.sides[&"blue"].toe, &"us_armor_bn_tf")
 	assert_eq(s.control_points.size(), 4)
+	assert_eq(s.control_points[0].id, &"cp_fox")
+	assert_eq(s.control_points[0].pos, Vector2(2000, 2000), "FOX 는 지도 중앙")
+	assert_almost_eq(s.collapse_threshold, 0.25, 0.0001)
 	assert_eq(s.objectives[0].point, &"cp_fox")
 
 

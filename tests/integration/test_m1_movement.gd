@@ -3,6 +3,20 @@ extends GutTest
 
 const MAX_STUCK_SEC: float = 10.0
 
+var _battles: Array[Battle] = []
+
+
+func _battle(seed_value: int = 1) -> Battle:
+	var b: Battle = TestFixture.battle(seed_value)
+	_battles.append(b)
+	return b
+
+
+func after_each() -> void:
+	for b: Battle in _battles:
+		b.dispose()
+	_battles.clear()
+
 
 ## 가이드가 움직이는 동안 어떤 엘리먼트든 10초 넘게 멈춰 있으면 실패로 본다.
 func _run_until_arrived(b: Battle, unit: Unit, max_sec: float) -> Dictionary:
@@ -35,7 +49,7 @@ func _max_slot_error(p: Platoon) -> float:
 
 
 func test_platoon_crosses_river_ridge_and_forest() -> void:
-	var b: Battle = TestFixture.battle()
+	var b: Battle = _battle()
 	var p: Platoon = TestFixture.platoon(b, &"us_tank_plt", &"blue", Vector2(600, 300))
 	var goal := Vector2(1150, 2450)
 	var order: Order = TestFixture.move(b, p, goal)
@@ -50,7 +64,7 @@ func test_platoon_crosses_river_ridge_and_forest() -> void:
 
 
 func test_line_formation_aligns_to_facing() -> void:
-	var b: Battle = TestFixture.battle()
+	var b: Battle = _battle()
 	var p: Platoon = TestFixture.platoon(b, &"us_tank_plt", &"blue", Vector2(2700, 3300))
 	var facing: float = PI / 2.0  # 동쪽
 	TestFixture.move(b, p, Vector2(3000, 3400), Order.Type.DEFEND, facing, {"formation": "line"})
@@ -64,7 +78,7 @@ func test_line_formation_aligns_to_facing() -> void:
 
 
 func test_road_march_uses_column() -> void:
-	var b: Battle = TestFixture.battle()
+	var b: Battle = _battle()
 	var p: Platoon = TestFixture.platoon(b, &"us_tank_plt", &"blue", Vector2(3370, 60))
 	TestFixture.move(b, p, Vector2(3020, 680))
 	var r: Dictionary = _run_until_arrived(b, p, 300.0)
@@ -73,7 +87,7 @@ func test_road_march_uses_column() -> void:
 
 
 func test_company_crosses_bridge_in_column_and_reforms() -> void:
-	var b: Battle = TestFixture.battle()
+	var b: Battle = _battle()
 	var c: Company = TestFixture.company(b, &"us_tank_co", &"blue", Vector2(2700, 450))
 	var goal := Vector2(2350, 1900)
 	var order: Order = TestFixture.move(b, c, goal)
@@ -100,7 +114,7 @@ func _slot_of(b: Battle, c: Company, p: Platoon) -> Vector2:
 
 
 func test_formation_change_takes_time() -> void:
-	var b: Battle = TestFixture.battle()
+	var b: Battle = _battle()
 	var p: Platoon = TestFixture.platoon(b, &"us_tank_plt", &"blue", Vector2(2700, 3300))
 	var o: Order = Order.make(Order.Type.SET_FORMATION, p.id, {"formation": "line"})
 	b.issue_order(o)
@@ -116,7 +130,7 @@ func test_formation_change_takes_time() -> void:
 func test_same_seed_same_result() -> void:
 	var h: Array[int] = []
 	for run: int in 2:
-		var b: Battle = TestFixture.battle(5)
+		var b: Battle = _battle(5)
 		var c: Company = TestFixture.company(b, &"us_tank_co", &"blue", Vector2(2700, 450))
 		TestFixture.move(b, c, Vector2(2600, 900))
 		b.run_seconds(60.0)
