@@ -64,7 +64,8 @@ Unity Hub에서 **프로젝트 추가(Add project from disk)**로 이 저장소�
 누를 때 "아직 없음" 안내만 나온다. 웹판에서는 브라우저가 Ctrl+숫자(탭 전환), Alt+숫자(리눅스 탭 전환)를 먼저 가져갈 수 있다 —
 그때는 대형 버튼을 누르거나 데스크톱판을 쓴다.
 
-명령은 지휘망을 타고 지연되어 전파된다(대대→중대 15초, 중대→소대 10초, 실행 준비 5초 × 통신 품질 × 숙련 × 상태).
+명령은 지휘망을 타고 지연되어 전파된다(대대→중대 5초, 중대→소대 3초, 실행 준비 2초 × 통신 품질 × 숙련 × 상태).
+이동은 실제 제원보다 1.5배 빠르게 압축된다(장비 데이터의 km/h 는 실제 값, D-048).
 중대 대형 안 소대에 직접 이동 명령을 내리면 그 소대는 분리되고 지휘 용량을 2 쓴다. 지휘 용량은 분당 6(상단 바).
 커서 옆에 "실행까지 약 N초" 미리보기, 지도에는 전파 중인 명령이 점선과 남은 시간으로 표시된다.
 
@@ -112,6 +113,7 @@ UNITY=/path/to/Unity ./tools/run_unity_tests.sh PlayMode
 ```bash
 ./tools/run_unity.sh -batchmode -nographics -executeMethod Echelon.Unity.Editor.EchelonSmoke.Run -- --scene=sandbox --smoke-ticks=50
 ./tools/check_golden.sh          # Windows: .\tools\check_golden.ps1
+./tools/update_golden.sh         # 규칙을 의도적으로 바꿨을 때만. Windows: .\tools\update_golden.ps1
 ```
 
 디스플레이가 없는 Linux 컨테이너에서는 플레이어 스모크에 SDL dummy 백엔드를 지정한다(데스크톱 GUI 실행에는 사용하지 않는다).
@@ -120,10 +122,10 @@ UNITY=/path/to/Unity ./tools/run_unity_tests.sh PlayMode
 SDL_VIDEODRIVER=dummy ./build/unity/linux/Echelon.x86_64 -batchmode -nographics -- --scene=sandbox --smoke-ticks=50
 ```
 
-골든 데이터는 Godot 4.7.2 구현에서 뽑은 기준값이다(Godot 코드는 D-045로 제거). AAR canonical JSON은 정확히 비교한다.
+지형·난수 골든은 Godot 4.7.2 구현에서 뽑은 기준값이고(Godot 코드는 D-045로 제거), 전투 골든(`tests/golden/battle`)은 D-048 규칙 변경 때 C# 출력으로 다시 만들었다. AAR canonical JSON은 정확히 비교한다.
 Godot 고유의 엔진 상태 해시는 제외하고, 기본 수학 라이브러리의 작은 차이는 1e-12로 제한한다.
 상세 스냅샷은 시드 1·8에서 비교하고, 나머지 시드는 개수·도착 기록·최종 틱·AAR을 검증한다.
-의도한 규칙 변경으로 결과가 바뀌면 골든과 달라지는 것이 정상이며, 그때는 변경 이유를 DECISIONS에 남기고 기준값을 갱신한다.
+의도한 규칙 변경으로 결과가 바뀌면 골든과 달라지는 것이 정상이며, 그때는 변경 이유를 DECISIONS에 남기고 `tools/update_golden.sh`로 기준값을 갱신한다.
 
 브라우저 검증은 Node.js와 Chrome을 사용한다. 먼저 WebGL 빌드와 로컬 서버를 띄운 뒤 다른 터미널에서 검증 스크립트를 실행한다.
 `CHROME`으로 Chrome 경로를, `CHROME_ANGLE`로 렌더링 백엔드(예: `d3d11`, `swiftshader`)를 바꿀 수 있다.
@@ -162,7 +164,7 @@ unity/                Unity 프로젝트
   Assets/Scripts/Platform/ JSON 리소스·플랫폼별 편성 저장
   Assets/Tests/       EditMode·PlayMode 테스트
 tests/csharp/        .NET 테스트
-tests/golden/        동일 시드·지형·전투 기준 데이터(Godot 4.7.2 기준값)
+tests/golden/        동일 시드·지형·전투 기준 데이터(지형·난수는 Godot 4.7.2, 전투는 C# 재생성)
 tools/               실행·검증·빌드 스크립트
 docs/                PLAN.md, DECISIONS.md, REPORT.md
 ```
