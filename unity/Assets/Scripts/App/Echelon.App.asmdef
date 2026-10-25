@@ -1,7 +1,7 @@
 {
   "name": "Echelon.App",
   "rootNamespace": "Echelon.Unity.App",
-  "references": ["Echelon.Core", "Echelon.Presentation", "Echelon.UI", "Echelon.Platform", "Unity.InputSystem", "Unity.TextMeshPro"],
+  "references": ["Echelon.Core", "Echelon.Presentation", "Echelon.UI", "Echelon.Platform", "Unity.InputSystem", "Unity.TextMeshPro", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

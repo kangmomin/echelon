@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Echelon.Unity.App
 {
-    /// <summary>전장의 하늘·주변광·안개·태양을 설정하고, 전투가 끝나면 원래 RenderSettings 로 되돌린다.</summary>
+    /// <summary>
+    /// 전장의 하늘·주변광·안개·태양과 후처리(톤매핑·블룸·색 보정·비네트)를 설정하고,
+    /// 전투가 끝나면 원래 RenderSettings 로 되돌린다.
+    /// </summary>
     internal sealed class BattleEnvironment
     {
         private static readonly Color SkyTint = new Color(0.36f, 0.52f, 0.72f);
@@ -24,6 +28,7 @@ namespace Echelon.Unity.App
         private readonly FogMode _previousFogMode;
         private readonly float _previousFogDensity;
         private Material _skybox;
+        private VolumeProfile _postProcess;
 
         private BattleEnvironment()
         {
@@ -78,7 +83,40 @@ namespace Echelon.Unity.App
             sun.color = SunColor;
             sun.intensity = 1.15f;
             sun.shadows = LightShadows.Soft;
+            sun.shadowStrength = 0.75f;
+            environment._postProcess = CreatePostProcess(parent);
             return environment;
+        }
+
+        /// <summary>
+        /// 전장 전체에 거는 후처리. 중립 톤매핑으로 밝은 하늘·포연이 하얗게 날아가지 않게 하고, 블룸은 포구 섬광·화염에만
+        /// 걸리도록 문턱을 1 가까이 둔다. 대비·채도는 지형 색이 흐릿해 보이지 않을 만큼만 올린다.
+        /// </summary>
+        private static VolumeProfile CreatePostProcess(Transform parent)
+        {
+            VolumeProfile profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            profile.name = "BattlePostProcess";
+            profile.hideFlags = HideFlags.DontSave;
+            profile.Add<Tonemapping>().mode.Override(TonemappingMode.Neutral);
+            Bloom bloom = profile.Add<Bloom>();
+            bloom.threshold.Override(0.95f);
+            bloom.intensity.Override(0.35f);
+            bloom.scatter.Override(0.6f);
+            ColorAdjustments color = profile.Add<ColorAdjustments>();
+            color.postExposure.Override(0.1f);
+            color.contrast.Override(12f);
+            color.saturation.Override(8f);
+            Vignette vignette = profile.Add<Vignette>();
+            vignette.intensity.Override(0.2f);
+            vignette.smoothness.Override(0.45f);
+
+            var volumeObject = new GameObject("PostProcess");
+            volumeObject.transform.SetParent(parent, false);
+            Volume volume = volumeObject.AddComponent<Volume>();
+            volume.isGlobal = true;
+            volume.priority = 10f;
+            volume.sharedProfile = profile;
+            return profile;
         }
 
         public void Restore()
@@ -95,13 +133,20 @@ namespace Echelon.Unity.App
             RenderSettings.fogMode = _previousFogMode;
             RenderSettings.fogDensity = _previousFogDensity;
             DynamicGI.UpdateEnvironment();
-            if (_skybox == null)
+            DestroyOwned(_skybox);
+            _skybox = null;
+            DestroyOwned(_postProcess);
+            _postProcess = null;
+        }
+
+        private static void DestroyOwned(Object target)
+        {
+            if (target == null)
                 return;
             if (Application.isPlaying)
-                Object.Destroy(_skybox);
+                Object.Destroy(target);
             else
-                Object.DestroyImmediate(_skybox);
-            _skybox = null;
+                Object.DestroyImmediate(target);
         }
     }
 }

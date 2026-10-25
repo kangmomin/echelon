@@ -16,6 +16,7 @@ using Echelon.Unity.UI.Guide;
 using Echelon.Unity.UI.Minimap;
 using Echelon.Unity.UI.Tutorial;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using CoreBattle = Echelon.Core.Battle;
 
 namespace Echelon.Unity.App
@@ -286,6 +287,7 @@ namespace Echelon.Unity.App
             var camera = cameraObject.AddComponent<Camera>();
             camera.clearFlags = RenderSettings.skybox != null ? CameraClearFlags.Skybox : CameraClearFlags.SolidColor;
             camera.backgroundColor = BattleEnvironment.BackgroundColor;
+            camera.GetUniversalAdditionalCameraData().renderPostProcessing = true;
             cameraObject.tag = "MainCamera";
             RtsCamera = cameraObject.AddComponent<RtsCameraController>();
             RtsCamera.TargetCamera = camera;
