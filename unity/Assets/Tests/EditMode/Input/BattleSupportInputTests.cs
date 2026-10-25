@@ -16,29 +16,29 @@ namespace Echelon.Unity.Tests.Input
         public void FireModesCycleTargetAndCancelWithoutConsumingSelection()
         {
             Company company = Battle.GetTaskForce(Battle.PlayerSide).Companies[0];
-            Controller.SelectUnit(company.Id);
+            Controller.Commands.SelectUnit(company.Id);
             Controller.HandleKey(Key.T);
-            Assert.That(Controller.FireAsset, Is.EqualTo(BattleFireAsset.Mortar));
-            Assert.That(Controller.FireSmoke, Is.False);
+            Assert.That(Controller.Commands.FireAsset, Is.EqualTo(BattleFireAsset.Mortar));
+            Assert.That(Controller.Commands.FireSmoke, Is.False);
             Controller.HandleKey(Key.T);
-            Assert.That(Controller.FireAsset, Is.EqualTo(BattleFireAsset.Artillery));
+            Assert.That(Controller.Commands.FireAsset, Is.EqualTo(BattleFireAsset.Artillery));
             Controller.HandleKey(Key.T);
-            Assert.That(Controller.FireAsset, Is.Null);
+            Assert.That(Controller.Commands.FireAsset, Is.Null);
 
             Controller.HandleKey(Key.G);
-            Assert.That(Controller.FireAsset, Is.EqualTo(BattleFireAsset.Mortar));
-            Assert.That(Controller.FireSmoke, Is.True);
+            Assert.That(Controller.Commands.FireAsset, Is.EqualTo(BattleFireAsset.Mortar));
+            Assert.That(Controller.Commands.FireSmoke, Is.True);
             Controller.HandleKey(Key.G);
-            Assert.That(Controller.FireAsset, Is.EqualTo(BattleFireAsset.Artillery));
-            Assert.That(Controller.FireSmoke, Is.True);
+            Assert.That(Controller.Commands.FireAsset, Is.EqualTo(BattleFireAsset.Artillery));
+            Assert.That(Controller.Commands.FireSmoke, Is.True);
             Controller.HandleKey(Key.Escape);
-            Assert.That(Controller.FireAsset, Is.Null);
-            CollectionAssert.AreEqual(new[] { company.Id }, Controller.SelectedUnitIds);
+            Assert.That(Controller.Commands.FireAsset, Is.Null);
+            CollectionAssert.AreEqual(new[] { company.Id }, Controller.Commands.SelectedUnitIds);
 
-            Controller.SetFireMode(BattleFireAsset.Cas, true);
-            Assert.That(Controller.FireSmoke, Is.False);
+            Controller.Commands.SetFireMode(BattleFireAsset.Cas, true);
+            Assert.That(Controller.Commands.FireSmoke, Is.False);
             Controller.PointerDown(Vector2.zero, BattlePointerButton.Right);
-            Assert.That(Controller.FireAsset, Is.Null);
+            Assert.That(Controller.Commands.FireAsset, Is.Null);
         }
 
         [Test]
@@ -51,18 +51,18 @@ namespace Echelon.Unity.Tests.Input
             Battle.Comms.Rebuild();
             FireSupportSystem.Mission observed = null;
             var notifications = new List<string>();
-            Controller.FireMissionRequested += mission => observed = mission;
-            Controller.NotificationRequested += notifications.Add;
-            Controller.SetFireMode(BattleFireAsset.Artillery);
+            Controller.Commands.FireMissionRequested += mission => observed = mission;
+            Controller.Commands.Notification += notifications.Add;
+            Controller.Commands.SetFireMode(BattleFireAsset.Artillery);
 
-            FireSupportSystem.Mission mission = Controller.RequestFireSupport(company.Centroid());
+            FireSupportSystem.Mission mission = Controller.Commands.RequestFireSupport(company.Centroid());
 
             Assert.That(mission, Is.Not.Null);
             Assert.That(observed, Is.SameAs(mission));
             Assert.That(Battle.Fires.Missions, Has.Count.EqualTo(1));
             Assert.That(mission.Asset, Is.EqualTo(FireSupportSystem.Asset.ARTILLERY));
             Assert.That(taskForce.ArtilleryMissions, Is.Zero);
-            Assert.That(Controller.FireAsset, Is.Null);
+            Assert.That(Controller.Commands.FireAsset, Is.Null);
             Assert.That(notifications, Has.Count.EqualTo(1));
             StringAssert.Contains("요청", notifications[0]);
         }
@@ -74,19 +74,19 @@ namespace Echelon.Unity.Tests.Input
             Company company = taskForce.Companies[0];
             Battle.Factory.Redeploy(company, taskForce.Guide.Pos + new SimVec2(0f, 100f), 0.0);
             Battle.Comms.Rebuild();
-            Controller.SelectUnit(company.Id);
-            Controller.SetOrderMode(BattleCommandType.Defend);
+            Controller.Commands.SelectUnit(company.Id);
+            Controller.Commands.SetOrderMode(BattleCommandType.Defend);
             Controller.UpdateCursorPreview(new Vector2(50f, 50f));
             StringAssert.Contains("방어", Controller.CursorPreviewText);
             StringAssert.Contains("실행까지", Controller.CursorPreviewText);
 
             Platoon platoon = company.Platoons[0];
-            Controller.SelectUnit(platoon.Id);
+            Controller.Commands.SelectUnit(platoon.Id);
             Controller.UpdateCursorPreview(new Vector2(50f, 50f));
             StringAssert.Contains("직접 명령: 분리", Controller.CursorPreviewText);
 
             taskForce.ArtilleryMissions = 1;
-            Controller.SetFireMode(BattleFireAsset.Artillery);
+            Controller.Commands.SetFireMode(BattleFireAsset.Artillery);
             Controller.UpdateCursorPreview(new Vector2(100f, 100f));
             StringAssert.Contains("포병", Controller.CursorPreviewText);
             StringAssert.Contains("약", Controller.CursorPreviewText);
@@ -99,10 +99,10 @@ namespace Echelon.Unity.Tests.Input
             Company company = Battle.GetTaskForce(Battle.PlayerSide).Companies[0];
             Battle.Deploying = true;
             Battle.World.SetPaused(true);
-            Controller.SelectUnit(company.Id);
+            Controller.Commands.SelectUnit(company.Id);
             SimVec2 target = Battle.Scenario.Sides[Battle.PlayerSide].DeployZone.Center;
 
-            int placed = Controller.DeploySelection(target, 0.7);
+            int placed = Controller.Commands.DeploySelection(target, 0.7);
 
             Assert.That(placed, Is.EqualTo(1));
             Assert.That(company.Guide.Pos.X, Is.EqualTo(target.X).Within(0.001f));
@@ -119,11 +119,11 @@ namespace Echelon.Unity.Tests.Input
             bool paused = Battle.World.Paused;
             Controller.HandleKey(Key.Space);
             Assert.That(Battle.World.Paused, Is.EqualTo(!paused));
-            Controller.TogglePause();
+            Controller.Commands.TogglePause();
             Assert.That(Battle.World.Paused, Is.EqualTo(paused));
 
             int speed = Battle.World.SpeedIndex;
-            Controller.ChangeSpeed(1);
+            Controller.Commands.ChangeSpeed(1);
             Assert.That(Battle.World.SpeedIndex, Is.EqualTo(speed + 1));
             Controller.HandleKey(Key.Minus);
             Assert.That(Battle.World.SpeedIndex, Is.EqualTo(speed));
@@ -144,7 +144,7 @@ namespace Echelon.Unity.Tests.Input
 
             Battle.Deploying = true;
             paused = Battle.World.Paused;
-            Controller.TogglePause();
+            Controller.Commands.TogglePause();
             Assert.That(Battle.World.Paused, Is.EqualTo(paused));
         }
 
@@ -169,7 +169,7 @@ namespace Echelon.Unity.Tests.Input
                 Assert.That(camera.WasdInputBlocked, Is.True);
                 Assert.That(camera.PointerInputBlocked, Is.True);
 
-                Controller.SetGuideOpenFromView(false);
+                Controller.SetGuideOpen(false);
                 Controller.Update();
                 Assert.That(camera.WasdInputBlocked, Is.False);
                 Assert.That(camera.PointerInputBlocked, Is.False);

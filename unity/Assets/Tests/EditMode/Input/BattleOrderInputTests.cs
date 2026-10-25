@@ -16,13 +16,13 @@ namespace Echelon.Unity.Tests.Input
         public void MovementUsesRealOrderNetworkTargetFacingQueueAndReset()
         {
             Company company = Battle.GetTaskForce(Battle.PlayerSide).Companies[0];
-            Controller.SelectUnit(company.Id);
-            Controller.SetOrderMode(BattleCommandType.Seize);
+            Controller.Commands.SelectUnit(company.Id);
+            Controller.Commands.SetOrderMode(BattleCommandType.Seize);
             Order observed = null;
-            Controller.CommandIssued += order => observed = order;
+            Controller.Commands.OrderIssued += order => observed = order;
             var target = new SimVec2(1500f, 1600f);
 
-            IReadOnlyList<Order> orders = Controller.IssueMovementOrders(target, 0.4, true);
+            IReadOnlyList<Order> orders = Controller.Commands.IssueMovementOrders(target, 0.4, true);
 
             Assert.That(orders, Has.Count.EqualTo(1));
             Order order = orders[0];
@@ -38,7 +38,7 @@ namespace Echelon.Unity.Tests.Input
             Assert.That(order.Hops, Is.Not.Empty);
             Assert.That(order.ReceivedTick, Is.EqualTo(-1));
             Assert.That(company.Mission, Is.Not.SameAs(order));
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Move));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Move));
         }
 
         [Test]
@@ -47,12 +47,12 @@ namespace Echelon.Unity.Tests.Input
             TaskForce taskForce = Battle.GetTaskForce(Battle.PlayerSide);
             Company first = taskForce.Companies[0];
             Company second = taskForce.Companies[1];
-            Controller.SelectUnits(new Unit[] { second, first });
-            Controller.SetOrderMode(BattleCommandType.FastMove);
+            Controller.Commands.SelectUnits(new Unit[] { second, first });
+            Controller.Commands.SetOrderMode(BattleCommandType.FastMove);
             var observed = new List<Order>();
-            Controller.CommandIssued += observed.Add;
+            Controller.Commands.OrderIssued += observed.Add;
 
-            IReadOnlyList<Order> orders = Controller.IssueMovementOrders(
+            IReadOnlyList<Order> orders = Controller.Commands.IssueMovementOrders(
                 new SimVec2(2000f, 2000f), 0.0);
 
             Assert.That(orders, Has.Count.EqualTo(2));
@@ -74,9 +74,9 @@ namespace Echelon.Unity.Tests.Input
             Company company = taskForce.Companies[0];
             Platoon platoon = company.Platoons[0];
             Assert.That(platoon.FollowsParent(), Is.True);
-            Controller.SelectUnit(platoon.Id);
+            Controller.Commands.SelectUnit(platoon.Id);
 
-            IReadOnlyList<Order> orders = Controller.IssueMovementOrders(
+            IReadOnlyList<Order> orders = Controller.Commands.IssueMovementOrders(
                 new SimVec2(1700f, 1400f), null, true);
 
             Assert.That(orders, Has.Count.EqualTo(1));
@@ -95,8 +95,8 @@ namespace Echelon.Unity.Tests.Input
         public void RightDragIssuesFacingAtInitialTargetAndShiftQueues()
         {
             Company company = Battle.GetTaskForce(Battle.PlayerSide).Companies[0];
-            Controller.SelectUnit(company.Id);
-            Controller.SetOrderMode(BattleCommandType.Defend);
+            Controller.Commands.SelectUnit(company.Id);
+            Controller.Commands.SetOrderMode(BattleCommandType.Defend);
             Controller.SetHeightFieldPickDelegate((Vector2 screen, out Vector2 target) =>
             {
                 target = screen * 10f;
@@ -119,7 +119,7 @@ namespace Echelon.Unity.Tests.Input
             }
             Assert.That(Controller.IsRightDragging, Is.False);
             Assert.That(Controller.HasDirectionPreview, Is.False);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Move));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Move));
         }
 
         [Test]
@@ -127,14 +127,14 @@ namespace Echelon.Unity.Tests.Input
         {
             Company company = Battle.GetTaskForce(Battle.PlayerSide).Companies[0];
             var issued = new List<Order>();
-            Controller.CommandIssued += issued.Add;
-            Controller.SelectUnit(company.Id);
+            Controller.Commands.OrderIssued += issued.Add;
+            Controller.Commands.SelectUnit(company.Id);
             Controller.HandleKey(Key.Digit7, alt: true);
             Assert.That(issued, Has.Count.EqualTo(1));
             Assert.That(issued[0].Type, Is.EqualTo(OrderType.SET_FORMATION));
             Assert.That(issued[0].GetString("formation"), Is.EqualTo("co_box"));
 
-            Controller.SelectUnit(company.Platoons[0].Id);
+            Controller.Commands.SelectUnit(company.Platoons[0].Id);
             Controller.HandleKey(Key.Digit7, alt: true);
             Assert.That(issued, Has.Count.EqualTo(2));
             Assert.That(issued[1].GetString("formation"), Is.EqualTo("coil"));
@@ -146,12 +146,12 @@ namespace Echelon.Unity.Tests.Input
         public void ImmediateCommandsCarrySopMountResupplyDetachAndRejoinParameters()
         {
             Company company = Battle.GetTaskForce(Battle.PlayerSide).Companies[1];
-            Controller.SelectUnit(company.Id);
+            Controller.Commands.SelectUnit(company.Id);
             var issued = new List<Order>();
-            Controller.CommandIssued += issued.Add;
+            Controller.Commands.OrderIssued += issued.Add;
             string originalRoe = company.Sop.Roe;
 
-            Controller.ToggleHoldFire();
+            Controller.Commands.ToggleHoldFire();
             Assert.That(issued[0].Type, Is.EqualTo(OrderType.SET_SOP));
             string sop = issued[0].GetString("sop");
             StringAssert.Contains("roe", sop);
@@ -161,14 +161,14 @@ namespace Echelon.Unity.Tests.Input
             string[] techniques = { BattleSop.Traveling, BattleSop.Overwatch, BattleSop.Bounding };
             int techniqueIndex = Array.IndexOf(techniques, company.Sop.Technique);
             string expectedTechnique = techniques[(techniqueIndex + 1) % techniques.Length];
-            Controller.CycleTechnique();
+            Controller.Commands.CycleTechnique();
             StringAssert.Contains(expectedTechnique, issued[1].GetString("sop"));
 
-            Controller.ToggleMount();
+            Controller.Commands.ToggleMount();
             Assert.That(issued[2].Type, Is.EqualTo(OrderType.DISMOUNT));
-            Controller.IssueImmediateOrder(new BattleCommandIntent(BattleCommandType.Resupply));
-            Controller.IssueImmediateOrder(new BattleCommandIntent(BattleCommandType.Detach));
-            Controller.IssueImmediateOrder(new BattleCommandIntent(BattleCommandType.Rejoin));
+            Controller.Commands.IssueImmediateOrder(new BattleCommandIntent(BattleCommandType.Resupply));
+            Controller.Commands.IssueImmediateOrder(new BattleCommandIntent(BattleCommandType.Detach));
+            Controller.Commands.IssueImmediateOrder(new BattleCommandIntent(BattleCommandType.Rejoin));
             Assert.That(issued[3].Type, Is.EqualTo(OrderType.RESUPPLY));
             Assert.That(issued[4].Type, Is.EqualTo(OrderType.DETACH));
             Assert.That(issued[5].Type, Is.EqualTo(OrderType.REJOIN));
@@ -182,10 +182,10 @@ namespace Echelon.Unity.Tests.Input
             Company company = taskForce.Companies[0];
             var issued = new List<Order>();
             var notifications = new List<string>();
-            Controller.CommandIssued += issued.Add;
-            Controller.NotificationRequested += notifications.Add;
-            Controller.SelectUnit(company.Id);
-            Controller.ToggleAltitude();
+            Controller.Commands.OrderIssued += issued.Add;
+            Controller.Commands.Notification += notifications.Add;
+            Controller.Commands.SelectUnit(company.Id);
+            Controller.Commands.ToggleAltitude();
             Assert.That(issued, Is.Empty);
             Assert.That(notifications, Has.Count.EqualTo(1));
 
@@ -193,8 +193,8 @@ namespace Echelon.Unity.Tests.Input
                 Catalog.GetUnitTemplate("us_aviation_sec"), Battle.PlayerSide,
                 new SimVec2(1800f, 800f), 0.0, taskForce);
             taskForce.Organic.Add(helicopter);
-            Controller.SelectUnits(new Unit[] { company, helicopter });
-            Controller.ToggleAltitude();
+            Controller.Commands.SelectUnits(new Unit[] { company, helicopter });
+            Controller.Commands.ToggleAltitude();
 
             Assert.That(issued, Has.Count.EqualTo(1));
             Assert.That(issued[0].TargetUnitId, Is.EqualTo(helicopter.Id));
@@ -207,26 +207,26 @@ namespace Echelon.Unity.Tests.Input
         public void TargetModeHotkeysCoverMovementEngineeringAndHaltReset()
         {
             Controller.HandleKey(Key.F);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.FastMove));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.FastMove));
             Controller.HandleKey(Key.Q);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.AttackMove));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.AttackMove));
             Controller.HandleKey(Key.Y);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Seize));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Seize));
             Controller.HandleKey(Key.J);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Defend));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Defend));
             Controller.HandleKey(Key.B);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Withdraw));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Withdraw));
             Controller.HandleKey(Key.N);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.LayMines));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.LayMines));
             Controller.HandleKey(Key.I);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.ClearMines));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.ClearMines));
             Controller.HandleKey(Key.O);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Fortify));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Fortify));
             Controller.HandleKey(Key.M);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Move));
-            Controller.SetOrderMode(BattleCommandType.AttackMove);
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Move));
+            Controller.Commands.SetOrderMode(BattleCommandType.AttackMove);
             Controller.HandleKey(Key.E);
-            Assert.That(Controller.OrderMode, Is.EqualTo(BattleCommandType.Move));
+            Assert.That(Controller.Commands.OrderMode, Is.EqualTo(BattleCommandType.Move));
         }
     }
 }

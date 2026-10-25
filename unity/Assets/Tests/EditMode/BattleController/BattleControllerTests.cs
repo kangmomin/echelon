@@ -64,9 +64,9 @@ namespace Echelon.Unity.Tests.BattleComposition
             Compose(battle);
             Company company = Battle.GetTaskForce(Battle.PlayerSide).Companies[0];
             DeploymentZoneData zone = BattleViewAdapter.CreateDeploymentZone(Battle);
-            Controller.SelectUnit(company.Id);
+            Controller.Commands.SelectUnit(company.Id);
 
-            int placed = Controller.DeploySelection(zone.Zone.center, 0.5f);
+            int placed = Controller.Commands.DeploySelection(zone.Zone.center, 0.5f);
 
             Assert.AreEqual(1, placed);
             Assert.Less(BattleViewAdapter.ToVector(company.Guide.Pos).x, zone.Zone.xMax);
@@ -239,7 +239,7 @@ namespace Echelon.Unity.Tests.BattleComposition
             Assert.IsFalse(Controller.Input.enabled);
             Assert.IsFalse(Controller.RtsCamera.InputEnabled);
 
-            Controller.CloseOverlay();
+            Controller.CloseGuide();
 
             Assert.IsFalse(Controller.IsGuideOpen);
             Assert.IsFalse(Battle.World.Paused);

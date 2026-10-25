@@ -88,7 +88,7 @@ namespace Echelon.Unity.Tests.PlayMode
             Company company = battle.Battle.GetTaskForce(battle.Battle.PlayerSide).Companies[0];
             battle.Input.ClickUnit(company.Id);
             DeploymentZoneData zone = BattleViewAdapter.CreateDeploymentZone(battle.Battle);
-            Assert.That(battle.DeploySelection(zone.Zone.center, 0f), Is.GreaterThan(0));
+            Assert.That(battle.Commands.DeploySelection(zone.Zone.center, 0f), Is.GreaterThan(0));
             battle.DeploymentPanel.StartButton.onClick.Invoke();
             Assert.IsFalse(battle.Battle.Deploying);
 
@@ -134,42 +134,42 @@ namespace Echelon.Unity.Tests.PlayMode
             battle.Input.ClickUnit(company.Id);
             AdvanceTutorial(battle, TutorialStepId.ControlGroups);
 
-            battle.Input.AssignGroup(1);
-            battle.Input.ClearSelection();
+            battle.Commands.AssignGroup(1);
+            battle.Commands.ClearSelection();
             battle.AdvanceFrame(0f);
             battle.Tutorial.Tick(0f);
             battle.Input.RecallGroup(1);
             AdvanceTutorial(battle, TutorialStepId.Formation);
 
-            battle.Input.SetFormation("co_line");
+            battle.Commands.SetFormation("co_line");
             AdvanceSeconds(battle, 30);
             AdvanceTutorial(battle, TutorialStepId.TimeControls);
-            battle.Input.TogglePause();
-            battle.Input.ChangeSpeed(1);
+            battle.Commands.TogglePause();
+            battle.Commands.ChangeSpeed(1);
             battle.AdvanceFrame(0f);
             battle.Tutorial.Tick(0f);
-            battle.Input.TogglePause();
+            battle.Commands.TogglePause();
             AdvanceTutorial(battle, TutorialStepId.MovementOrder);
 
             battle.Input.ClickUnit(company.Id);
-            Assert.That(battle.Input.IssueMovementOrders(TutorialController.TutorialWaypoint).Count, Is.EqualTo(1));
+            Assert.That(battle.Commands.IssueMovementOrders(TutorialController.TutorialWaypoint).Count, Is.EqualTo(1));
             AdvanceTutorial(battle, TutorialStepId.CommandDelay);
             AdvanceSeconds(battle, 60);
             AdvanceTutorial(battle, TutorialStepId.RulesOfEngagement);
 
-            battle.Input.ToggleHoldFire();
+            battle.Commands.ToggleHoldFire();
             AdvanceSeconds(battle, 30);
             battle.Tutorial.Tick(0f);
-            battle.Input.ToggleHoldFire();
+            battle.Commands.ToggleHoldFire();
             AdvanceSeconds(battle, 30);
             AdvanceTutorial(battle, TutorialStepId.AttackMove);
             battle.Input.ClickUnit(company.Id);
-            battle.Input.SetOrderMode(BattleCommandType.AttackMove);
-            Assert.That(battle.Input.IssueMovementOrders(TutorialController.TutorialEnemy).Count, Is.EqualTo(1));
+            battle.Commands.SetOrderMode(BattleCommandType.AttackMove);
+            Assert.That(battle.Commands.IssueMovementOrders(TutorialController.TutorialEnemy).Count, Is.EqualTo(1));
             AdvanceTutorial(battle, TutorialStepId.FireSupport);
 
-            battle.Input.SetFireMode(BattleFireAsset.Mortar, false);
-            Assert.NotNull(battle.Input.RequestFireSupport(TutorialController.TutorialEnemy));
+            battle.Commands.SetFireMode(BattleFireAsset.Mortar, false);
+            Assert.NotNull(battle.Commands.RequestFireSupport(TutorialController.TutorialEnemy));
             AdvanceTutorial(battle, TutorialStepId.EnemyDestruction);
             for (int attempt = 0; attempt < 16 && tutorial.CurrentStepId == TutorialStepId.EnemyDestruction; attempt++)
             {

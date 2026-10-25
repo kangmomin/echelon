@@ -24,7 +24,7 @@ namespace Echelon.Unity.Tests.Input
             Battle = BattleSetup.Sandbox(Catalog);
             ControllerObject = new GameObject("BattleInputControllerTests");
             Controller = ControllerObject.AddComponent<BattleInputController>();
-            Controller.Configure(Battle, (Vector2 screen, out Vector2 target) =>
+            Controller.Configure(new BattleCommands(Battle), (Vector2 screen, out Vector2 target) =>
             {
                 target = screen;
                 return true;
