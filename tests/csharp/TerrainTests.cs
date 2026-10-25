@@ -38,11 +38,6 @@ namespace Echelon.Core.Tests
             JsonElement expected = TerrainTestSupport.GoldenMap.Value.RootElement.GetProperty("arrays").GetProperty(name);
             byte[] actualBytes = ArrayBytes(terrain, name, out int count);
             string actualHash = Hash(actualBytes);
-            if (actualHash != expected.GetProperty("sha256").GetString())
-            {
-                ReportFirstDifference(name, actualBytes);
-            }
-
             Assert.That(count, Is.EqualTo(expected.GetProperty("count").GetInt32()), name + " count");
             Assert.That(actualHash, Is.EqualTo(expected.GetProperty("sha256").GetString()), name + " full-array SHA-256");
         }
@@ -195,32 +190,6 @@ namespace Echelon.Core.Tests
         private static string Hash(byte[] bytes)
         {
             return Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
-        }
-
-        private static void ReportFirstDifference(string name, byte[] actual)
-        {
-            string path = TerrainTestSupport.OracleBinaryPath(name);
-            if (!File.Exists(path))
-            {
-                return;
-            }
-
-            byte[] expected = File.ReadAllBytes(path);
-            int limit = Math.Min(expected.Length, actual.Length);
-            int differences = Math.Abs(expected.Length - actual.Length);
-            for (int i = 0; i < limit; i++)
-            {
-                if (expected[i] != actual[i])
-                {
-                    differences++;
-                    if (differences == 1)
-                    {
-                        TestContext.Error.WriteLine(name + " first difference at byte " + i + ": expected " + expected[i] + ", actual " + actual[i]);
-                    }
-                }
-            }
-
-            TestContext.Error.WriteLine(name + " differing bytes: " + differences);
         }
     }
 }

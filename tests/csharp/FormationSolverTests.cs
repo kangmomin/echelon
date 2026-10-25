@@ -33,7 +33,7 @@ namespace Echelon.Core.Tests
         [Test]
         public void EveryDefinitionUsesItsThreeAndFourSlotSets()
         {
-            foreach (FormationDef formation in TerrainTestSupport.Catalog.Value.Formations.Values)
+            foreach (FormationDef formation in DataTestAssets.Catalog.Formations.Values)
             {
                 foreach (int count in new[] { 3, 4 })
                 {
@@ -53,7 +53,7 @@ namespace Echelon.Core.Tests
         [Test]
         public void EveryDefinitionAppliesOpenForestUrbanAndFallbackScaling()
         {
-            foreach (FormationDef formation in TerrainTestSupport.Catalog.Value.Formations.Values)
+            foreach (FormationDef formation in DataTestAssets.Catalog.Formations.Values)
             {
                 foreach (int count in new[] { 3, 4 })
                 {
@@ -79,7 +79,7 @@ namespace Echelon.Core.Tests
         [Test]
         public void EveryDefinitionExposesAllModifiersAndDefaults()
         {
-            foreach (FormationDef formation in TerrainTestSupport.Catalog.Value.Formations.Values)
+            foreach (FormationDef formation in DataTestAssets.Catalog.Formations.Values)
             {
                 foreach (string key in FormationDef.ModKeys)
                 {
@@ -94,10 +94,10 @@ namespace Echelon.Core.Tests
                 Assert.That(formation.GetMod("missing", 0.375), Is.EqualTo(0.375));
             }
 
-            Assert.That(TerrainTestSupport.Catalog.Value.GetFormation("coil")!.AllowedMoving, Is.False);
-            Assert.That(TerrainTestSupport.Catalog.Value.GetFormation("column")!.GetMod("road_speed"), Is.EqualTo(1.4));
-            Assert.That(TerrainTestSupport.Catalog.Value.GetFormation("echelon_left")!.GetMod("flank_side"), Is.EqualTo(-1.0));
-            Assert.That(TerrainTestSupport.Catalog.Value.GetFormation("echelon_right")!.GetMod("flank_side"), Is.EqualTo(1.0));
+            Assert.That(DataTestAssets.Catalog.GetFormation("coil")!.AllowedMoving, Is.False);
+            Assert.That(DataTestAssets.Catalog.GetFormation("column")!.GetMod("road_speed"), Is.EqualTo(1.4));
+            Assert.That(DataTestAssets.Catalog.GetFormation("echelon_left")!.GetMod("flank_side"), Is.EqualTo(-1.0));
+            Assert.That(DataTestAssets.Catalog.GetFormation("echelon_right")!.GetMod("flank_side"), Is.EqualTo(1.0));
         }
 
         [Test]
@@ -137,7 +137,7 @@ namespace Echelon.Core.Tests
 
         private static FormationDef Wedge()
         {
-            FormationDef? wedge = TerrainTestSupport.Catalog.Value.GetFormation("wedge");
+            FormationDef? wedge = DataTestAssets.Catalog.GetFormation("wedge");
             Assert.That(wedge, Is.Not.Null);
             return wedge!;
         }

@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -8,23 +7,11 @@ namespace Echelon.Core.Tests
     internal static class TestFixture
     {
         private static readonly Lazy<DataCatalog> SharedCatalog = new Lazy<DataCatalog>(() =>
-            DataLoader.LoadCatalog(Path.Combine(RepositoryRoot(), "data")));
+            DataLoader.LoadCatalog(DataTestAssets.DataRoot));
 
         public static DataCatalog Catalog()
         {
             return SharedCatalog.Value;
-        }
-
-        public static string RepositoryRoot()
-        {
-            var current = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
-            while (current != null)
-            {
-                if (Directory.Exists(Path.Combine(current.FullName, "data")))
-                    return current.FullName;
-                current = current.Parent;
-            }
-            throw new DirectoryNotFoundException("Could not find the repository data directory");
         }
 
         public static Battle Battle(int seedValue = 1, bool instant = true)

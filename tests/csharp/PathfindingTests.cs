@@ -151,10 +151,9 @@ namespace Echelon.Core.Tests
         [OneTimeSetUp]
         public void BuildTerrainAndPathfinder()
         {
-            string root = FindRepositoryRoot();
-            _golden = JsonDocument.Parse(File.ReadAllText(Path.Combine(root, "tests", "golden", "map01.json")));
+            _golden = JsonDocument.Parse(File.ReadAllText(Path.Combine(DataTestAssets.GoldenRoot, "map01.json")));
             _cellSize = _golden.RootElement.GetProperty("cell_m").GetSingle();
-            DataCatalog catalog = DataLoader.LoadCatalog(Path.Combine(root, "data"));
+            DataCatalog catalog = DataLoader.LoadCatalog(DataTestAssets.DataRoot);
             Assert.That(catalog.IsValid(), Is.True, string.Join("\n", catalog.Errors));
             MapDef? map = catalog.GetMap("map01");
             Assert.That(map, Is.Not.Null);
@@ -265,27 +264,6 @@ namespace Echelon.Core.Tests
             {
                 Assert.That(actual[i], Is.EqualTo(expected[i]), $"{context} point {i}");
             }
-        }
-
-        private static string FindRepositoryRoot()
-        {
-            var starts = new[] { Directory.GetCurrentDirectory(), AppContext.BaseDirectory };
-            foreach (string start in starts)
-            {
-                DirectoryInfo? directory = new DirectoryInfo(start);
-                while (directory != null)
-                {
-                    if (File.Exists(Path.Combine(directory.FullName, "tests", "golden", "map01.json")) &&
-                        File.Exists(Path.Combine(directory.FullName, "data", "maps", "map01.json")))
-                    {
-                        return directory.FullName;
-                    }
-
-                    directory = directory.Parent;
-                }
-            }
-
-            throw new AssertionException("Could not locate the repository and map01 data.");
         }
     }
 }

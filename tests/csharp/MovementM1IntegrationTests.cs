@@ -11,7 +11,7 @@ namespace Echelon.Core.Tests
     public sealed class MovementM1IntegrationTests
     {
         private const double MaxStuckSec = 10.0;
-        private static DataCatalog Catalog => TerrainTestSupport.Catalog.Value;
+        private static DataCatalog Catalog => DataTestAssets.Catalog;
         private readonly List<Battle> _battles = new List<Battle>();
 
         [TearDown]

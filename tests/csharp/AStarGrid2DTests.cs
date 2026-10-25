@@ -133,18 +133,17 @@ namespace Echelon.Core.Tests
         [OneTimeSetUp]
         public void LoadOracle()
         {
-            string repositoryRoot = FindRepositoryRoot();
-            string goldenPath = Path.Combine(repositoryRoot, "tests", "golden", "map01.json");
-            _golden = JsonDocument.Parse(File.ReadAllText(goldenPath));
+            _golden = JsonDocument.Parse(File.ReadAllText(Path.Combine(DataTestAssets.GoldenRoot, "map01.json")));
             JsonElement root = _golden.RootElement;
             _width = root.GetProperty("width").GetInt32();
             _height = root.GetProperty("height").GetInt32();
             _cellSize = root.GetProperty("cell_m").GetSingle();
-            string oracle = Path.Combine(repositoryRoot, "build", "unity_oracle");
-            _types = File.ReadAllBytes(Path.Combine(oracle, "types.bin"));
-            _slopes = ReadFloats(Path.Combine(oracle, "slopes.bin"));
-            _passableVehicle = File.ReadAllBytes(Path.Combine(oracle, "passable_vehicle.bin"));
-            _passableFoot = File.ReadAllBytes(Path.Combine(oracle, "passable_foot.bin"));
+            // TerrainTests가 이 배열들의 SHA-256을 골든 값과 대조한다.
+            Terrain terrain = TerrainTestSupport.Map01.Value;
+            _types = terrain.Types;
+            _slopes = terrain.Slopes;
+            _passableVehicle = terrain.PassableVehicle;
+            _passableFoot = terrain.PassableFoot;
             Assert.That(_types.Length, Is.EqualTo(_width * _height));
             Assert.That(_slopes.Length, Is.EqualTo(_width * _height));
         }
@@ -318,36 +317,6 @@ namespace Echelon.Core.Tests
             }
 
             return points.ToArray();
-        }
-
-        private static float[] ReadFloats(string path)
-        {
-            byte[] bytes = File.ReadAllBytes(path);
-            Assert.That(bytes.Length % 4, Is.Zero);
-            var values = new float[bytes.Length / 4];
-            Buffer.BlockCopy(bytes, 0, values, 0, bytes.Length);
-            return values;
-        }
-
-        private static string FindRepositoryRoot()
-        {
-            var starts = new[] { Directory.GetCurrentDirectory(), AppContext.BaseDirectory };
-            foreach (string start in starts)
-            {
-                var directory = new DirectoryInfo(start);
-                while (directory != null)
-                {
-                    if (File.Exists(Path.Combine(directory.FullName, "tests", "golden", "map01.json")) &&
-                        File.Exists(Path.Combine(directory.FullName, "build", "unity_oracle", "types.bin")))
-                    {
-                        return directory.FullName;
-                    }
-
-                    directory = directory.Parent;
-                }
-            }
-
-            throw new AssertionException("Could not locate the repository and Unity oracle files.");
         }
     }
 }

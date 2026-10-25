@@ -24,8 +24,6 @@ concurrency:
 
 env:
   UNITY_VERSION: "6000.3.27f1"
-  GODOT_VERSION: "4.7.2"
-  GODOT_BIN: /opt/godot/Godot_v4.7.2-stable_linux.x86_64
   DOTNET_VERSION: "8.0.426"
 
 jobs:
@@ -42,47 +40,20 @@ jobs:
         run: |
           ./tools/run_dotnet_tests.sh
           ./tools/run_dotnet_tests.sh --filter "Name~ColumnAttackTradesWorseThanLine|Name~ForestEdgeHelpsDefender"
-      - name: 공유 데이터 동기화
-        run: python3 tools/sync_unity_data.py
-      - name: 8개 시드의 실제 전투 생성
-        run: ./tools/run_headless.sh --snapshots --seeds=1,2,3,4,5,6,7,8 --detail=1,8 --out=build/snapshot_unity/ci
-      - name: Godot 기준과 비교
-        run: python3 tools/compare_unity_snapshots.py --actual=build/snapshot_unity/ci --ignore-prefix=engine_hashes --float-tolerance=1e-12 --json=build/validation/unity_parity.json
+      - name: Unity 데이터 복사본 동기화 검사
+        run: python3 tools/sync_unity_data.py --check
+      - name: 8개 시드 골든 비교
+        run: ./tools/check_golden.sh
       - name: 검증 산출물
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: unity-simulation-validation
-          path: build/validation/unity_parity.json
-
-  reference:
-    name: Godot 기준 구현 회귀 검사
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@v4
-      - name: Godot 캐시
-        id: cache-godot
-        uses: actions/cache@v4
-        with:
-          path: /opt/godot
-          key: godot-${{ env.GODOT_VERSION }}-linux
-      - name: Godot 받기
-        if: steps.cache-godot.outputs.cache-hit != 'true'
-        run: |
-          sudo mkdir -p /opt/godot && sudo chown "$USER" /opt/godot
-          curl -fsSL -o /tmp/godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
-          unzip -q /tmp/godot.zip -d /opt/godot
-      - name: 정적 타입 검사
-        run: GODOT=$GODOT_BIN ./tools/check_warnings.sh
-      - name: GUT 테스트
-        run: GODOT=$GODOT_BIN ./tools/run_tests.sh
-      - name: 참조 스모크
-        run: GODOT=$GODOT_BIN ./tools/run_smoke.sh 100
+          name: golden-check
+          path: build/validation/golden_check.json
 
   unity-tests:
     name: Unity ${{ matrix.testMode }}
-    needs: [core, reference]
+    needs: core
     runs-on: ubuntu-latest
     timeout-minutes: 35
     strategy:
@@ -142,8 +113,6 @@ jobs:
           path: unity/Library
           key: Library-build-${{ matrix.targetPlatform }}-${{ hashFiles('unity/Assets/**', 'unity/Packages/**', 'unity/ProjectSettings/**', 'src/Echelon.Core/**') }}
           restore-keys: Library-build-${{ matrix.targetPlatform }}-
-      - name: 공유 데이터 동기화
-        run: python3 tools/sync_unity_data.py
       - name: 빌드
         uses: game-ci/unity-builder@v4
         env:
@@ -160,7 +129,7 @@ jobs:
       - name: 데스크톱 패키지
         if: matrix.output != 'web'
         run: |
-          cp assets/fonts/OFL.txt build/unity/${{ matrix.output }}/
+          cp unity/Assets/Fonts/OFL.txt build/unity/${{ matrix.output }}/
           mkdir -p build/packages
           (cd build/unity/${{ matrix.output }} && zip -qr ../../packages/echelon-${{ matrix.artifact }}.zip .)
       - uses: actions/upload-artifact@v4

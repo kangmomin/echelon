@@ -7,7 +7,7 @@ namespace Echelon.Core.Tests
     [TestFixture]
     public sealed class MovementSystemTests
     {
-        private static DataCatalog Catalog => TerrainTestSupport.Catalog.Value;
+        private static DataCatalog Catalog => DataTestAssets.Catalog;
 
         [Test]
         public void ElementStepStoresPreviousPositionVelocityAndArrivalHeading()

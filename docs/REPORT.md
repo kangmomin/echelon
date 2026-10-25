@@ -4,7 +4,7 @@
 
 ## Unity 전환 (2026-10-25)
 
-현재 실행 엔진은 **Unity 6000.3.27f1 LTS, URP, C#**이다. `src/Echelon.Core`는 엔진과 독립된 10 Hz 시뮬레이션이고, `unity/`에 지형·장비·효과·침로·입력·전투 HUD·편성·가이드·튜토리얼·AAR·저장을 연결했다. `data/`가 유일한 정의 원본이며 Unity의 138개 JSON 복사본은 동기화 도구가 내용을 검사한다. Godot는 결과 비교용 참조 구현으로 남긴다.
+현재 실행 엔진은 **Unity 6000.3.27f1 LTS, URP, C#**이다. `src/Echelon.Core`는 엔진과 독립된 10 Hz 시뮬레이션이고, `unity/`에 지형·장비·효과·침로·입력·전투 HUD·편성·가이드·튜토리얼·AAR·저장을 연결했다. `data/`가 유일한 정의 원본이며 Unity의 138개 JSON 복사본은 동기화 도구가 내용을 검사한다. Godot 코드는 이후 제거했고(D-045), Godot 4.7.2에서 뽑은 기준값은 `tests/golden`에 남아 `tools/check_golden.sh`로 비교한다.
 
 ### 자동 검증
 

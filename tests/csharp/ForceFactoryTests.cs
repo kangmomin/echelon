@@ -8,7 +8,7 @@ namespace Echelon.Core.Tests
     [TestFixture]
     public sealed class ForceFactoryTests
     {
-        private static DataCatalog Catalog => TerrainTestSupport.Catalog.Value;
+        private static DataCatalog Catalog => DataTestAssets.Catalog;
 
         [Test]
         public void SandboxCreatesStableIdsCompositionAndCommanders()

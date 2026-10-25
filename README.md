@@ -8,7 +8,7 @@ Broken Arrow 를 기반으로 **제대(梯隊) 지휘·편제표·전술 대형�
 설계는 [`docs/PLAN.md`](docs/PLAN.md), 설계 변경 기록은 [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 - 엔진: **Unity 6000.3.27f1 LTS**, URP, C#
-- 테스트: .NET/NUnit, Unity Test Framework. Godot는 결과 비교용 참조 구현으로 유지
+- 테스트: .NET/NUnit, Unity Test Framework, 8개 시드 골든 비교(`tests/golden`)
 - 현재 단계: **M7 완료 + Unity 전환**. 검증 결과는 [`docs/REPORT.md`](docs/REPORT.md), 플레이테스트 기록은 [`docs/PLAYTEST.md`](docs/PLAYTEST.md)
 
 ## 실행
@@ -71,7 +71,7 @@ Unity Hub에서 **프로젝트 추가(Add project from disk)**로 이 저장소�
 전투(M3): 엘리먼트는 2초마다 주변을 탐지하고(거리·크기·은폐·지형·이동·대형 측면 경계), 본 적은 소대→중대→대대로
 지연 보고된다. 화면에는 아군이 지금 보고 있는 적과 대대에 보고된 적(오래되면 흐림)만 보인다.
 사격은 명중(거리·숙련·이동·제압·피복) → 맞은 방향 장갑 대 관통력(격파/손상/튕김) 순서로 판정하고,
-병병·IFV 피해 규칙은 기존 구현과 같다. 앞 아군 차량이 사선을 가리면 쏘지 않는다.
+보병은 인원 손실, 탑승 중 IFV 가 격파되면 분대가 절반을 잃고 내린다. 앞 아군 차량이 사선을 가리면 쏘지 않는다.
 제압·사기(40 이하 공격 거부, 20 이하 패주)와 소대 SOP(접촉 시 정지 사격·철수 기준·하차)가 자동으로 돈다.
 
 화력·보급(M5): 화력 요청은 지휘 용량 1을 쓰고, 표적을 보는 관측자(관측반이 최선)와 통신 상태에 따라 지연·정확도가
@@ -107,12 +107,11 @@ UNITY=/path/to/Unity ./tools/run_unity_tests.sh PlayMode
 ./tools/build_unity.sh all
 ```
 
-실제 전투 50틱과 8개 시드의 동일 시드 비교:
+실제 전투 50틱과 8개 시드 골든 비교(시뮬레이션을 바꿨다면 반드시 돌린다):
 
 ```bash
 ./tools/run_unity.sh -batchmode -nographics -executeMethod Echelon.Unity.Editor.EchelonSmoke.Run -- --scene=sandbox --smoke-ticks=50
-./tools/run_headless.sh --snapshots --seeds=1,2,3,4,5,6,7,8 --detail=1,8 --out=build/snapshot_unity/local
-python3 tools/compare_unity_snapshots.py --actual=build/snapshot_unity/local --ignore-prefix=engine_hashes --float-tolerance=1e-12
+./tools/check_golden.sh          # Windows: .\tools\check_golden.ps1
 ```
 
 디스플레이가 없는 Linux 컨테이너에서는 플레이어 스모크에 SDL dummy 백엔드를 지정한다(데스크톱 GUI 실행에는 사용하지 않는다).
@@ -121,17 +120,10 @@ python3 tools/compare_unity_snapshots.py --actual=build/snapshot_unity/local --i
 SDL_VIDEODRIVER=dummy ./build/unity/linux/Echelon.x86_64 -batchmode -nographics -- --scene=sandbox --smoke-ticks=50
 ```
 
-AAR canonical JSON은 정확히 비교한다. 엔진별 상태 해시는 제외하고, 기본 수학 라이브러리의 작은 차이는 1e-12로 제한한다.
-상세 스냅샷은 시드 1·8에서 비교하고, 나머지 시드는 개수·도착 기록·최종 틱·AAR을 검증한다. 자세한 범위와 한계는 `docs/REPORT.md`에 있다.
-
-Godot 참조 구현의 테스트와 프로파일러도 남겨 두었다(출시 실행 경로가 아니다).
-
-```bash
-GODOT=/path/to/godot ./tools/run_tests.sh
-GODOT=/path/to/godot ./tools/run_smoke.sh
-GODOT=/path/to/godot ./tools/check_warnings.sh
-$GODOT --headless --path . -s res://tools/profile_sim.gd -- --ticks=1500 --extra=5
-```
+골든 데이터는 Godot 4.7.2 구현에서 뽑은 기준값이다(Godot 코드는 D-045로 제거). AAR canonical JSON은 정확히 비교한다.
+Godot 고유의 엔진 상태 해시는 제외하고, 기본 수학 라이브러리의 작은 차이는 1e-12로 제한한다.
+상세 스냅샷은 시드 1·8에서 비교하고, 나머지 시드는 개수·도착 기록·최종 틱·AAR을 검증한다.
+의도한 규칙 변경으로 결과가 바뀌면 골든과 달라지는 것이 정상이며, 그때는 변경 이유를 DECISIONS에 남기고 기준값을 갱신한다.
 
 브라우저 검증은 Node.js와 Chrome을 사용한다. 먼저 WebGL 빌드와 로컬 서버를 띄운 뒤 다른 터미널에서 검증 스크립트를 실행한다.
 `CHROME`으로 Chrome 경로를, `CHROME_ANGLE`로 렌더링 백엔드(예: `d3d11`, `swiftshader`)를 바꿀 수 있다.
@@ -147,14 +139,14 @@ node --experimental-websocket tools/web_smoke.mjs
 
 로컬 빌드는 `./tools/build_unity.sh all`(Windows에서는 `.\tools\build_unity.ps1 all`)로 만든다. Unity Hub의 Windows·Linux·WebGL 빌드 모듈이 필요하다.
 
-`.github/workflows/ci-deploy.yml`은 .NET·Unity EditMode·PlayMode 검증과 Godot 참조 검사를 거쳐 WebGL·Windows·Linux를 빌드한다.
+`.github/workflows/ci-deploy.yml`은 .NET 테스트·골든 비교·데이터 동기화 검사와 Unity EditMode·PlayMode를 거쳐 WebGL·Windows·Linux를 빌드한다.
 통과하면 `main`에서 **웹 빌드를 GitHub Pages에 배포**하고, `v*` 태그 또는 `release_tag`로 데스크톱 실행 파일을 Releases에 첨부한다.
 원격 Unity 실행에는 `UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD` Secrets가 필요하다(GameCI Personal 라이선스).
 
 - `build/unity/windows/Echelon.exe`: Windows 플레이어
 - `build/unity/linux/Echelon.x86_64`: Linux 플레이어
 - `build/unity/web/index.html`: WebGL 2. 로컬에서는 `python3 tools/serve_unity_web.py --port 8000` 후 `http://localhost:8000`으로 연다. Unity 압축 해제 대체 기능도 켜져 있어 Brotli 헤더를 설정할 수 없는 일반 정적 호스팅을 지원한다
-- 한글은 내장 Noto Sans KR(SIL OFL, `assets/fonts`)로 그린다
+- 한글은 내장 Noto Sans KR(SIL OFL, `unity/Assets/Fonts`)로 그린다
 
 ## 디렉터리 구조
 
@@ -169,10 +161,8 @@ unity/                Unity 프로젝트
   Assets/Scripts/UI/  메뉴·편성·전투 HUD·가이드·튜토리얼·AAR
   Assets/Scripts/Platform/ JSON 리소스·플랫폼별 편성 저장
   Assets/Tests/       EditMode·PlayMode 테스트
-sim/, game/, services/ Godot 참조 구현
 tests/csharp/        .NET 테스트
-tests/unit/, tests/integration/ Godot GUT 참조 테스트
-tests/golden/        동일 시드·지형·전투 기준 데이터
+tests/golden/        동일 시드·지형·전투 기준 데이터(Godot 4.7.2 기준값)
 tools/               실행·검증·빌드 스크립트
 docs/                PLAN.md, DECISIONS.md, REPORT.md
 ```
@@ -181,5 +171,5 @@ docs/                PLAN.md, DECISIONS.md, REPORT.md
 
 - 공유 시뮬레이션 시간은 10 Hz 정수 틱으로만 다루고 `Time.timeScale`에 의존하지 않는다. 난수는 `world.rng`에서만 뽑는다.
 - `src/Echelon.Core`는 `UnityEngine`에 의존하지 않는다. 시뮬 → 표현 통신은 `world.events`와 읽기 전용 상태로 한다.
-- `data/`가 유일한 정의 원본이다. Unity의 `Resources/GameData`는 `tools/sync_unity_data.py`로 생성한 복사본이므로 직접 고치지 않는다.
-- Godot 파일은 동작 비교용으로 유지하며, 새 실행 경로는 Unity와 `src/Echelon.Core`다.
+- `data/`가 유일한 정의 원본이다. Unity의 `Resources/GameData`는 `tools/sync_unity_data.sh`로 만드는 복사본이므로 직접 고치지 않는다.
+  CI는 `--check`로 복사본이 원본과 같은지 검사한다.

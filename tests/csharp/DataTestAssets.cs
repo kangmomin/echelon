@@ -11,8 +11,11 @@ namespace Echelon.Core.Tests
     {
         private static DataCatalog? _catalog;
 
-        internal static string RepositoryRoot => FindRepositoryRoot();
+        private static readonly Lazy<string> Root = new Lazy<string>(FindRepositoryRoot);
+
+        internal static string RepositoryRoot => Root.Value;
         internal static string DataRoot => Path.Combine(RepositoryRoot, "data");
+        internal static string GoldenRoot => Path.Combine(RepositoryRoot, "tests", "golden");
         internal static DataCatalog Catalog => _catalog ??= FreshCatalog();
 
         internal static DataCatalog FreshCatalog()
@@ -68,8 +71,8 @@ namespace Echelon.Core.Tests
                 DirectoryInfo? current = new DirectoryInfo(start);
                 while (current != null)
                 {
-                    if (File.Exists(Path.Combine(current.FullName, "project.godot")) &&
-                        File.Exists(Path.Combine(current.FullName, "data", "formations.json")))
+                    if (File.Exists(Path.Combine(current.FullName, "data", "formations.json")) &&
+                        File.Exists(Path.Combine(current.FullName, "tests", "golden", "map01.json")))
                     {
                         return current.FullName;
                     }
