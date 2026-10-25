@@ -1,0 +1,14 @@
+{
+  "name": "Echelon.UI",
+  "rootNamespace": "Echelon.Unity.UI",
+  "references": ["Echelon.Core", "Echelon.Presentation", "Unity.InputSystem", "Unity.TextMeshPro"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

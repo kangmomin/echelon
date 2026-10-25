@@ -1,0 +1,33 @@
+{
+  "id": "us_avenger",
+  "name": "M1097 어벤저",
+  "faction": "US",
+  "class": "aa",
+  "hp": 50,
+  "armor": {
+    "front": 10,
+    "side": 10,
+    "rear": 10,
+    "top": 5
+  },
+  "size": 1.0,
+  "stealth": 0.15,
+  "optics_m": 4000,
+  "speed_kmh": {
+    "road": 90,
+    "offroad": 45
+  },
+  "weapons": [
+    "stinger",
+    "m2_hmg"
+  ],
+  "ammo": {
+    "stinger": 8,
+    "m2_hmg": 200
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 2,
+  "cost": 20,
+  "supply_full": 4
+}

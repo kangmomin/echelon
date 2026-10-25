@@ -1,0 +1,23 @@
+{
+  "id": "xm813_he",
+  "name": "30 mm XM813 고폭탄",
+  "type": "AC",
+  "range_m": {
+    "min": 0,
+    "max": 2500
+  },
+  "penetration": 12,
+  "damage": 7,
+  "accuracy": {
+    "base": 0.55,
+    "at_max_range": 0.2
+  },
+  "rof_rpm": 200,
+  "suppression": 16,
+  "fire_on_move": true,
+  "targets": [
+    "infantry"
+  ],
+  "he_radius_m": 3.5,
+  "burst": 3
+}

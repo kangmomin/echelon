@@ -1,0 +1,37 @@
+{
+  "id": "us_m2a3",
+  "name": "M2A3 브래들리",
+  "faction": "US",
+  "class": "ifv",
+  "hp": 100,
+  "armor": {
+    "front": 350,
+    "side": 120,
+    "rear": 60,
+    "top": 30
+  },
+  "size": 1.1,
+  "stealth": 0.1,
+  "optics_m": 2200,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 38
+  },
+  "weapons": [
+    "m242_apds",
+    "m242_he",
+    "tow2b",
+    "m240_coax"
+  ],
+  "ammo": {
+    "m242_apds": 150,
+    "m242_he": 300,
+    "tow2b": 7,
+    "m240_coax": 2200
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 1,
+  "crew": 3,
+  "cost": 34,
+  "supply_full": 8
+}

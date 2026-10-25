@@ -1,0 +1,24 @@
+{
+  "id": "s8_rockets",
+  "name": "S-8 로켓",
+  "type": "HE",
+  "range_m": {
+    "min": 500,
+    "max": 4500
+  },
+  "penetration": 80,
+  "damage": 45,
+  "accuracy": {
+    "base": 0.45,
+    "at_max_range": 0.25
+  },
+  "rof_rpm": 20,
+  "suppression": 55,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 12,
+  "burst": 5
+}

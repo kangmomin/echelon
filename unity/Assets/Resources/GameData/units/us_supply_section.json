@@ -1,0 +1,22 @@
+{
+  "id": "us_supply_section",
+  "name": "보급반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "supply",
+  "elements": [
+    {
+      "element": "us_hemtt",
+      "count": 3
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular",
+  "role": "HEMTT 보급 트럭 3대. 탄약 보급과 수리.",
+  "pros": [
+    "오래 싸울 수 있게 한다(K 보급)"
+  ],
+  "cons": [
+    "무장 없음 — 후방에 둔다"
+  ]
+}

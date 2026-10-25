@@ -1,0 +1,23 @@
+{
+  "id": "ag17_gl",
+  "name": "30 mm AG-17 유탄발사기",
+  "type": "HE",
+  "range_m": {
+    "min": 50,
+    "max": 1700
+  },
+  "penetration": 15,
+  "damage": 8,
+  "accuracy": {
+    "base": 0.5,
+    "at_max_range": 0.2
+  },
+  "rof_rpm": 400,
+  "suppression": 25,
+  "fire_on_move": true,
+  "targets": [
+    "infantry"
+  ],
+  "he_radius_m": 6,
+  "burst": 5
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Echelon.Platform",
+  "rootNamespace": "Echelon.Unity.Platform",
+  "references": ["Echelon.Core"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

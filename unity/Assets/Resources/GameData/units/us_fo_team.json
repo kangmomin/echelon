@@ -1,0 +1,23 @@
+{
+  "id": "us_fo_team",
+  "name": "포병 관측반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "fo",
+  "elements": [
+    {
+      "element": "us_m7_fist",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular",
+  "role": "M7 BFIST 관측반. 화력 요청을 빠르고 정확하게.",
+  "pros": [
+    "관측 4.5 km",
+    "포격 지연·오차를 크게 줄인다"
+  ],
+  "cons": [
+    "무장이 약하다"
+  ]
+}

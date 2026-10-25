@@ -1,0 +1,38 @@
+{
+  "id": "ru_t90m",
+  "name": "T-90M",
+  "faction": "RU",
+  "class": "tank",
+  "hp": 100,
+  "armor": {
+    "front": 850,
+    "side": 300,
+    "rear": 120,
+    "top": 50
+  },
+  "size": 1.0,
+  "stealth": 0.15,
+  "optics_m": 2300,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "2a46m_apfsds",
+    "9m119_atgm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "2a46m_apfsds": 22,
+    "9m119_atgm": 4,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 3,
+  "cost": 45,
+  "supply_full": 10,
+  "loadouts": [
+    "t90m"
+  ]
+}

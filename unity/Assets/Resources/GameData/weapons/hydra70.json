@@ -1,0 +1,24 @@
+{
+  "id": "hydra70",
+  "name": "하이드라 70 로켓",
+  "type": "HE",
+  "range_m": {
+    "min": 500,
+    "max": 5000
+  },
+  "penetration": 60,
+  "damage": 40,
+  "accuracy": {
+    "base": 0.5,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 12,
+  "suppression": 50,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 12,
+  "burst": 4
+}

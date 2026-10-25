@@ -1,0 +1,23 @@
+{
+  "id": "2a46m_apfsds",
+  "name": "125 mm 날개안정분리철갑탄(2A46M)",
+  "type": "KE",
+  "range_m": {
+    "min": 100,
+    "max": 3000
+  },
+  "penetration": 750,
+  "pen_falloff_per_km": 0.06,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.7,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 7,
+  "suppression": 30,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle"
+  ],
+  "he_radius_m": 0
+}

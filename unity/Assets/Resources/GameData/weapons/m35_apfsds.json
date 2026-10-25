@@ -1,0 +1,22 @@
+{
+  "id": "m35_apfsds",
+  "name": "105 mm M35 날개안정분리철갑탄",
+  "type": "KE",
+  "range_m": {
+    "min": 100,
+    "max": 3000
+  },
+  "penetration": 520,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.75,
+    "at_max_range": 0.35
+  },
+  "rof_rpm": 8,
+  "suppression": 30,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle"
+  ],
+  "pen_falloff_per_km": 0.06
+}

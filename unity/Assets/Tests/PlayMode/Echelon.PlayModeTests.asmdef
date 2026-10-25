@@ -1,0 +1,14 @@
+{
+  "name": "Echelon.PlayModeTests",
+  "rootNamespace": "Echelon.Unity.Tests.PlayMode",
+  "references": ["Echelon.App", "Echelon.Core", "Echelon.Presentation", "Echelon.UI", "Echelon.Platform", "Unity.InputSystem", "Unity.TextMeshPro", "UnityEngine.TestRunner"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": ["nunit.framework.dll"],
+  "autoReferenced": false,
+  "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

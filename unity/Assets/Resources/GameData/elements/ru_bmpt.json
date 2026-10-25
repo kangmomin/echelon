@@ -1,0 +1,37 @@
+{
+  "id": "ru_bmpt",
+  "name": "BMPT 테르미나토르",
+  "faction": "RU",
+  "class": "ifv",
+  "hp": 100,
+  "armor": {
+    "front": 800,
+    "side": 260,
+    "rear": 110,
+    "top": 45
+  },
+  "size": 1.0,
+  "stealth": 0.12,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "9m120_ataka",
+    "2a42_30mm",
+    "ag17_gl",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "9m120_ataka": 4,
+    "2a42_30mm": 850,
+    "ag17_gl": 600,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 5,
+  "cost": 50,
+  "supply_full": 10
+}

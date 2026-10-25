@@ -1,0 +1,35 @@
+{
+  "id": "us_m1296",
+  "name": "M1296 스트라이커 드라군",
+  "faction": "US",
+  "class": "ifv",
+  "hp": 100,
+  "armor": {
+    "front": 90,
+    "side": 60,
+    "rear": 40,
+    "top": 15
+  },
+  "size": 1.1,
+  "stealth": 0.12,
+  "optics_m": 2200,
+  "speed_kmh": {
+    "road": 97,
+    "offroad": 55
+  },
+  "weapons": [
+    "xm813_apfsds",
+    "xm813_he",
+    "m240_coax"
+  ],
+  "ammo": {
+    "xm813_apfsds": 150,
+    "xm813_he": 250,
+    "m240_coax": 2000
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 1,
+  "crew": 3,
+  "cost": 30,
+  "supply_full": 6
+}

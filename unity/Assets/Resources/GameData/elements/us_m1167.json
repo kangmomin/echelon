@@ -1,0 +1,31 @@
+{
+  "id": "us_m1167",
+  "name": "M1167 HMMWV TOW",
+  "faction": "US",
+  "class": "at",
+  "hp": 60,
+  "armor": {
+    "front": 20,
+    "side": 15,
+    "rear": 10,
+    "top": 5
+  },
+  "size": 0.8,
+  "stealth": 0.3,
+  "optics_m": 3000,
+  "speed_kmh": {
+    "road": 100,
+    "offroad": 55
+  },
+  "weapons": [
+    "tow2b"
+  ],
+  "ammo": {
+    "tow2b": 6
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 16,
+  "supply_full": 3
+}

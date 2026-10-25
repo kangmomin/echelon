@@ -1,0 +1,25 @@
+{
+  "id": "xm914_30mm",
+  "name": "30 mm XM914 기관포",
+  "type": "AC",
+  "range_m": {
+    "min": 50,
+    "max": 3000
+  },
+  "penetration": 100,
+  "damage": 35,
+  "accuracy": {
+    "base": 0.65,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 200,
+  "suppression": 12,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "air",
+    "infantry"
+  ],
+  "pen_falloff_per_km": 0.15,
+  "burst": 4
+}

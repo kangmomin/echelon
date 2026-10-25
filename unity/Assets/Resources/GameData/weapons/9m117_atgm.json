@@ -1,0 +1,21 @@
+{
+  "id": "9m117_atgm",
+  "name": "9M117 바스티온 포발사 미사일",
+  "type": "ATGM",
+  "range_m": {
+    "min": 100,
+    "max": 5500
+  },
+  "penetration": 600,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.8,
+    "at_max_range": 0.7
+  },
+  "rof_rpm": 2,
+  "suppression": 40,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle"
+  ]
+}

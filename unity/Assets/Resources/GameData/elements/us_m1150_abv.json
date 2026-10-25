@@ -1,0 +1,31 @@
+{
+  "id": "us_m1150_abv",
+  "name": "M1150 돌파 장비",
+  "faction": "US",
+  "class": "eng",
+  "hp": 100,
+  "armor": {
+    "front": 850,
+    "side": 330,
+    "rear": 140,
+    "top": 55
+  },
+  "size": 1.25,
+  "stealth": 0.08,
+  "optics_m": 1800,
+  "speed_kmh": {
+    "road": 55,
+    "offroad": 32
+  },
+  "weapons": [
+    "m240_coax"
+  ],
+  "ammo": {
+    "m240_coax": 2000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 2,
+  "cost": 40,
+  "supply_full": 6
+}

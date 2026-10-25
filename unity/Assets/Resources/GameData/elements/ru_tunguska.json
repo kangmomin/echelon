@@ -1,0 +1,33 @@
+{
+  "id": "ru_tunguska",
+  "name": "2K22M1 퉁구스카",
+  "faction": "RU",
+  "class": "aa",
+  "hp": 90,
+  "armor": {
+    "front": 40,
+    "side": 20,
+    "rear": 15,
+    "top": 10
+  },
+  "size": 1.2,
+  "stealth": 0.1,
+  "optics_m": 7000,
+  "speed_kmh": {
+    "road": 65,
+    "offroad": 40
+  },
+  "weapons": [
+    "9m311_sam",
+    "2a38m_30mm"
+  ],
+  "ammo": {
+    "9m311_sam": 8,
+    "2a38m_30mm": 1900
+  },
+  "radio_range_m": 2000,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 36,
+  "supply_full": 6
+}

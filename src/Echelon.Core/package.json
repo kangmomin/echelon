@@ -1,0 +1,8 @@
+{
+  "name": "com.echelon.core",
+  "version": "0.1.0",
+  "displayName": "Echelon Core",
+  "description": "Unity-independent deterministic simulation primitives for Echelon.",
+  "unity": "2022.3",
+  "type": "library"
+}

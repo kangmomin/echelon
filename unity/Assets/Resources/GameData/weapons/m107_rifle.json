@@ -1,0 +1,21 @@
+{
+  "id": "m107_rifle",
+  "name": "M107 12.7 mm 저격총",
+  "type": "MG",
+  "range_m": {
+    "min": 0,
+    "max": 1800
+  },
+  "penetration": 25,
+  "damage": 4,
+  "accuracy": {
+    "base": 0.6,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 12,
+  "suppression": 25,
+  "fire_on_move": false,
+  "targets": [
+    "infantry"
+  ]
+}

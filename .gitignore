@@ -8,3 +8,25 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code 로컬 설정
+.claude/settings.local.json
+
+# Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]in/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+.vs/
+TestResults/
+
+# 로컬 마이그레이션 도구 (버전 관리 제외)
+tools/.cache/
+tools/.dotnet/
+tools/.engines/
+
+# Python 캐시
+__pycache__/
+*.py[cod]

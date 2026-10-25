@@ -1,0 +1,25 @@
+{
+  "id": "ru_kornet_sec",
+  "name": "코르넷 대전차반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "at",
+  "elements": [
+    {
+      "element": "ru_at_squad",
+      "count": 3
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "코르넷 3개 반. 숨어서 5.5 km 밖 전차 정면도 뚫는다.",
+  "pros": [
+    "관통력 최강(1100)",
+    "은밀하다",
+    "싸다"
+  ],
+  "cons": [
+    "도보라 느리다",
+    "보병 화력이 약하다"
+  ]
+}

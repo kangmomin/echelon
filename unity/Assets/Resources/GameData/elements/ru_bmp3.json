@@ -1,0 +1,37 @@
+{
+  "id": "ru_bmp3",
+  "name": "BMP-3",
+  "faction": "RU",
+  "class": "ifv",
+  "hp": 100,
+  "armor": {
+    "front": 300,
+    "side": 100,
+    "rear": 50,
+    "top": 25
+  },
+  "size": 1.1,
+  "stealth": 0.1,
+  "optics_m": 2200,
+  "speed_kmh": {
+    "road": 70,
+    "offroad": 40
+  },
+  "weapons": [
+    "2a70_he",
+    "9m117_atgm",
+    "2a72_30mm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "2a70_he": 40,
+    "9m117_atgm": 8,
+    "2a72_30mm": 500,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 1,
+  "crew": 3,
+  "cost": 23,
+  "supply_full": 8
+}

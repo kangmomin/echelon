@@ -1,0 +1,23 @@
+{
+  "id": "m240_coax",
+  "name": "7.62 mm M240 동축기관총",
+  "type": "MG",
+  "range_m": {
+    "min": 0,
+    "max": 1100
+  },
+  "penetration": 8,
+  "pen_falloff_per_km": 0.3,
+  "damage": 4,
+  "accuracy": {
+    "base": 0.45,
+    "at_max_range": 0.15
+  },
+  "rof_rpm": 600,
+  "suppression": 12,
+  "fire_on_move": true,
+  "targets": [
+    "infantry"
+  ],
+  "he_radius_m": 0
+}

@@ -1,0 +1,21 @@
+{
+  "id": "at4",
+  "name": "AT4 대전차 로켓",
+  "type": "HEAT",
+  "range_m": {
+    "min": 0,
+    "max": 300
+  },
+  "penetration": 420,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.55,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 1,
+  "suppression": 30,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle"
+  ]
+}

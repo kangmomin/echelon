@@ -1,0 +1,36 @@
+{
+  "id": "us_ada_section",
+  "name": "방공반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "aa",
+  "elements": [
+    {
+      "element": "us_avenger",
+      "count": 2
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular",
+  "loadouts": [
+    {
+      "id": "avenger",
+      "name": "어벤저"
+    },
+    {
+      "id": "mshorad",
+      "name": "M-SHORAD",
+      "replace": {
+        "us_avenger": "us_mshorad"
+      }
+    }
+  ],
+  "role": "방공반. CAS·헬기를 쏜다.",
+  "pros": [
+    "적 항공 지원·헬기 요격",
+    "M-SHORAD: 30 mm 기관포 + 스팅어"
+  ],
+  "cons": [
+    "지상 전투력 약함"
+  ]
+}

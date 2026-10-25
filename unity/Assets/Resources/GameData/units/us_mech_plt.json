@@ -1,0 +1,42 @@
+{
+  "id": "us_mech_plt",
+  "name": "기계화보병 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "mech",
+  "elements": [
+    {
+      "element": "us_m2a3",
+      "count": 4
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "us_inf_squad",
+      "count": 4
+    }
+  ],
+  "loadouts": [
+    {
+      "id": "jav1",
+      "name": "분대 재블린 1기"
+    },
+    {
+      "id": "jav2",
+      "name": "분대 재블린 2기",
+      "replace": {
+        "us_inf_squad": "us_inf_squad_jav2"
+      }
+    }
+  ],
+  "role": "M2A3 4대 + 보병 4개 분대.",
+  "pros": [
+    "보병과 IFV 를 함께 운용",
+    "분대 재블린으로 대전차"
+  ],
+  "cons": [
+    "IFV 장갑은 전차포에 약하다"
+  ]
+}

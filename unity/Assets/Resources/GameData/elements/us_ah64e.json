@@ -1,0 +1,35 @@
+{
+  "id": "us_ah64e",
+  "name": "AH-64E 아파치",
+  "faction": "US",
+  "class": "heli",
+  "hp": 100,
+  "armor": {
+    "front": 30,
+    "side": 25,
+    "rear": 20,
+    "top": 20
+  },
+  "size": 1.3,
+  "stealth": 0.05,
+  "optics_m": 7000,
+  "speed_kmh": {
+    "road": 220,
+    "offroad": 220
+  },
+  "weapons": [
+    "agm114_hellfire",
+    "m230_30mm",
+    "hydra70"
+  ],
+  "ammo": {
+    "agm114_hellfire": 8,
+    "m230_30mm": 600,
+    "hydra70": 19
+  },
+  "radio_range_m": 10000,
+  "transport_capacity": 0,
+  "crew": 2,
+  "cost": 95,
+  "supply_full": 12
+}

@@ -1,0 +1,35 @@
+{
+  "id": "ru_ka52",
+  "name": "Ka-52 앨리게이터",
+  "faction": "RU",
+  "class": "heli",
+  "hp": 100,
+  "armor": {
+    "front": 35,
+    "side": 28,
+    "rear": 22,
+    "top": 22
+  },
+  "size": 1.3,
+  "stealth": 0.05,
+  "optics_m": 7000,
+  "speed_kmh": {
+    "road": 230,
+    "offroad": 230
+  },
+  "weapons": [
+    "9k121_vikhr",
+    "2a42_30mm",
+    "s8_rockets"
+  ],
+  "ammo": {
+    "9k121_vikhr": 12,
+    "2a42_30mm": 460,
+    "s8_rockets": 40
+  },
+  "radio_range_m": 10000,
+  "transport_capacity": 0,
+  "crew": 2,
+  "cost": 92,
+  "supply_full": 12
+}

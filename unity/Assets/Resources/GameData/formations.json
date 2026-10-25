@@ -1,0 +1,752 @@
+{
+  "formations": [
+    {
+      "id": "column",
+      "name": "종대",
+      "echelon": "platoon",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            -50
+          ],
+          [
+            0,
+            -100
+          ],
+          [
+            0,
+            -150
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            -50
+          ],
+          [
+            0,
+            -100
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.5,
+        "urban": 0.5
+      },
+      "mods": {
+        "speed": 1.25,
+        "front_fire": 0.25,
+        "flank_security": 0.25,
+        "arty_vuln": 1.5,
+        "control": 0.8,
+        "transition_sec": 10,
+        "road_speed": 1.4
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "wedge",
+      "name": "쐐기",
+      "echelon": "platoon",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            -60,
+            -50
+          ],
+          [
+            60,
+            -50
+          ],
+          [
+            0,
+            -100
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            -60,
+            -50
+          ],
+          [
+            60,
+            -50
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.5,
+        "urban": 0.5
+      },
+      "mods": {
+        "speed": 1.0,
+        "front_fire": 0.75,
+        "flank_security": 0.5,
+        "arty_vuln": 1.0,
+        "control": 1.0,
+        "transition_sec": 10
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "line",
+      "name": "횡대",
+      "echelon": "platoon",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            -100,
+            0
+          ],
+          [
+            100,
+            0
+          ],
+          [
+            200,
+            0
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            -100,
+            0
+          ],
+          [
+            100,
+            0
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.5,
+        "urban": 0.5
+      },
+      "mods": {
+        "speed": 0.8,
+        "front_fire": 1.0,
+        "flank_security": 0.25,
+        "arty_vuln": 0.7,
+        "control": 1.3,
+        "transition_sec": 10
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "echelon_left",
+      "name": "제대 좌",
+      "echelon": "platoon",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            -50,
+            -50
+          ],
+          [
+            -100,
+            -100
+          ],
+          [
+            -150,
+            -150
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            -50,
+            -50
+          ],
+          [
+            -100,
+            -100
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.5,
+        "urban": 0.5
+      },
+      "mods": {
+        "speed": 0.9,
+        "front_fire": 0.5,
+        "flank_security": 1.0,
+        "arty_vuln": 1.0,
+        "control": 1.0,
+        "transition_sec": 10,
+        "flank_side": -1
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "echelon_right",
+      "name": "제대 우",
+      "echelon": "platoon",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            50,
+            -50
+          ],
+          [
+            100,
+            -100
+          ],
+          [
+            150,
+            -150
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            50,
+            -50
+          ],
+          [
+            100,
+            -100
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.5,
+        "urban": 0.5
+      },
+      "mods": {
+        "speed": 0.9,
+        "front_fire": 0.5,
+        "flank_security": 1.0,
+        "arty_vuln": 1.0,
+        "control": 1.0,
+        "transition_sec": 10,
+        "flank_side": 1
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "vee",
+      "name": "V",
+      "echelon": "platoon",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            100,
+            0
+          ],
+          [
+            25,
+            -80
+          ],
+          [
+            75,
+            -80
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            100,
+            0
+          ],
+          [
+            50,
+            -80
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.5,
+        "urban": 0.5
+      },
+      "mods": {
+        "speed": 0.9,
+        "front_fire": 0.75,
+        "flank_security": 0.5,
+        "arty_vuln": 1.0,
+        "control": 1.3,
+        "transition_sec": 10
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "coil",
+      "name": "사주 경계",
+      "echelon": "platoon",
+      "slots": {
+        "4": [
+          [
+            0,
+            40
+          ],
+          [
+            40,
+            0
+          ],
+          [
+            0,
+            -40
+          ],
+          [
+            -40,
+            0
+          ]
+        ],
+        "3": [
+          [
+            0,
+            40
+          ],
+          [
+            35,
+            -20
+          ],
+          [
+            -35,
+            -20
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.5,
+        "urban": 0.5
+      },
+      "mods": {
+        "speed": 0.0,
+        "front_fire": 0.25,
+        "flank_security": 1.0,
+        "arty_vuln": 1.5,
+        "control": 0.8,
+        "transition_sec": 10
+      },
+      "allowed_moving": false
+    },
+    {
+      "id": "co_column",
+      "name": "소대 종대",
+      "echelon": "company",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            -300
+          ],
+          [
+            0,
+            -600
+          ],
+          [
+            0,
+            -900
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            -300
+          ],
+          [
+            0,
+            -600
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.6,
+        "urban": 0.6
+      },
+      "mods": {
+        "speed": 1.15,
+        "front_fire": 0.25,
+        "flank_security": 0.25,
+        "arty_vuln": 1.2,
+        "control": 0.9,
+        "transition_sec": 10,
+        "road_speed": 1.3
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "co_line",
+      "name": "소대 횡대",
+      "echelon": "company",
+      "slots": {
+        "4": [
+          [
+            -200,
+            0
+          ],
+          [
+            200,
+            0
+          ],
+          [
+            -600,
+            0
+          ],
+          [
+            600,
+            0
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            -400,
+            0
+          ],
+          [
+            400,
+            0
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.6,
+        "urban": 0.6
+      },
+      "mods": {
+        "speed": 0.9,
+        "front_fire": 1.0,
+        "flank_security": 0.25,
+        "arty_vuln": 0.9,
+        "control": 1.2,
+        "transition_sec": 10
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "co_wedge",
+      "name": "쐐기 (1 up 2 back)",
+      "echelon": "company",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            -300,
+            -250
+          ],
+          [
+            300,
+            -250
+          ],
+          [
+            0,
+            -500
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            -300,
+            -250
+          ],
+          [
+            300,
+            -250
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.6,
+        "urban": 0.6
+      },
+      "mods": {
+        "speed": 1.0,
+        "front_fire": 0.75,
+        "flank_security": 0.5,
+        "arty_vuln": 1.0,
+        "control": 1.0,
+        "transition_sec": 10
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "co_vee",
+      "name": "V (2 up 1 back)",
+      "echelon": "company",
+      "slots": {
+        "4": [
+          [
+            -300,
+            0
+          ],
+          [
+            300,
+            0
+          ],
+          [
+            0,
+            -300
+          ],
+          [
+            0,
+            -600
+          ]
+        ],
+        "3": [
+          [
+            -300,
+            0
+          ],
+          [
+            300,
+            0
+          ],
+          [
+            0,
+            -300
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.6,
+        "urban": 0.6
+      },
+      "mods": {
+        "speed": 0.95,
+        "front_fire": 0.75,
+        "flank_security": 0.5,
+        "arty_vuln": 1.0,
+        "control": 1.1,
+        "transition_sec": 10
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "co_echelon_left",
+      "name": "제대 좌",
+      "echelon": "company",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            -300,
+            -300
+          ],
+          [
+            -600,
+            -600
+          ],
+          [
+            -900,
+            -900
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            -300,
+            -300
+          ],
+          [
+            -600,
+            -600
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.6,
+        "urban": 0.6
+      },
+      "mods": {
+        "speed": 0.95,
+        "front_fire": 0.5,
+        "flank_security": 1.0,
+        "arty_vuln": 1.0,
+        "control": 1.0,
+        "transition_sec": 10,
+        "flank_side": -1
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "co_echelon_right",
+      "name": "제대 우",
+      "echelon": "company",
+      "slots": {
+        "4": [
+          [
+            0,
+            0
+          ],
+          [
+            300,
+            -300
+          ],
+          [
+            600,
+            -600
+          ],
+          [
+            900,
+            -900
+          ]
+        ],
+        "3": [
+          [
+            0,
+            0
+          ],
+          [
+            300,
+            -300
+          ],
+          [
+            600,
+            -600
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.6,
+        "urban": 0.6
+      },
+      "mods": {
+        "speed": 0.95,
+        "front_fire": 0.5,
+        "flank_security": 1.0,
+        "arty_vuln": 1.0,
+        "control": 1.0,
+        "transition_sec": 10,
+        "flank_side": 1
+      },
+      "allowed_moving": true
+    },
+    {
+      "id": "co_box",
+      "name": "박스 / 다이아몬드",
+      "echelon": "company",
+      "slots": {
+        "4": [
+          [
+            0,
+            300
+          ],
+          [
+            300,
+            0
+          ],
+          [
+            0,
+            -300
+          ],
+          [
+            -300,
+            0
+          ]
+        ],
+        "3": [
+          [
+            0,
+            300
+          ],
+          [
+            -260,
+            -150
+          ],
+          [
+            260,
+            -150
+          ]
+        ]
+      },
+      "spacing_scale": {
+        "open": 1.0,
+        "forest": 0.6,
+        "urban": 0.6
+      },
+      "mods": {
+        "speed": 0.9,
+        "front_fire": 0.5,
+        "flank_security": 1.0,
+        "arty_vuln": 1.0,
+        "control": 1.2,
+        "transition_sec": 10
+      },
+      "allowed_moving": true
+    }
+  ]
+}

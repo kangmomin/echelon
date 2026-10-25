@@ -1,0 +1,21 @@
+{
+  "id": "9m133_kornet",
+  "name": "9M133 코르넷",
+  "type": "ATGM",
+  "range_m": {
+    "min": 100,
+    "max": 5500
+  },
+  "penetration": 1100,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.85,
+    "at_max_range": 0.75
+  },
+  "rof_rpm": 1.5,
+  "suppression": 40,
+  "fire_on_move": false,
+  "targets": [
+    "vehicle"
+  ]
+}

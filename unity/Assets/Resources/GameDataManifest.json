@@ -1,0 +1,556 @@
+{
+  "files": [
+    {
+      "path": "elements/ru_2s9.json",
+      "sha256": "b6fc64d438524950134eb4564d471aace66cc56cec45126bc6d5d6ee2b722435"
+    },
+    {
+      "path": "elements/ru_at_squad.json",
+      "sha256": "3a7752c1408b72261931d0da7e26d34354e02463e5f13a244051e05a0575ede1"
+    },
+    {
+      "path": "elements/ru_bmp1ksh_cp.json",
+      "sha256": "c6aafa67f9cae61a97f78a9bff5f0d4e8d88c49bc2d2207b9934db663691729e"
+    },
+    {
+      "path": "elements/ru_bmp2m.json",
+      "sha256": "8a9a9c9d0a8248a2e4d47da189cdb9fd578f2345907266c5f6bdb370ccd96b08"
+    },
+    {
+      "path": "elements/ru_bmp3.json",
+      "sha256": "9540a9fa69be0716f5c0adfccc9c2f9ca11800e9303128e6da9e23e953eaeb14"
+    },
+    {
+      "path": "elements/ru_bmpt.json",
+      "sha256": "4d710deae1ac8ef62c3d959256ba9a895a45605274e766c1a53c79ae99e0a9de"
+    },
+    {
+      "path": "elements/ru_brm3k.json",
+      "sha256": "cf4ddee3cdeac9a9f6b4c103ff4e1d6becfe07da6d835b99c6bcb7dc463b141d"
+    },
+    {
+      "path": "elements/ru_btr82a.json",
+      "sha256": "a02124108bfdde828e68a36e2b33bb70dee2274e8257fe3a89625bc457a02a73"
+    },
+    {
+      "path": "elements/ru_fo_team.json",
+      "sha256": "e06e1c0fbeb63fc064eda99cf2b25c27485673aa74825f1ee2a598f89084a7a3"
+    },
+    {
+      "path": "elements/ru_hq_team.json",
+      "sha256": "1455fa2de7815e6e852d007fe620d7ed1589fcddde7f0b509087e8bc58f65725"
+    },
+    {
+      "path": "elements/ru_ka52.json",
+      "sha256": "386ba09da946bb0b15861bcefe9399a561bd6198037f9b9d47959f428eb43d6d"
+    },
+    {
+      "path": "elements/ru_kamaz.json",
+      "sha256": "6abeedb7295092a2b1bea72b6cbd53c7f3e0403e8bf6d9d7afc125b2d7414fe2"
+    },
+    {
+      "path": "elements/ru_msr_squad.json",
+      "sha256": "918e3a8db55bd80623668a3bdfaf7edc5980c903728c587031930fff3e444807"
+    },
+    {
+      "path": "elements/ru_r330zh.json",
+      "sha256": "d9b12358318d9fe64de52198cc1d2455c01a5e2cdefa49b36ed39afbf9b9dda8"
+    },
+    {
+      "path": "elements/ru_sapper_squad.json",
+      "sha256": "c934bee4dc2c3fde78562727335ffdca02c4731b51082a0c4b40fad3f0989d82"
+    },
+    {
+      "path": "elements/ru_shturm_s.json",
+      "sha256": "94065e1e0c91628082f245ff4460e83a9838ff01f505fec283cf0aa47ef64988"
+    },
+    {
+      "path": "elements/ru_sniper_team.json",
+      "sha256": "522ec30e76e0906a2bd8a6e99c6e10ba53cb482f91676e3bc52e654d33e67d8b"
+    },
+    {
+      "path": "elements/ru_t72b3.json",
+      "sha256": "ccdc072fb6b810682f4c9c86defed2b3ff6cfb9a6114ee58b9c3d424c374863f"
+    },
+    {
+      "path": "elements/ru_t80bvm.json",
+      "sha256": "271602ff26e1f58c11633de50f978fb6297620f084bc1b0b4e3bf3f09e5d51ea"
+    },
+    {
+      "path": "elements/ru_t90m.json",
+      "sha256": "f398188aad3a3670aa0798feb7fa2596de6d1e59735d5e86b1e7c8bc603a8669"
+    },
+    {
+      "path": "elements/ru_tor_m2.json",
+      "sha256": "997cff7e17dab42209ef59d8798550dece2a2e2a906de25d905d744081f71035"
+    },
+    {
+      "path": "elements/ru_tunguska.json",
+      "sha256": "1c5645baff6164a0752562201d797544b06a47f91becfae3dc2109f0f40e6773"
+    },
+    {
+      "path": "elements/ru_ur77.json",
+      "sha256": "6db7a10719ed4fe210b4f4e5d39af047fb1f9d42a89db6f3dd068538f9f8ee41"
+    },
+    {
+      "path": "elements/us_ah64e.json",
+      "sha256": "787aa927b522566f3a08f07e0fd4c0aae2c76b3dd116a08afad348af60eb7be9"
+    },
+    {
+      "path": "elements/us_avenger.json",
+      "sha256": "104f047696d8ad081a09784856ff595c10cc853feb74bedc537dd12b9c7307bf"
+    },
+    {
+      "path": "elements/us_hemtt.json",
+      "sha256": "6b96d51fad0b8b20f48453418d07970e64caaad879b840284e30f4ad14effad8"
+    },
+    {
+      "path": "elements/us_hq_team.json",
+      "sha256": "83a6b598d23874ebcf1c180de4c11e9466b0e87d02ab076c197d7a26f0b4fe1f"
+    },
+    {
+      "path": "elements/us_inf_squad.json",
+      "sha256": "f26146fd5c1478dbb86a75bbd4a2e9e2b2b6988e9638dcfb32899ae8bbbafaa7"
+    },
+    {
+      "path": "elements/us_inf_squad_jav2.json",
+      "sha256": "a85640e0ad59d41aeab5e6a7f4ac5183da34a90d1d9642a43bc0ce2842ff9649"
+    },
+    {
+      "path": "elements/us_jtac.json",
+      "sha256": "dc3ad29ebe12ca4c290133bdae8ed91985827d563ae86072ec3510b66ff21cb9"
+    },
+    {
+      "path": "elements/us_m1064.json",
+      "sha256": "0d4d71460ae2c7a7745318b98525762a8333ced3fc9136b258cb53065ab8a904"
+    },
+    {
+      "path": "elements/us_m1068_cp.json",
+      "sha256": "3884af1654143c3f950ed95249ac94d3af102e6f38e6e23985636a3e7e2c2ddf"
+    },
+    {
+      "path": "elements/us_m10_booker.json",
+      "sha256": "d67dee2fe6057c3cb3260396660ce4cb51f182284eae82a53d0cc848429b1197"
+    },
+    {
+      "path": "elements/us_m1126.json",
+      "sha256": "7a8312a1f8bd86c5b4b8457b636fdadac2fa46c8260ef802393d954d740a5f7c"
+    },
+    {
+      "path": "elements/us_m1134.json",
+      "sha256": "95664b6f883c830387a49beaf041cb3fb8e3353d36bf60312410d88b4a25b687"
+    },
+    {
+      "path": "elements/us_m1150_abv.json",
+      "sha256": "e2385ef11eceb9ad4caaa7e9b3687a1fee27c1f4a4f94f8e321ea89c97cc1f7a"
+    },
+    {
+      "path": "elements/us_m1167.json",
+      "sha256": "8eab1241db8d71e31d2a65902995652562f8b4c9b03a42443894e09d164ea0df"
+    },
+    {
+      "path": "elements/us_m1296.json",
+      "sha256": "f6f75900e9a504c1902fe01dab4815f9b850cd98b1d97fbe164f251c9b9c4075"
+    },
+    {
+      "path": "elements/us_m1a2_sepv3.json",
+      "sha256": "2fec7820a0cbe3411e7ba078078c401d1f7ea3072b32cf90c2cda5bbbab029a3"
+    },
+    {
+      "path": "elements/us_m1a2_sepv3_tusk.json",
+      "sha256": "9dfa0ef9395def1b4d12c8f59cfa96c0f0c551ca9dfdba1c8edb6b80ce8c8108"
+    },
+    {
+      "path": "elements/us_m2a3.json",
+      "sha256": "66b08a87031af40f3161efe0fb70f682bce65c4f64f27e07dcf112a64ad0f7ea"
+    },
+    {
+      "path": "elements/us_m3a3.json",
+      "sha256": "2511e55bf994a2f889816368f1126be4a6e79ec11ce845c0065cd23a357bf7ae"
+    },
+    {
+      "path": "elements/us_m7_fist.json",
+      "sha256": "c4e720bb2ff149edadd850fb2c3ce31b2e0c51cdb69a46f191aeb8c622be4c2f"
+    },
+    {
+      "path": "elements/us_mshorad.json",
+      "sha256": "38e3cf3ec768f0cda046ed48faa21e449bd25cf6e5ae6446b2ac50327db41cd0"
+    },
+    {
+      "path": "elements/us_sapper_squad.json",
+      "sha256": "0694de9784f24cb53b9e02c58cc5014ec957390b8fcfe0e485c91613e15c5e78"
+    },
+    {
+      "path": "elements/us_sniper_team.json",
+      "sha256": "df129d5363ab2ba86c0857f0508d22cf6fd7710f04ae476f9d29a08ea976894c"
+    },
+    {
+      "path": "forces/ru_btg_default.json",
+      "sha256": "697dd4de1e606ee9021b446ed9869d1ec329499d32408cb0cc22e0dac12bf71e"
+    },
+    {
+      "path": "forces/us_armor_default.json",
+      "sha256": "7c0eb1f07ad1b927ac07468d9b6f728fbd304e32fe2efa294534aecab40efccd"
+    },
+    {
+      "path": "formations.json",
+      "sha256": "665a69c7ca098395859f0ebfdde8fe9381e1468f19b07ba6cf070950356fb347"
+    },
+    {
+      "path": "maps/map01.json",
+      "sha256": "74028786352acffaa07043134c12d26df71721f7bc66af19a7b24e18b6f84e34"
+    },
+    {
+      "path": "scenarios/skirmish_01.json",
+      "sha256": "2c3ad17e5278fcd8b0ecabf4dd880768b5ce7680b9d7d8cf5bbb784ea4ccb23f"
+    },
+    {
+      "path": "toe/ru_btg_bmp.json",
+      "sha256": "b37d2d19a7553c1705dada1bc089b8a1363254f75c9c67d40c6b52ae9c19354c"
+    },
+    {
+      "path": "toe/us_armor_bn_tf.json",
+      "sha256": "186abb0c71c974e0ff7ee85e7c9b23e2f593a0578e50ef8407c99092664d6b07"
+    },
+    {
+      "path": "units/ru_ada_section.json",
+      "sha256": "b91aab5a13156bce1cf0cb8fec3364f9042935b9cb8185599175fab098337f99"
+    },
+    {
+      "path": "units/ru_at_plt.json",
+      "sha256": "2c91b40d077383299c65eda2a66d21fa56ce41cecbf7e8eccdcac7587e0c2b17"
+    },
+    {
+      "path": "units/ru_aviation_sec.json",
+      "sha256": "7c873e67a345e3dd5152701d6781cc51749f67e45abfbf63e0f17bea1840cd9f"
+    },
+    {
+      "path": "units/ru_bmpt_plt.json",
+      "sha256": "ff4574eef626f1f334abddd2d328d620c3fbb5661ab732cd948e21ea4da9a4ce"
+    },
+    {
+      "path": "units/ru_engineer_plt.json",
+      "sha256": "58e1a0a8a64c8d47ec056b58b175a1c9b8cf0799dbfb8670c536f116d3b5008d"
+    },
+    {
+      "path": "units/ru_ew_section.json",
+      "sha256": "1c4a9e74c9459808fe1d41b134ba8782832490986ba78e488da124cb38e0b45f"
+    },
+    {
+      "path": "units/ru_fo_team.json",
+      "sha256": "1e2c1a33f5bbdc8c68a12d9fb61615d52fb504db5f92a38fa4482cea2ebc8993"
+    },
+    {
+      "path": "units/ru_kornet_sec.json",
+      "sha256": "9f0b8f8b339cd8ada3327d8fba0db6628b5815a3d5ac1c63290204efe7bcc40e"
+    },
+    {
+      "path": "units/ru_light_inf_plt.json",
+      "sha256": "a0fc7b4dcaee68b05a0f5498d931e1a44a2ff56813923d3702da6d90bdbf2922"
+    },
+    {
+      "path": "units/ru_mortar_bty.json",
+      "sha256": "f394b2f6a0da85b3f3b30bc45e9ded59374d19da52fd4d92e1b362d69a43f3b5"
+    },
+    {
+      "path": "units/ru_msr_co_bmp3.json",
+      "sha256": "cc08e118c658502495a22155c51328c704ab5edd5941926ae31ee681221f970f"
+    },
+    {
+      "path": "units/ru_msr_co_btr.json",
+      "sha256": "547e2ecd6668b1c51d3454f2d779099f0cc767f51e32445306a8a309a9d5afcb"
+    },
+    {
+      "path": "units/ru_msr_co_foot.json",
+      "sha256": "84a40a55f266b6d87704b16b7cdcc86b96a462bc18e4569628216a04f00bdb85"
+    },
+    {
+      "path": "units/ru_msr_plt_bmp3.json",
+      "sha256": "c1802a059df747f0f93327b6a1b620ff7096eb00fd95cd4f63349a39c7655b0a"
+    },
+    {
+      "path": "units/ru_msr_plt_btr.json",
+      "sha256": "ac4bce956785355606496a126e069fb09bdb03fa39a2fa4a7a54ad927b1c95ed"
+    },
+    {
+      "path": "units/ru_recon_plt.json",
+      "sha256": "e299983467283c5404b6227732eab12e1f9467f2f129bb12164820bf16ca3298"
+    },
+    {
+      "path": "units/ru_sniper_sec.json",
+      "sha256": "191066f675bb28450f78aeb7bc7fd8470c2e87f0947f88052951066f04c718b8"
+    },
+    {
+      "path": "units/ru_supply_section.json",
+      "sha256": "d78f5c177774fc7bdc65108a61ea2c3d044409a9fc6bff8e7f0ec7c33af88406"
+    },
+    {
+      "path": "units/ru_tank_co.json",
+      "sha256": "6ca13c3a0914c4475199032a348a823910cbf8c7a7eeb9b4c78c33095fbf54bf"
+    },
+    {
+      "path": "units/ru_tank_plt.json",
+      "sha256": "600442362056ff57694d17295dd6d19d43f32578787aad9cf9fe252fa958f911"
+    },
+    {
+      "path": "units/us_ada_section.json",
+      "sha256": "e7d7631359679d376f784d9b0cbc434d4c026a35cac769d09784da03b024d4ff"
+    },
+    {
+      "path": "units/us_at_plt.json",
+      "sha256": "a1b91db60496446fdd7fa93783216015e51a4a0bda0b97315cd708d6b8e990cb"
+    },
+    {
+      "path": "units/us_aviation_sec.json",
+      "sha256": "cbfcb09c060a404b7fbf6d002e9f37488e80ad7024bf82810ce726c7180b8c92"
+    },
+    {
+      "path": "units/us_engineer_plt.json",
+      "sha256": "d915e340244086605bb5b2924a2d648a92130cfc7326898140a0d5f17b6b0ad9"
+    },
+    {
+      "path": "units/us_fo_team.json",
+      "sha256": "49be9376c5f445983bba122dc087b6122697f0d6109cfc5ec5b5ae7ab66f8379"
+    },
+    {
+      "path": "units/us_jtac_team.json",
+      "sha256": "0d02f61033a20954b76ac560a68e27788944869b151d90602b6ae6e2b939417b"
+    },
+    {
+      "path": "units/us_light_inf_co.json",
+      "sha256": "95b6b86eade479ed40e23332ed9f5429df2bddb8c1ef46167f826ac966303c32"
+    },
+    {
+      "path": "units/us_light_inf_plt.json",
+      "sha256": "f648cb4e8e5cda159eb67908d97c79e3705fc89d1c050186f2065de59c9f776b"
+    },
+    {
+      "path": "units/us_light_tank_plt.json",
+      "sha256": "a2b05435b8f26e2eb18b72319736c88c406d5fad559e0affcb8499580b2928bf"
+    },
+    {
+      "path": "units/us_mech_co.json",
+      "sha256": "f4bb709e756a23469ba5f114b8c0f52fd65deef810218e95c734b926948769a0"
+    },
+    {
+      "path": "units/us_mech_plt.json",
+      "sha256": "6c4c31f66ec2ce27bd36bb3623875639fe8e4f50281fa075fb1aaf75415f939f"
+    },
+    {
+      "path": "units/us_mortar_plt.json",
+      "sha256": "d8db9058a7fc20ab2e06b0face3725169ee16aecce7b6cd9506163bfb0278248"
+    },
+    {
+      "path": "units/us_scout_plt.json",
+      "sha256": "2e0e959bde76d17c371e94c0ce1ea952bece3abd4915dc91b6bdce0d8a961933"
+    },
+    {
+      "path": "units/us_sniper_sec.json",
+      "sha256": "81c95016a2314576509979207507d5f8172b364e16e248dc9ad9811b7c22bc02"
+    },
+    {
+      "path": "units/us_stryker_co.json",
+      "sha256": "92d1fea9fd25bbc29eb5eaadebd127ebc09f82fd4da1c7126ddfb859ca86f978"
+    },
+    {
+      "path": "units/us_stryker_plt.json",
+      "sha256": "06b9075d6eef585a31ea4f324c16ca8d99384bcdce008b39f01c6ff30b00b3a9"
+    },
+    {
+      "path": "units/us_supply_section.json",
+      "sha256": "51a1dea1a99ec5848c52fe3747a1ab6e2f00b67e01bd5aeb14fa81c1dcbc475f"
+    },
+    {
+      "path": "units/us_tank_co.json",
+      "sha256": "4bc64d03a2ca6e11d63ca6a1aec21cabac41728a02b27a54e98c3fbec662d32a"
+    },
+    {
+      "path": "units/us_tank_plt.json",
+      "sha256": "42c64b9effbe6a11ff9f8a6df32524993836ce100fa201c7cc64a51af052d088"
+    },
+    {
+      "path": "weapons/2a38m_30mm.json",
+      "sha256": "880fc8326a0508cc7bf2700f1d1a15ce8910f5bbaf9783c37f623ebee0f4755b"
+    },
+    {
+      "path": "weapons/2a42_30mm.json",
+      "sha256": "a8d44c3c1a66dd239901458e1ed67ee038df1c28941c0a393b73bbe24de55076"
+    },
+    {
+      "path": "weapons/2a46m_apfsds.json",
+      "sha256": "1eea0ecd91e81e0639833efac20104131bd6fc82e313074a15e6b19704a62381"
+    },
+    {
+      "path": "weapons/2a51_mortar.json",
+      "sha256": "a0371cf25d48b499df8fab07f3bab536ec14bb4f897c149b5ca81bc99608ae53"
+    },
+    {
+      "path": "weapons/2a70_he.json",
+      "sha256": "eddc0209970c8979e917967b84dd3286e8fe18131ebf4a39560d3efe2f97d7ef"
+    },
+    {
+      "path": "weapons/2a72_30mm.json",
+      "sha256": "8b466ca40528a71c21f1abdd06a350225f74ddb1aee78991ecfb1758f8cf41b4"
+    },
+    {
+      "path": "weapons/9k121_vikhr.json",
+      "sha256": "cb2a50b53a6e8f57dd4e21096a352cbbeb17379788fabaa3b37f7dfa91be2a2a"
+    },
+    {
+      "path": "weapons/9m117_atgm.json",
+      "sha256": "39b848c96d050de9ea7fcec95ee7ff1f8e8d7071c6724b2aeded3f8555406013"
+    },
+    {
+      "path": "weapons/9m119_atgm.json",
+      "sha256": "ebf35e23eb50583e871bf43d61ef3ab5397d2a2614339120dd9ca2e599433cb4"
+    },
+    {
+      "path": "weapons/9m120_ataka.json",
+      "sha256": "9d46a35339c720b830ab62a2f7f7fa6dda82b3656a178197b0f8bf498dc841f5"
+    },
+    {
+      "path": "weapons/9m133_kornet.json",
+      "sha256": "7af85418399fe1f400228adbfdfb355e01857ab879abf278cccbdf9137015a28"
+    },
+    {
+      "path": "weapons/9m311_sam.json",
+      "sha256": "c183a0428b797721d6145ace90e05cc0e77d924e245f78250091d369c269c093"
+    },
+    {
+      "path": "weapons/9m338_sam.json",
+      "sha256": "9e8f9ce13c3a5bf1704004439cb8d5c2ef18545f374f32b93463c0c34ea3a810"
+    },
+    {
+      "path": "weapons/ag17_gl.json",
+      "sha256": "99e53c42a4c094651b12b20803cfd85b11f8ec66959d89d960e13ad87873c57d"
+    },
+    {
+      "path": "weapons/agm114_hellfire.json",
+      "sha256": "b2d23ab247d953655343d95530c642eca85f3f9e83681a03b646cd41c918ebc2"
+    },
+    {
+      "path": "weapons/ak74_rifles.json",
+      "sha256": "550324c23d673e6391037eea020264f3b123f0379ad0d38da720200b171d2372"
+    },
+    {
+      "path": "weapons/asvk_rifle.json",
+      "sha256": "52944b22dd261568f650dbe64df6df3b41fdb320cea63ee3987813f5f58c6fc7"
+    },
+    {
+      "path": "weapons/at4.json",
+      "sha256": "385360afb63b2584325333a6ca27a7b8395c7a0b9674565c5208181a4ca41069"
+    },
+    {
+      "path": "weapons/gbu38_jdam.json",
+      "sha256": "ae9757a1150c5d490ce29d30f3a2602ecc1624ed0903139d41df3adfd6d90b2d"
+    },
+    {
+      "path": "weapons/hydra70.json",
+      "sha256": "5567f2267d65ace27def02f74a6e34c6b379245960ec5420e477c85b4c84a03f"
+    },
+    {
+      "path": "weapons/javelin.json",
+      "sha256": "89358c1f2449ad16984c9d010cc9c97f00b3bfa8ea4b8a505d7ed2a64e00dae3"
+    },
+    {
+      "path": "weapons/kab500_bomb.json",
+      "sha256": "d53a51560e3ec056a682a576303ff2d9901a7c2b01bfea5813178a831462dcd6"
+    },
+    {
+      "path": "weapons/m107_rifle.json",
+      "sha256": "231bd0f3122054019afb7fd716ea58a6cb182c348d95d07ae89295f9fc0d41c3"
+    },
+    {
+      "path": "weapons/m120_mortar.json",
+      "sha256": "f042f8379677520492cd83ce0f99a1e59a1c4980450ebde46831f1971a0ce264"
+    },
+    {
+      "path": "weapons/m230_30mm.json",
+      "sha256": "bed89fdbd51b097ec6d1537c1ead4448f2db9dc5ed5ea6ee841afbfb50b1c494"
+    },
+    {
+      "path": "weapons/m240_coax.json",
+      "sha256": "1240483a108469efb65d1f1ed635a1bbf2fd4d0fd14b33f85499de84d86f9975"
+    },
+    {
+      "path": "weapons/m242_apds.json",
+      "sha256": "e6a456abb3c6dde38dd937962768baf675e5b1f22a3d0dc833c9ce6164e11b34"
+    },
+    {
+      "path": "weapons/m242_he.json",
+      "sha256": "5def0083218d815be884185e919092fd69bc2c3ca4078e870def7ad56ada14f0"
+    },
+    {
+      "path": "weapons/m249.json",
+      "sha256": "f5d2806619b64db362c8495f6ebc2b138ef9d440ee9022adb7fce1b9ee5d5f7a"
+    },
+    {
+      "path": "weapons/m256_apfsds.json",
+      "sha256": "e5dd5397fef176983bfbb67a132232f1ed7f9d495f8026500346bb4b4d2c6c0a"
+    },
+    {
+      "path": "weapons/m256_heat.json",
+      "sha256": "525e28d1de909363d5790f72d49b352c9acfe87669c5ad811e020685aa6b25c6"
+    },
+    {
+      "path": "weapons/m2_hmg.json",
+      "sha256": "180e49d51ae63cd01c6b9b4c74582a8bad9ebb966bd97d6373513affee8cd6ce"
+    },
+    {
+      "path": "weapons/m35_apfsds.json",
+      "sha256": "1e9040d4a5d88a7d4fb272079d93a1856a4006e106f1c2119dec347f057af294"
+    },
+    {
+      "path": "weapons/m35_hemp.json",
+      "sha256": "0303f974ef04068f5082d9594170d6217871fe65c399b6b3f603a68f878dc771"
+    },
+    {
+      "path": "weapons/m4_rifles.json",
+      "sha256": "8831f718ed74eae699284a2ee261be9256c7e4d79d697e75bf0681a5d9c8fb2c"
+    },
+    {
+      "path": "weapons/m795_155mm.json",
+      "sha256": "38539190f843bd8f69164eeecb68fe23a09b286eb3cdc59d265a7d11a72cd848"
+    },
+    {
+      "path": "weapons/of45_152mm.json",
+      "sha256": "0adda2660e10f14e29b0cc4cf6b4dfb8d543b031f5060231d5fbae0f3832c444"
+    },
+    {
+      "path": "weapons/pkm.json",
+      "sha256": "ff45837339ca3b4047289a9e3ce348126ac4dfac9ec1b5cc6aaa42e52ea27ea2"
+    },
+    {
+      "path": "weapons/pkt_coax.json",
+      "sha256": "3e70ba1bc5ad05839558da8de22e065176404cdda198f657370d816ca9d2a5db"
+    },
+    {
+      "path": "weapons/rpg29.json",
+      "sha256": "95f481de442d8f954f32b2f11a80ad95249897b9acc371d3a77e5c5723933336"
+    },
+    {
+      "path": "weapons/s8_rockets.json",
+      "sha256": "e2b0e71212e4865ef88999a846afbf28750fe69d45aa37fcdbdcfab0fcaee02c"
+    },
+    {
+      "path": "weapons/stinger.json",
+      "sha256": "c7587fe73b93fd6b3419ea5facc10c5517482d3f69be0cf0d224491e12ac3b53"
+    },
+    {
+      "path": "weapons/tow2b.json",
+      "sha256": "e3d6a362be6483225281b62160a847507b99329acfaf041a29e44bbcd0d822c6"
+    },
+    {
+      "path": "weapons/xm813_apfsds.json",
+      "sha256": "19e6bcb6da3a660a364caee28eaf85f63438bf63b36e2d8f3bf609f8732077e4"
+    },
+    {
+      "path": "weapons/xm813_he.json",
+      "sha256": "73a5539120e9c5a84c3cf4812d0723cf91d09a3fa002fe81042de564c3359c8f"
+    },
+    {
+      "path": "weapons/xm914_30mm.json",
+      "sha256": "80fedfd7f2fbf36f4458bf3ada39e924317c184de4b291c70eedc50685a935eb"
+    }
+  ]
+}

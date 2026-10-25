@@ -1,0 +1,33 @@
+{
+  "id": "us_m1064",
+  "name": "M1064 박격포",
+  "faction": "US",
+  "class": "mortar",
+  "hp": 80,
+  "armor": {
+    "front": 40,
+    "side": 30,
+    "rear": 20,
+    "top": 10
+  },
+  "size": 1.0,
+  "stealth": 0.15,
+  "optics_m": 1200,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "m120_mortar",
+    "m2_hmg"
+  ],
+  "ammo": {
+    "m120_mortar": 69,
+    "m2_hmg": 600
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 18,
+  "supply_full": 8
+}

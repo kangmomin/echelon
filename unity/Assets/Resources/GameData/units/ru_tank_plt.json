@@ -1,0 +1,43 @@
+{
+  "id": "ru_tank_plt",
+  "name": "전차 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "tank",
+  "elements": [
+    {
+      "element": "ru_t90m",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "loadouts": [
+    {
+      "id": "t90m",
+      "name": "T-90M"
+    },
+    {
+      "id": "t72b3",
+      "name": "T-72B3",
+      "replace": {
+        "ru_t90m": "ru_t72b3"
+      }
+    },
+    {
+      "id": "t80bvm",
+      "name": "T-80BVM",
+      "replace": {
+        "ru_t90m": "ru_t80bvm"
+      }
+    }
+  ],
+  "role": "전차 3대(T-90M / T-72B3 / T-80BVM).",
+  "pros": [
+    "T-80BVM: 가장 빠른 전차",
+    "T-72B3: 싸다"
+  ],
+  "cons": [
+    "보병이 없다"
+  ]
+}

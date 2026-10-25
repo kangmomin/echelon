@@ -1,0 +1,36 @@
+{
+  "id": "ru_ada_section",
+  "name": "방공반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "aa",
+  "elements": [
+    {
+      "element": "ru_tor_m2",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular",
+  "loadouts": [
+    {
+      "id": "tor",
+      "name": "Tor-M2"
+    },
+    {
+      "id": "tunguska",
+      "name": "퉁구스카(기관포+미사일)",
+      "replace": {
+        "ru_tor_m2": "ru_tunguska"
+      }
+    }
+  ],
+  "role": "방공반(Tor-M2 / 퉁구스카).",
+  "pros": [
+    "CAS·헬기 요격",
+    "퉁구스카: 기관포로 근거리 헬기·경장갑"
+  ],
+  "cons": [
+    "지상 전투력 약함"
+  ]
+}

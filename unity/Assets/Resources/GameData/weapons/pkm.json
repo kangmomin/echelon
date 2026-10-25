@@ -1,0 +1,22 @@
+{
+  "id": "pkm",
+  "name": "7.62 mm PKM 기관총",
+  "type": "MG",
+  "range_m": {
+    "min": 0,
+    "max": 800
+  },
+  "penetration": 3,
+  "damage": 3,
+  "accuracy": {
+    "base": 0.4,
+    "at_max_range": 0.12
+  },
+  "rof_rpm": 650,
+  "suppression": 12,
+  "fire_on_move": true,
+  "targets": [
+    "infantry"
+  ],
+  "burst": 15
+}

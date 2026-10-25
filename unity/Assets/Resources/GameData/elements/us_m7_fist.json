@@ -1,0 +1,31 @@
+{
+  "id": "us_m7_fist",
+  "name": "M7 BFIST 관측반",
+  "faction": "US",
+  "class": "fo",
+  "hp": 100,
+  "armor": {
+    "front": 350,
+    "side": 120,
+    "rear": 60,
+    "top": 30
+  },
+  "size": 1.1,
+  "stealth": 0.25,
+  "optics_m": 4500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 38
+  },
+  "weapons": [
+    "m240_coax"
+  ],
+  "ammo": {
+    "m240_coax": 2000
+  },
+  "radio_range_m": 4000,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 20,
+  "supply_full": 2
+}

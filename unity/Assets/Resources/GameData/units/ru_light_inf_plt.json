@@ -1,0 +1,24 @@
+{
+  "id": "ru_light_inf_plt",
+  "name": "도보 소총 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "inf",
+  "elements": [
+    {
+      "element": "ru_msr_squad",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "role": "차량 없는 소총 소대. 숲·마을 방어와 RPG 매복.",
+  "pros": [
+    "은밀하다",
+    "싸다"
+  ],
+  "cons": [
+    "느리다",
+    "원거리 대전차 화력이 없다(RPG 500 m)"
+  ]
+}

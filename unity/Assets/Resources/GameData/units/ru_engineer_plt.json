@@ -1,0 +1,35 @@
+{
+  "id": "ru_engineer_plt",
+  "name": "공병 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "engineer",
+  "elements": [
+    {
+      "element": "ru_btr82a",
+      "count": 2
+    },
+    {
+      "element": "ru_ur77",
+      "count": 1
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "ru_sapper_squad",
+      "count": 2
+    }
+  ],
+  "role": "지뢰 매설(N)·제거(I)·진지 구축(O). UR-77 이 지뢰 제거를 두 배로 빠르게.",
+  "pros": [
+    "지뢰 지대 2개",
+    "빠른 지뢰 제거",
+    "진지: 안의 아군 피해 40% 감소"
+  ],
+  "cons": [
+    "작업 중 취약",
+    "경장갑"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "us_stryker_co",
+  "name": "스트라이커 보병 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "wheeled",
+  "hq": [
+    {
+      "element": "us_m1126",
+      "count": 2
+    }
+  ],
+  "platoons": [
+    "us_stryker_plt",
+    "us_stryker_plt",
+    "us_stryker_plt"
+  ],
+  "default_formation": "co_wedge",
+  "role": "차륜형 보병 중대. 빠른 기동으로 거점을 먼저 잡고 보병으로 지킨다.",
+  "pros": [
+    "빠르다: 도로 이동 속도가 기계화 중대의 1.6배",
+    "보병 12개 분대",
+    "포인트가 싸다"
+  ],
+  "cons": [
+    "전차·IFV 와 정면으로 싸우면 진다",
+    "적 포병·기관포에 약하다"
+  ]
+}

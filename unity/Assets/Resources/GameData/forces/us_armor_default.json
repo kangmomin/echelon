@@ -1,0 +1,80 @@
+{
+  "format": 1,
+  "name": "기갑 대대 전투단 (기본)",
+  "faction": "US",
+  "toe": "us_armor_bn_tf",
+  "companies": [
+    {
+      "slot": "co_a",
+      "template": "us_tank_co",
+      "platoons": [
+        {
+          "template": "us_tank_plt",
+          "wave": 0,
+          "home": "co_a"
+        },
+        {
+          "template": "us_tank_plt",
+          "wave": 0,
+          "home": "co_a"
+        },
+        {
+          "template": "us_tank_plt",
+          "wave": 0,
+          "home": "co_a"
+        }
+      ]
+    },
+    {
+      "slot": "co_b",
+      "template": "us_mech_co",
+      "platoons": [
+        {
+          "template": "us_mech_plt",
+          "wave": 0,
+          "home": "co_b"
+        },
+        {
+          "template": "us_mech_plt",
+          "wave": 0,
+          "home": "co_b"
+        },
+        {
+          "template": "us_mech_plt",
+          "wave": 1,
+          "home": "co_b"
+        }
+      ]
+    }
+  ],
+  "organic": [
+    {
+      "template": "us_scout_plt",
+      "wave": 0
+    },
+    {
+      "template": "us_mortar_plt",
+      "wave": 0
+    },
+    {
+      "template": "us_supply_section",
+      "wave": 0
+    }
+  ],
+  "attachments": [
+    {
+      "template": "us_fo_team",
+      "wave": 0
+    },
+    {
+      "template": "us_jtac_team",
+      "wave": 0
+    }
+  ],
+  "support": {
+    "artillery_missions": 2,
+    "cas_sorties": 0
+  },
+  "deploy": {},
+  "entry_point": 0
+}

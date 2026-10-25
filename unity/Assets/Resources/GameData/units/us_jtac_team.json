@@ -1,0 +1,23 @@
+{
+  "id": "us_jtac_team",
+  "name": "JTAC 팀",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "fo",
+  "elements": [
+    {
+      "element": "us_jtac",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular",
+  "role": "JTAC 팀. 근접항공지원 유도.",
+  "pros": [
+    "CAS 에 필요한 관측",
+    "관측 4.5 km"
+  ],
+  "cons": [
+    "경장갑 HMMWV"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "us_m10_booker",
+  "name": "M10 부커",
+  "faction": "US",
+  "class": "tank",
+  "hp": 100,
+  "armor": {
+    "front": 380,
+    "side": 120,
+    "rear": 60,
+    "top": 30
+  },
+  "size": 1.1,
+  "stealth": 0.12,
+  "optics_m": 2500,
+  "speed_kmh": {
+    "road": 64,
+    "offroad": 40
+  },
+  "weapons": [
+    "m35_apfsds",
+    "m35_hemp",
+    "m240_coax"
+  ],
+  "ammo": {
+    "m35_apfsds": 20,
+    "m35_hemp": 18,
+    "m240_coax": 3000
+  },
+  "radio_range_m": 1000,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 42,
+  "supply_full": 9
+}

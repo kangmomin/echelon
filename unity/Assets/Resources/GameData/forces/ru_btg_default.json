@@ -1,0 +1,131 @@
+{
+  "format": 1,
+  "name": "BTG (BMP형, 기본)",
+  "faction": "RU",
+  "toe": "ru_btg_bmp",
+  "companies": [
+    {
+      "slot": "co_1",
+      "template": "ru_msr_co_bmp3",
+      "platoons": [
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 0,
+          "home": "co_1"
+        },
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 0,
+          "home": "co_1"
+        },
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 0,
+          "home": "co_1"
+        }
+      ]
+    },
+    {
+      "slot": "co_2",
+      "template": "ru_msr_co_bmp3",
+      "platoons": [
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 0,
+          "home": "co_2"
+        },
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 0,
+          "home": "co_2"
+        },
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 0,
+          "home": "co_2"
+        }
+      ]
+    },
+    {
+      "slot": "co_3",
+      "template": "ru_msr_co_bmp3",
+      "platoons": [
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 1,
+          "home": "co_3"
+        },
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 1,
+          "home": "co_3"
+        },
+        {
+          "template": "ru_msr_plt_bmp3",
+          "wave": 1,
+          "home": "co_3"
+        }
+      ]
+    },
+    {
+      "slot": "co_4",
+      "template": "ru_tank_co",
+      "platoons": [
+        {
+          "template": "ru_tank_plt",
+          "wave": 0,
+          "home": "co_4"
+        },
+        {
+          "template": "ru_tank_plt",
+          "wave": 0,
+          "home": "co_4"
+        },
+        {
+          "template": "ru_tank_plt",
+          "wave": 0,
+          "home": "co_4"
+        },
+        {
+          "template": "ru_tank_plt",
+          "wave": 0,
+          "home": "co_4"
+        }
+      ]
+    }
+  ],
+  "organic": [
+    {
+      "template": "ru_recon_plt",
+      "wave": 0
+    },
+    {
+      "template": "ru_mortar_bty",
+      "wave": 0
+    },
+    {
+      "template": "ru_supply_section",
+      "wave": 0
+    }
+  ],
+  "attachments": [
+    {
+      "template": "ru_fo_team",
+      "wave": 0
+    },
+    {
+      "template": "ru_ada_section",
+      "wave": 0
+    },
+    {
+      "template": "ru_ew_section",
+      "wave": 0
+    }
+  ],
+  "support": {
+    "artillery_missions": 7,
+    "cas_sorties": 1
+  },
+  "deploy": {},
+  "entry_point": 1
+}

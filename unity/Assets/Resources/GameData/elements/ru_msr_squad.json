@@ -1,0 +1,35 @@
+{
+  "id": "ru_msr_squad",
+  "name": "차량화소총 분대",
+  "faction": "RU",
+  "class": "inf_squad",
+  "hp": 8,
+  "armor": {
+    "front": 0,
+    "side": 0,
+    "rear": 0,
+    "top": 0
+  },
+  "size": 0.4,
+  "stealth": 0.5,
+  "optics_m": 1200,
+  "speed_kmh": {
+    "road": 6,
+    "offroad": 5
+  },
+  "weapons": [
+    "ak74_rifles",
+    "pkm",
+    "rpg29"
+  ],
+  "ammo": {
+    "ak74_rifles": 2000,
+    "pkm": 1000,
+    "rpg29": 3
+  },
+  "radio_range_m": 800,
+  "transport_capacity": 0,
+  "crew": 8,
+  "cost": 7,
+  "supply_full": 3
+}

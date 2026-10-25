@@ -1,0 +1,24 @@
+{
+  "id": "m230_30mm",
+  "name": "30 mm M230 체인건",
+  "type": "AC",
+  "range_m": {
+    "min": 0,
+    "max": 3000
+  },
+  "penetration": 50,
+  "damage": 12,
+  "accuracy": {
+    "base": 0.5,
+    "at_max_range": 0.2
+  },
+  "rof_rpm": 300,
+  "suppression": 20,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 4,
+  "burst": 10
+}

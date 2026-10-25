@@ -1,0 +1,35 @@
+{
+  "id": "us_mshorad",
+  "name": "M-SHORAD",
+  "faction": "US",
+  "class": "aa",
+  "hp": 90,
+  "armor": {
+    "front": 80,
+    "side": 50,
+    "rear": 40,
+    "top": 15
+  },
+  "size": 1.1,
+  "stealth": 0.12,
+  "optics_m": 5000,
+  "speed_kmh": {
+    "road": 97,
+    "offroad": 55
+  },
+  "weapons": [
+    "stinger",
+    "xm914_30mm",
+    "m240_coax"
+  ],
+  "ammo": {
+    "stinger": 4,
+    "xm914_30mm": 300,
+    "m240_coax": 1000
+  },
+  "radio_range_m": 2000,
+  "transport_capacity": 0,
+  "crew": 4,
+  "cost": 32,
+  "supply_full": 5
+}

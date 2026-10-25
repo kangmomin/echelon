@@ -1,0 +1,25 @@
+{
+  "id": "2a72_30mm",
+  "name": "30 mm 2A72 기관포",
+  "type": "AC",
+  "range_m": {
+    "min": 50,
+    "max": 2000
+  },
+  "penetration": 80,
+  "damage": 30,
+  "accuracy": {
+    "base": 0.6,
+    "at_max_range": 0.22
+  },
+  "rof_rpm": 330,
+  "suppression": 10,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry",
+    "air"
+  ],
+  "pen_falloff_per_km": 0.2,
+  "burst": 3
+}

@@ -1,0 +1,23 @@
+{
+  "id": "ru_fo_team",
+  "name": "포병 관측반",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "fo",
+  "elements": [
+    {
+      "element": "ru_fo_team",
+      "count": 1
+    }
+  ],
+  "default_formation": "column",
+  "skill": "regular",
+  "role": "PRP-4M 관측반.",
+  "pros": [
+    "관측 4.5 km",
+    "포격 정확도·속도 향상"
+  ],
+  "cons": [
+    "경장갑"
+  ]
+}

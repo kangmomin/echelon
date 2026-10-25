@@ -1,0 +1,35 @@
+{
+  "id": "us_m3a3",
+  "name": "M3A3 브래들리(정찰)",
+  "faction": "US",
+  "class": "recon",
+  "hp": 100,
+  "armor": {
+    "front": 350,
+    "side": 120,
+    "rear": 60,
+    "top": 30
+  },
+  "size": 1.1,
+  "stealth": 0.25,
+  "optics_m": 3500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 38
+  },
+  "weapons": [
+    "m242_apds",
+    "m242_he",
+    "tow2b"
+  ],
+  "ammo": {
+    "m242_apds": 150,
+    "m242_he": 300,
+    "tow2b": 10
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 3,
+  "cost": 36,
+  "supply_full": 8
+}

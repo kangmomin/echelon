@@ -1,0 +1,31 @@
+{
+  "id": "ru_msr_plt_btr",
+  "name": "차륜형 차량화소총 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "wheeled",
+  "elements": [
+    {
+      "element": "ru_btr82a",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "ru_msr_squad",
+      "count": 3
+    }
+  ],
+  "role": "BTR-82A 에 탄 차량화소총병. 빠르고 30 mm 기관포가 있다.",
+  "pros": [
+    "도로 100 km/h",
+    "30 mm 기관포로 경장갑·헬기 대응",
+    "싸다"
+  ],
+  "cons": [
+    "장갑이 얇다",
+    "대전차 미사일이 없다(분대 RPG 뿐)"
+  ]
+}

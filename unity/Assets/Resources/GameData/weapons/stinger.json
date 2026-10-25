@@ -1,0 +1,21 @@
+{
+  "id": "stinger",
+  "name": "FIM-92 스팅어",
+  "type": "SAM",
+  "range_m": {
+    "min": 200,
+    "max": 4800
+  },
+  "penetration": 200,
+  "damage": 100,
+  "accuracy": {
+    "base": 0.7,
+    "at_max_range": 0.5
+  },
+  "rof_rpm": 2,
+  "suppression": 0,
+  "fire_on_move": false,
+  "targets": [
+    "air"
+  ]
+}

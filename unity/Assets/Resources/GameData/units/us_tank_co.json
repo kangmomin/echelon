@@ -1,0 +1,29 @@
+{
+  "id": "us_tank_co",
+  "name": "전차 중대",
+  "faction": "US",
+  "echelon": "company",
+  "kind": "tank",
+  "hq": [
+    {
+      "element": "us_m1a2_sepv3",
+      "count": 2
+    }
+  ],
+  "platoons": [
+    "us_tank_plt",
+    "us_tank_plt",
+    "us_tank_plt"
+  ],
+  "default_formation": "co_wedge",
+  "role": "M1A2 전차 중대. 전차 10대로 적 기갑을 정면에서 깬다.",
+  "pros": [
+    "최강의 정면 장갑(900)과 120 mm 포",
+    "움직이며 정확히 쏜다"
+  ],
+  "cons": [
+    "비싸다",
+    "보병이 없어 숲·마을에 약하다",
+    "대전차 매복에 노출"
+  ]
+}

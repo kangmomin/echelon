@@ -1,0 +1,22 @@
+{
+  "id": "ak74_rifles",
+  "name": "AK-74 소총",
+  "type": "MG",
+  "range_m": {
+    "min": 0,
+    "max": 500
+  },
+  "penetration": 2,
+  "damage": 2,
+  "accuracy": {
+    "base": 0.4,
+    "at_max_range": 0.1
+  },
+  "rof_rpm": 300,
+  "suppression": 8,
+  "fire_on_move": true,
+  "targets": [
+    "infantry"
+  ],
+  "burst": 10
+}

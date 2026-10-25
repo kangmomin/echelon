@@ -1,0 +1,37 @@
+{
+  "id": "us_tank_plt",
+  "name": "전차 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "tank",
+  "elements": [
+    {
+      "element": "us_m1a2_sepv3",
+      "count": 4
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "loadouts": [
+    {
+      "id": "sepv3",
+      "name": "SEPv3"
+    },
+    {
+      "id": "tusk",
+      "name": "TUSK 장착",
+      "replace": {
+        "us_m1a2_sepv3": "us_m1a2_sepv3_tusk"
+      }
+    }
+  ],
+  "role": "M1A2 4대. 기갑 주력.",
+  "pros": [
+    "정면 장갑 900, 120 mm",
+    "TUSK: 측면 장갑 강화(시가지)"
+  ],
+  "cons": [
+    "비싸다",
+    "보병 없이는 숲·마을에 약하다"
+  ]
+}

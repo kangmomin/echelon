@@ -1,0 +1,25 @@
+{
+  "id": "us_sniper_sec",
+  "name": "저격반",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "sniper",
+  "elements": [
+    {
+      "element": "us_sniper_team",
+      "count": 2
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "2인 저격조 2개. 숨어서 멀리 보고 적 보병을 깎는다.",
+  "pros": [
+    "가장 은밀하다(은폐 0.8)",
+    "관측 3 km — 정찰·관측자 역할",
+    "매우 싸다"
+  ],
+  "cons": [
+    "차량을 상대할 수 없다",
+    "들키면 금방 죽는다"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "m35_hemp",
+  "name": "105 mm 다목적 고폭탄",
+  "type": "HEAT",
+  "range_m": {
+    "min": 100,
+    "max": 2500
+  },
+  "penetration": 350,
+  "damage": 90,
+  "accuracy": {
+    "base": 0.7,
+    "at_max_range": 0.3
+  },
+  "rof_rpm": 8,
+  "suppression": 40,
+  "fire_on_move": true,
+  "targets": [
+    "vehicle",
+    "infantry"
+  ],
+  "he_radius_m": 8
+}

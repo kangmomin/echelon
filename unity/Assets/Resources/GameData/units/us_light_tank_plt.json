@@ -1,0 +1,24 @@
+{
+  "id": "us_light_tank_plt",
+  "name": "경전차 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "tank",
+  "elements": [
+    {
+      "element": "us_m10_booker",
+      "count": 4
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "role": "M10 부커 105 mm 경전차. 보병 중대의 직접 화력 지원.",
+  "pros": [
+    "전차보다 싸다",
+    "105 mm 다목적탄으로 진지·경장갑 파괴"
+  ],
+  "cons": [
+    "주력전차 정면은 못 뚫는다",
+    "장갑이 주력전차의 절반 이하"
+  ]
+}

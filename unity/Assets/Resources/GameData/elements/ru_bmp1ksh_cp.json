@@ -1,0 +1,32 @@
+{
+  "id": "ru_bmp1ksh_cp",
+  "name": "BMP-1KSh 지휘소",
+  "faction": "RU",
+  "class": "cp",
+  "hp": 55,
+  "armor": {
+    "front": 30,
+    "side": 20,
+    "rear": 15,
+    "top": 10
+  },
+  "size": 1.0,
+  "stealth": 0.15,
+  "optics_m": 1500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "pkt_coax"
+  ],
+  "ammo": {
+    "pkt_coax": 1000
+  },
+  "radio_range_m": 8000,
+  "transport_capacity": 0,
+  "crew": 6,
+  "cost": 18,
+  "supply_full": 2,
+  "loadouts": []
+}

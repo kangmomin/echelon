@@ -1,0 +1,45 @@
+{
+  "id": "us_stryker_plt",
+  "name": "스트라이커 보병 소대",
+  "faction": "US",
+  "echelon": "platoon",
+  "kind": "wheeled",
+  "elements": [
+    {
+      "element": "us_m1126",
+      "count": 4
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "us_inf_squad",
+      "count": 4
+    }
+  ],
+  "loadouts": [
+    {
+      "id": "icv",
+      "name": "ICV (.50 기관총)"
+    },
+    {
+      "id": "dragoon",
+      "name": "드라군 (30 mm)",
+      "replace": {
+        "us_m1126": "us_m1296"
+      }
+    }
+  ],
+  "role": "8륜 장갑차에 탄 보병. 도로에서 빠르게 넓은 지역을 잡는다.",
+  "pros": [
+    "도로 속도 97 km/h — 가장 빠른 보병",
+    "보병 4개 분대(재블린)",
+    "드라군형은 30 mm 기관포로 경장갑을 잡는다"
+  ],
+  "cons": [
+    "장갑이 얇다(정면 80) — 기관포에도 뚫린다",
+    "야지 기동은 궤도 차량보다 못하다",
+    "ICV형은 .50 기관총뿐"
+  ]
+}

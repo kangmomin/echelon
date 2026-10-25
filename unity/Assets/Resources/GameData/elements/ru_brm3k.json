@@ -1,0 +1,33 @@
+{
+  "id": "ru_brm3k",
+  "name": "BRM-3K 정찰",
+  "faction": "RU",
+  "class": "recon",
+  "hp": 100,
+  "armor": {
+    "front": 200,
+    "side": 80,
+    "rear": 40,
+    "top": 20
+  },
+  "size": 1.0,
+  "stealth": 0.25,
+  "optics_m": 3500,
+  "speed_kmh": {
+    "road": 70,
+    "offroad": 40
+  },
+  "weapons": [
+    "2a72_30mm",
+    "pkt_coax"
+  ],
+  "ammo": {
+    "2a72_30mm": 500,
+    "pkt_coax": 2000
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 6,
+  "cost": 23,
+  "supply_full": 6
+}

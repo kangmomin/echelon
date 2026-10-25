@@ -1,0 +1,23 @@
+{
+  "id": "ru_recon_plt",
+  "name": "정찰 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "recon",
+  "elements": [
+    {
+      "element": "ru_brm3k",
+      "count": 3
+    }
+  ],
+  "default_formation": "line",
+  "skill": "regular",
+  "role": "BRM-3K 정찰 소대.",
+  "pros": [
+    "관측 3.5 km",
+    "은폐가 좋다"
+  ],
+  "cons": [
+    "전투력 약함"
+  ]
+}

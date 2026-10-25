@@ -1,0 +1,42 @@
+{
+  "id": "ru_msr_plt_bmp3",
+  "name": "차량화소총 소대",
+  "faction": "RU",
+  "echelon": "platoon",
+  "kind": "mech",
+  "elements": [
+    {
+      "element": "ru_bmp3",
+      "count": 3
+    }
+  ],
+  "default_formation": "wedge",
+  "skill": "regular",
+  "passengers": [
+    {
+      "element": "ru_msr_squad",
+      "count": 3
+    }
+  ],
+  "loadouts": [
+    {
+      "id": "bmp3",
+      "name": "BMP-3"
+    },
+    {
+      "id": "bmp2m",
+      "name": "BMP-2M",
+      "replace": {
+        "ru_bmp3": "ru_bmp2m"
+      }
+    }
+  ],
+  "role": "BMP-3 3대 + 분대 3개.",
+  "pros": [
+    "화력이 강하다",
+    "보병 동반"
+  ],
+  "cons": [
+    "경장갑"
+  ]
+}

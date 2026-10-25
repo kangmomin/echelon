@@ -1,0 +1,31 @@
+{
+  "id": "ru_shturm_s",
+  "name": "9P149 시투름-S",
+  "faction": "RU",
+  "class": "at",
+  "hp": 70,
+  "armor": {
+    "front": 40,
+    "side": 20,
+    "rear": 15,
+    "top": 10
+  },
+  "size": 0.9,
+  "stealth": 0.2,
+  "optics_m": 3500,
+  "speed_kmh": {
+    "road": 60,
+    "offroad": 35
+  },
+  "weapons": [
+    "9m120_ataka"
+  ],
+  "ammo": {
+    "9m120_ataka": 12
+  },
+  "radio_range_m": 1500,
+  "transport_capacity": 0,
+  "crew": 2,
+  "cost": 22,
+  "supply_full": 4
+}
