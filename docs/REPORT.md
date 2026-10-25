@@ -1,6 +1,14 @@
 # ECHELON 프로토타입 — 구현 결과 보고 (M0~M7·Unity 전환)
 
-최초 작성일 2026-10-23. 2026-10-25에 Unity 전환 결과를 추가했다. 설계는 `docs/PLAN.md`, 설계 변경은 `docs/DECISIONS.md`, 플레이테스트 기록은 `docs/PLAYTEST.md`.
+최초 작성일 2026-10-23. 2026-10-25에 Unity 전환 결과와 그 뒤의 리팩토링·화면 개편을 추가했다. 설계는 `docs/PLAN.md`, 설계 변경은 `docs/DECISIONS.md`, 플레이테스트 기록은 `docs/PLAYTEST.md`.
+
+## 리팩토링과 화면 개편 (2026-10-25, D-045~D-047)
+
+- **구조**: 선택·부대 지정·명령·화력 모드를 `BattleCommands` 하나로 모았다. 이전에는 `BattleController`와 `BattleInputController`가 같은 기능을 따로 갖고 동기화 플래그로 맞췄다. 두 클래스는 1,621 → 약 740줄, 1,363 → 약 630줄이 되었다. 하늘·조명 설정(`BattleEnvironment`), 명령줄 해석(`LaunchOptions`), 자동 검증(`AppAutomation`)도 분리했다.
+- **고친 결함**: 버튼이 거의 검정으로 보이던 색 이중 곱셈, 데이터 동기화가 Unity `.meta`(GUID)를 지우던 문제, 테스트가 git 밖 `build/` 파일에 의존하던 문제, HUD가 매 프레임 대형 버튼을 다시 만들고 ORBAT가 0.5초마다 모든 행을 다시 만들던 문제, 이식 때 영어로 바뀐 튜토리얼 문구, 빌드 때마다 TMP 기본 글꼴이 한글 없는 LiberationSans로 되돌아가던 문제(Resources 안 TMP 설정 중복).
+- **화면**: 전술 지휘(C2) 톤의 디자인 토큰(`UiTheme`)과 부품(`UiKit`)을 정비하고, 메뉴·편성·전투 HUD·배치·AAR·가이드·튜토리얼을 같은 체계로 맞췄다. 전투 화면은 위 상태 바, 왼쪽 ORBAT, 오른쪽 위 미니맵·알림, 아래 부대 카드·명령 바·화력 지원이다.
+- **검증**: .NET 335개, 8개 시드 골든 비교 일치, Unity EditMode 303개·PlayMode 2개 통과. Windows 플레이어로 메뉴·편성·HUD(선택 전후)·배치·AAR·가이드·튜토리얼을 캡처해 경고·오류 0건을 확인했다.
+- **알려진 점**: 편집기에서 EditMode 테스트를 돌리면 TMP 동적 글꼴이 새로 그린 글자쌍의 커닝 데이터를 `NotoSansKR SDF.asset`에 쌓는다(TMP 동작). 플레이어 빌드에는 비운 상태가 들어간다.
 
 ## Unity 전환 (2026-10-25)
 
